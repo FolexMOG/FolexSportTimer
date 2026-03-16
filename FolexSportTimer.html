@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#111214">
+<title>Sport Timer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #111214;
+  --surface:  #18191c;
+  --border:   #1f2124;
+  --border2:  #2a2b30;
+  --green:    #4ade80;
+  --green-dim:#1e3a2a;
+  --green-glow: rgba(74,222,128,.18);
+  --amber:    #fbbf24;
+  --amber-dim:#2d2008;
+  --red:      #f87171;
+  --red-dim:  #2d0f0f;
+  --text:     #e4e4e7;
+  --muted:    #52525b;
+  --muted2:   #3f3f46;
+  --radius:   20px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%; height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  overflow: hidden;
+}
+
+/* ── APP SHELL ── */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 420px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ── HEADER ── */
+header {
+  padding: 14px 20px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  font-weight: 600;
+  transition: all .3s;
+}
+.status-pill .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--muted2);
+  transition: all .3s;
+}
+.status-pill.active { border-color: #1e3a2a; color: var(--green); }
+.status-pill.active .dot { background: var(--green); box-shadow: 0 0 8px var(--green); animation: blink 1.4s infinite; }
+.status-pill.paused { border-color: #2d2008; color: var(--amber); }
+.status-pill.paused .dot { background: var(--amber); }
+.status-pill.countdown { border-color: #2d0f0f; color: var(--red); }
+.status-pill.countdown .dot { background: var(--red); animation: blink .6s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+/* ── TABS ── */
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 20px 12px;
+  flex-shrink: 0;
+}
+.tab {
+  flex: 1;
+  padding: 8px 6px;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: all .2s;
+  text-align: center;
+}
+.tab.active {
+  background: var(--green-dim);
+  border-color: rgba(74,222,128,.2);
+  color: var(--green);
+}
+
+/* ── SCREENS ── */
+.screen { display: none; flex-direction: column; flex: 1; overflow-y: auto; padding-bottom: 12px; }
+.screen.active { display: flex; }
+
+/* ── SECTION TITLE ── */
+.sec-title {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 12px 20px 8px;
+}
+
+/* ── CONFIG ROWS ── */
+.config-card {
+  margin: 0 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.field-row:last-child { border-bottom: none; }
+.field-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.field-sub {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+.field-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.spin-btn {
+  width: 34px; height: 34px;
+  background: var(--border);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .12s;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  flex-shrink: 0;
+}
+.spin-btn:active { background: var(--green); color: var(--bg); border-color: var(--green); transform: scale(.93); }
+.val-display {
+  font-family: 'Syne', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  min-width: 52px;
+  text-align: center;
+}
+.val-display.small { font-size: 22px; }
+
+/* ── INLINE TIME INPUT ── */
+.time-input {
+  font-family: 'Syne', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--border2);
+  border-radius: 0;
+  width: 58px;
+  text-align: center;
+  outline: none;
+  padding: 2px 0 3px;
+  caret-color: var(--green);
+  transition: border-color .2s;
+  -webkit-appearance: none;
+}
+.time-input:focus {
+  border-bottom-color: var(--green);
+  color: var(--green);
+}
+.time-input::placeholder { color: var(--muted2); }
+/* hide number arrows */
+.time-input[type=number]::-webkit-outer-spin-button,
+.time-input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* reps input slightly larger */
+.reps-input {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--border2);
+  width: 48px;
+  text-align: center;
+  outline: none;
+  padding: 2px 0 3px;
+  caret-color: var(--green);
+  transition: border-color .2s;
+  -webkit-appearance: none;
+}
+.reps-input:focus { border-bottom-color: var(--green); color: var(--green); }
+.reps-input[type=number]::-webkit-outer-spin-button,
+.reps-input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* ── SERIE BIG DISPLAY ── */
+.stat-card.serie-card { flex: 1.4; }
+.stat-card.serie-card .stat-val { font-size: 32px; color: var(--green); }
+
+/* ── DEGRESSIVE ── */
+.deg-add-card {
+  margin: 0 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.deg-add-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.deg-add-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.deg-add-sep {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.add-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--green-dim);
+  border: 1px solid rgba(74,222,128,.2);
+  border-radius: 10px;
+  color: var(--green);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all .12s;
+}
+.add-btn:active { background: var(--green); color: var(--bg); }
+
+.deg-list { padding: 0 20px; display: flex; flex-direction: column; gap: 6px; }
+.deg-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.deg-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  min-width: 22px;
+}
+.deg-times {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.deg-times em { color: var(--muted); font-style: normal; }
+.deg-del {
+  background: none; border: none;
+  color: var(--muted2); font-size: 15px;
+  cursor: pointer; padding: 0 2px;
+  line-height: 1;
+}
+.deg-del:active { color: var(--red); }
+.deg-empty {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  padding: 20px;
+  letter-spacing: 1px;
+}
+
+/* ── TOGGLE ── */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.toggle {
+  width: 44px; height: 26px;
+  background: var(--border2);
+  border-radius: 13px;
+  position: relative;
+  cursor: pointer;
+  border: none;
+  transition: background .2s;
+  flex-shrink: 0;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  left: 3px; top: 3px;
+  width: 20px; height: 20px;
+  background: var(--muted);
+  border-radius: 50%;
+  transition: all .2s;
+}
+.toggle.on { background: var(--green-dim); }
+.toggle.on::after { left: 21px; background: var(--green); box-shadow: 0 0 8px var(--green-glow); }
+.toggle-label { font-size: 13px; font-weight: 500; color: var(--text); }
+
+/* ── START BUTTON ── */
+.start-wrap {
+  padding: 16px 20px 8px;
+  margin-top: auto;
+  flex-shrink: 0;
+}
+.start-btn {
+  width: 100%;
+  padding: 17px;
+  background: var(--green);
+  color: #0a0f0c;
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 24px var(--green-glow);
+  transition: all .12s;
+}
+.start-btn:active { transform: scale(.98); background: #3ac96e; }
+
+/* ══════════════════════════════════════
+   TIMER SCREEN
+══════════════════════════════════════ */
+#timer-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  padding: 16px 20px 20px;
+  gap: 0;
+}
+#timer-screen.active { display: flex; }
+
+/* Phase label */
+.t-phase {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 6px;
+  transition: color .3s;
+  min-height: 16px;
+}
+.t-phase.rest { color: var(--amber); }
+.t-phase.done { color: var(--green); }
+
+/* Ring */
+.ring-wrap {
+  position: relative;
+  width: 220px; height: 220px;
+  margin: 8px 0 12px;
+}
+.ring-svg { width: 220px; height: 220px; transform: rotate(-90deg); }
+.ring-track { fill: none; stroke: var(--border); stroke-width: 10; }
+.ring-fill {
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dasharray: 628;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset .8s linear, stroke .3s;
+  filter: drop-shadow(0 0 10px rgba(74,222,128,.5));
+}
+.ring-fill.rest {
+  stroke: var(--amber);
+  filter: drop-shadow(0 0 10px rgba(251,191,36,.5));
+}
+.ring-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 160px;
+}
+.ring-time {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(52px, 16vw, 68px);
+  font-weight: 800;
+  color: var(--text);
+  line-height: .95;
+  letter-spacing: -2px;
+  transition: color .3s;
+}
+.ring-time.rest { color: var(--amber); }
+.ring-time.urgent { color: var(--red); }
+.ring-sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 1px;
+  margin-top: 6px;
+}
+
+/* Stats cards */
+.stats-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 14px;
+}
+.stat-card {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 8px;
+  text-align: center;
+}
+.stat-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+.stat-lbl {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* Chrono elapsed */
+.chrono-info {
+  display: none;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+}
+
+/* Control buttons */
+.ctrl-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+.ctrl-btn {
+  flex: 1;
+  padding: 15px;
+  border-radius: 14px;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  color: var(--muted);
+  transition: all .12s;
+}
+.ctrl-btn:active { transform: scale(.97); }
+.ctrl-btn.primary { background: var(--green); color: #0a0f0c; border-color: var(--green); box-shadow: 0 4px 18px var(--green-glow); }
+.ctrl-btn.primary:active { background: #3ac96e; }
+.ctrl-btn.danger { color: var(--red); border-color: var(--red-dim); background: var(--red-dim); }
+.ctrl-btn.danger:active { background: var(--red); color: var(--bg); }
+
+/* ══════════════════════════════════════
+   COUNTDOWN OVERLAY
+══════════════════════════════════════ */
+#countdown-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(17,18,20,.96);
+  z-index: 200;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+#countdown-overlay.active { display: flex; }
+
+.cd-number {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(110px, 38vw, 160px);
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+  animation: cdPop .25s cubic-bezier(.2,1.6,.4,1);
+}
+.cd-number.beeping { color: var(--green); text-shadow: 0 0 40px var(--green-glow); }
+.cd-number.go-text { color: var(--green); text-shadow: 0 0 60px rgba(74,222,128,.4); font-size: clamp(80px,28vw,120px); letter-spacing: 4px; }
+.cd-label {
+  font-size: 11px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+@keyframes cdPop {
+  from { transform: scale(1.3); opacity: .4; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* Finished */
+.finished-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(17,18,20,.97);
+  z-index: 200;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.finished-overlay.active { display: flex; }
+.finished-icon {
+  font-size: 56px;
+  animation: scaleIn .4s cubic-bezier(.2,1.6,.4,1);
+}
+.finished-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--green);
+  letter-spacing: 2px;
+  text-shadow: 0 0 30px var(--green-glow);
+}
+.finished-sub {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 2px;
+}
+@keyframes scaleIn {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">Sport Timer</div>
+    <div class="status-pill" id="status-pill">
+      <span class="dot"></span>
+      <span id="status-text">PRÊT</span>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <div class="tabs" id="tab-bar">
+    <button class="tab active" data-tab="interval">Interval</button>
+    <button class="tab" data-tab="degressive">Dégressif</button>
+    <button class="tab" data-tab="chrono">Chrono</button>
+  </div>
+
+  <!-- ════════════ INTERVAL ════════════ -->
+  <div class="screen active" id="screen-interval">
+    <div class="sec-title">Configuration</div>
+    <div class="config-card">
+      <div class="field-row">
+        <div>
+          <div class="field-label">Exercice</div>
+          <div class="field-sub">Durée par série</div>
+        </div>
+        <div class="field-ctrl">
+          <button class="spin-btn" onclick="adj('i_exo',-10)">−</button>
+          <input class="time-input" id="disp-i_exo" type="text" inputmode="numeric" maxlength="5" placeholder="03:00" onblur="inputTime('i_exo',this)" onkeydown="if(event.key==='Enter')this.blur()">
+          <button class="spin-btn" onclick="adj('i_exo',10)">+</button>
+        </div>
+      </div>
+      <div class="field-row">
+        <div>
+          <div class="field-label">Pause</div>
+          <div class="field-sub">Entre les séries</div>
+        </div>
+        <div class="field-ctrl">
+          <button class="spin-btn" onclick="adj('i_rest',-5)">−</button>
+          <input class="time-input" id="disp-i_rest" type="text" inputmode="numeric" maxlength="5" placeholder="01:00" onblur="inputTime('i_rest',this)" onkeydown="if(event.key==='Enter')this.blur()">
+          <button class="spin-btn" onclick="adj('i_rest',5)">+</button>
+        </div>
+      </div>
+      <div class="field-row">
+        <div>
+          <div class="field-label">Séries</div>
+          <div class="field-sub">Nombre de répétitions</div>
+        </div>
+        <div class="field-ctrl">
+          <button class="spin-btn" onclick="adj('i_reps',-1)">−</button>
+          <input class="reps-input" id="disp-i_reps" type="text" inputmode="numeric" maxlength="2" placeholder="5" onblur="inputReps('i_reps',this)" onkeydown="if(event.key==='Enter')this.blur()">
+          <button class="spin-btn" onclick="adj('i_reps',1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="start-wrap">
+      <button class="start-btn" onclick="startInterval()">Lancer</button>
+    </div>
+  </div>
+
+  <!-- ════════════ DÉGRESSIF ════════════ -->
+  <div class="screen" id="screen-degressive">
+    <div class="sec-title">Ajouter un palier</div>
+    <div class="deg-add-card">
+      <div class="deg-add-row">
+        <button class="spin-btn" onclick="adj('d_exo',-10)">−</button>
+        <input class="time-input" id="disp-d_exo" type="text" inputmode="numeric" maxlength="5" placeholder="02:00" onblur="inputTime('d_exo',this)" onkeydown="if(event.key==='Enter')this.blur()">
+        <button class="spin-btn" onclick="adj('d_exo',10)">+</button>
+        <div class="deg-add-sep">Exo</div>
+        <button class="spin-btn" onclick="adj('d_rest',-5)">−</button>
+        <input class="time-input" id="disp-d_rest" type="text" inputmode="numeric" maxlength="5" placeholder="01:00" onblur="inputTime('d_rest',this)" onkeydown="if(event.key==='Enter')this.blur()">
+        <button class="spin-btn" onclick="adj('d_rest',5)">+</button>
+        <div class="deg-add-sep">Pause</div>
+      </div>
+      <button class="add-btn" onclick="addDegStep()">+ Ajouter ce palier</button>
+    </div>
+
+    <div class="sec-title" style="margin-top:16px">Paliers programmés</div>
+    <div class="deg-list" id="deg-list"></div>
+
+    <div class="start-wrap">
+      <button class="start-btn" onclick="startDegressive()">Lancer</button>
+    </div>
+  </div>
+
+  <!-- ════════════ CHRONO ════════════ -->
+  <div class="screen" id="screen-chrono">
+    <div class="sec-title">Configuration</div>
+    <div class="config-card">
+      <div class="field-row">
+        <div class="toggle-row">
+          <button class="toggle" id="timecap-toggle" onclick="toggleTimecap()"></button>
+          <div>
+            <div class="toggle-label">Time Cap</div>
+            <div class="field-sub" style="font-size:10px;color:var(--muted);margin-top:1px">Durée maximale</div>
+          </div>
+        </div>
+        <div class="field-ctrl" id="timecap-field" style="display:none">
+          <button class="spin-btn" onclick="adj('c_cap',-30)">−</button>
+          <input class="time-input" id="disp-c_cap" type="text" inputmode="numeric" maxlength="5" placeholder="20:00" onblur="inputTime('c_cap',this)" onkeydown="if(event.key==='Enter')this.blur()">
+          <button class="spin-btn" onclick="adj('c_cap',30)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="start-wrap">
+      <button class="start-btn" onclick="startChrono()">Lancer</button>
+    </div>
+  </div>
+
+  <!-- ════════════ TIMER SCREEN ════════════ -->
+  <div id="timer-screen">
+    <div class="t-phase" id="t-phase">Exercice</div>
+
+    <div class="ring-wrap">
+      <svg class="ring-svg" viewBox="0 0 220 220">
+        <circle class="ring-track" cx="110" cy="110" r="100"/>
+        <circle class="ring-fill" id="ring-fill" cx="110" cy="110" r="100"/>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-time" id="ring-time">00:00</div>
+        <div class="ring-sub" id="ring-sub">— exercice —</div>
+      </div>
+    </div>
+
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card serie-card">
+        <div class="stat-val" id="stat-serie">1/5</div>
+        <div class="stat-lbl">Série</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="stat-next">01:00</div>
+        <div class="stat-lbl">Prochain</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="stat-total">--</div>
+        <div class="stat-lbl">Restant</div>
+      </div>
+    </div>
+
+    <div class="chrono-info" id="chrono-info">00:00</div>
+
+    <div class="ctrl-row">
+      <button class="ctrl-btn danger" onclick="stopTimer()">■ Stop</button>
+      <button class="ctrl-btn primary" id="btn-pause" onclick="togglePause()">⏸ Pause</button>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- COUNTDOWN OVERLAY -->
+<div id="countdown-overlay">
+  <div class="cd-number" id="cd-number">10</div>
+  <div class="cd-label" id="cd-label">Prépare-toi</div>
+</div>
+
+<!-- FINISHED OVERLAY -->
+<div class="finished-overlay" id="finished-overlay">
+  <div class="finished-icon">✓</div>
+  <div class="finished-title">Terminé !</div>
+  <div class="finished-sub" id="finished-sub">Bien joué</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  CONFIG STATE
+// ══════════════════════════════════════════════
+const vals = {
+  i_exo: 180, i_rest: 60, i_reps: 5,
+  d_exo: 120, d_rest: 60,
+  c_cap: 1200
+};
+const limits = {
+  i_exo:[10,3600], i_rest:[0,600], i_reps:[1,50],
+  d_exo:[10,3600], d_rest:[0,600],
+  c_cap:[60,7200]
+};
+let degSteps = [];
+let timecapOn = false;
+
+// Timer state
+let timerInterval = null;
+let isPaused = false;
+let currentMode = null;
+let phases = [], phaseIdx = 0, phaseRemaining = 0, phaseDuration = 0;
+let chronoElapsed = 0, chronoCap = 0;
+
+// Ring circumference = 2π×100 ≈ 628.3
+const CIRC = 628.3;
+
+// ══════════════════════════════════════════════
+//  RICH AUDIO ENGINE
+// ══════════════════════════════════════════════
+let audioCtx = null;
+
+function ctx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  // Resume if suspended (iOS)
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+// Low-level: multi-oscillator tone with envelope
+function playTone({ freqs = [440], type = 'sine', attack = 0.005, decay = 0.1, sustain = 0.3, release = 0.15, vol = 0.25, detune = 0 } = {}) {
+  try {
+    const c = ctx();
+    const master = c.createGain();
+    master.connect(c.destination);
+    const now = c.currentTime;
+    const dur = attack + decay + sustain + release;
+    master.gain.setValueAtTime(0, now);
+    master.gain.linearRampToValueAtTime(vol, now + attack);
+    master.gain.linearRampToValueAtTime(vol * 0.7, now + attack + decay);
+    master.gain.setValueAtTime(vol * 0.7, now + attack + decay + sustain);
+    master.gain.linearRampToValueAtTime(0.0001, now + dur);
+
+    freqs.forEach((f, i) => {
+      const osc = c.createOscillator();
+      osc.type = type;
+      osc.frequency.value = f;
+      osc.detune.value = detune * i;
+
+      // Add slight filter for warmth
+      const filt = c.createBiquadFilter();
+      filt.type = 'lowpass';
+      filt.frequency.value = 3200;
+      filt.Q.value = 0.7;
+
+      osc.connect(filt);
+      filt.connect(master);
+      osc.start(now);
+      osc.stop(now + dur + 0.05);
+    });
+  } catch(e) {}
+}
+
+// Warm click/tick for countdown (5,4,3,2,1)
+function soundTick() {
+  playTone({ freqs:[880, 1760], type:'sine', attack:0.003, decay:0.04, sustain:0.0, release:0.08, vol:0.22 });
+}
+
+// Deep resonant tick for last 3 secs of a phase
+function soundWarn() {
+  playTone({ freqs:[660, 990], type:'sine', attack:0.003, decay:0.06, sustain:0.02, release:0.12, vol:0.3 });
+}
+
+// Rich GO sound — ascending chord
+function soundGo() {
+  try {
+    const c = ctx();
+    const now = c.currentTime;
+    // Chord: root + major third + fifth
+    [[523, 0], [659, 0.06], [784, 0.12], [1047, 0.2]].forEach(([f, t]) => {
+      const osc = c.createOscillator();
+      const g = c.createGain();
+      const filt = c.createBiquadFilter();
+      filt.type = 'lowpass';
+      filt.frequency.value = 4000;
+      osc.type = 'sine';
+      osc.frequency.value = f;
+      osc.connect(filt); filt.connect(g); g.connect(c.destination);
+      const s = now + t;
+      g.gain.setValueAtTime(0, s);
+      g.gain.linearRampToValueAtTime(0.22, s + 0.01);
+      g.gain.linearRampToValueAtTime(0.1, s + 0.2);
+      g.gain.linearRampToValueAtTime(0, s + 0.55);
+      osc.start(s); osc.stop(s + 0.65);
+    });
+  } catch(e) {}
+}
+
+// Phase start — two-tone bell
+function soundPhaseStart() {
+  playTone({ freqs:[523, 784], type:'sine', attack:0.005, decay:0.15, sustain:0.2, release:0.3, vol:0.28 });
+}
+
+// Phase transition (exo → rest or rest → exo)
+function soundTransition(toRest) {
+  if (toRest) {
+    // Descending: relaxation signal
+    playTone({ freqs:[784, 659], type:'sine', attack:0.005, decay:0.1, sustain:0.15, release:0.25, vol:0.3 });
+    setTimeout(() => playTone({ freqs:[523], type:'sine', attack:0.005, decay:0.1, sustain:0.1, release:0.3, vol:0.25 }), 180);
+  } else {
+    // Ascending: activation signal
+    playTone({ freqs:[523, 659], type:'sine', attack:0.005, decay:0.08, sustain:0.1, release:0.2, vol:0.28 });
+    setTimeout(() => playTone({ freqs:[784, 1047], type:'sine', attack:0.005, decay:0.08, sustain:0.08, release:0.2, vol:0.28 }), 160);
+  }
+}
+
+// Finished — triumphant arpeggio
+function soundFinished() {
+  try {
+    const c = ctx();
+    const now = c.currentTime;
+    [523, 659, 784, 1047, 1319].forEach((f, i) => {
+      const osc = c.createOscillator();
+      const g = c.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = f;
+      osc.connect(g); g.connect(c.destination);
+      const s = now + i * 0.1;
+      g.gain.setValueAtTime(0, s);
+      g.gain.linearRampToValueAtTime(0.25, s + 0.01);
+      g.gain.linearRampToValueAtTime(0.08, s + 0.25);
+      g.gain.linearRampToValueAtTime(0, s + 0.6);
+      osc.start(s); osc.stop(s + 0.7);
+    });
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════════
+//  FORMAT
+// ══════════════════════════════════════════════
+function fmt(sec) {
+  sec = Math.max(0, Math.round(sec));
+  return String(Math.floor(sec/60)).padStart(2,'0') + ':' + String(sec%60).padStart(2,'0');
+}
+
+// ══════════════════════════════════════════════
+//  SPIN CONTROLS
+// ══════════════════════════════════════════════
+function adj(key, delta) {
+  const [mn, mx] = limits[key];
+  vals[key] = Math.min(mx, Math.max(mn, vals[key] + delta));
+  renderVal(key);
+}
+function renderVal(key) {
+  const el = document.getElementById('disp-' + key);
+  if (!el) return;
+  const v = key === 'i_reps' ? String(vals[key]) : fmt(vals[key]);
+  // works for both <div> and <input>
+  if (el.tagName === 'INPUT') el.value = v;
+  else el.textContent = v;
+}
+function renderAll() { Object.keys(vals).forEach(renderVal); }
+
+// Parse "MM:SS" or plain seconds typed by user
+function parseTimeInput(raw) {
+  raw = raw.trim().replace(/[^0-9:]/g, '');
+  if (!raw) return null;
+  if (raw.includes(':')) {
+    const [m, s] = raw.split(':').map(Number);
+    return (isNaN(m) ? 0 : m) * 60 + (isNaN(s) ? 0 : s);
+  }
+  // plain number: treat as seconds if ≤99, else minutes*100+seconds (e.g. 130 → 1:30)
+  const n = parseInt(raw, 10);
+  if (isNaN(n)) return null;
+  if (raw.length <= 2) return n;              // e.g. "45" → 45s
+  if (raw.length === 3) return Math.floor(n/100)*60 + (n%100); // e.g. "130" → 1:30
+  if (raw.length === 4) return Math.floor(n/100)*60 + (n%100); // e.g. "0300" → 3:00
+  return n;
+}
+
+function inputTime(key, el) {
+  const sec = parseTimeInput(el.value);
+  if (sec !== null) {
+    const [mn, mx] = limits[key];
+    vals[key] = Math.min(mx, Math.max(mn, sec));
+  }
+  renderVal(key); // reformat display
+}
+
+function inputReps(key, el) {
+  const n = parseInt(el.value, 10);
+  if (!isNaN(n)) {
+    const [mn, mx] = limits[key];
+    vals[key] = Math.min(mx, Math.max(mn, n));
+  }
+  renderVal(key);
+}
+
+// ══════════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════════
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (document.getElementById('timer-screen').classList.contains('active')) return;
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ══════════════════════════════════════════════
+//  TIMECAP TOGGLE
+// ══════════════════════════════════════════════
+function toggleTimecap() {
+  timecapOn = !timecapOn;
+  document.getElementById('timecap-toggle').classList.toggle('on', timecapOn);
+  document.getElementById('timecap-field').style.display = timecapOn ? 'flex' : 'none';
+}
+
+// ══════════════════════════════════════════════
+//  DEGRESSIVE STEPS
+// ══════════════════════════════════════════════
+function addDegStep() {
+  degSteps.push({ exo: vals.d_exo, rest: vals.d_rest });
+  renderDegList();
+}
+function removeDeg(i) {
+  degSteps.splice(i, 1);
+  renderDegList();
+}
+function renderDegList() {
+  const el = document.getElementById('deg-list');
+  if (!degSteps.length) {
+    el.innerHTML = '<div class="deg-empty">Aucun palier — ajoutez-en ci-dessus</div>';
+    return;
+  }
+  el.innerHTML = degSteps.map((s,i) => `
+    <div class="deg-item">
+      <div class="deg-num">#${i+1}</div>
+      <div class="deg-times">${fmt(s.exo)} <em>exo</em> · ${fmt(s.rest)} <em>pause</em></div>
+      <button class="deg-del" onclick="removeDeg(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════
+//  STATUS PILL
+// ══════════════════════════════════════════════
+function setStatus(state, label) {
+  const pill = document.getElementById('status-pill');
+  pill.className = 'status-pill' + (state ? ' ' + state : '');
+  document.getElementById('status-text').textContent = label;
+}
+
+// ══════════════════════════════════════════════
+//  COUNTDOWN
+// ══════════════════════════════════════════════
+function runCountdown(cb) {
+  const overlay = document.getElementById('countdown-overlay');
+  const numEl   = document.getElementById('cd-number');
+  const lblEl   = document.getElementById('cd-label');
+
+  overlay.classList.add('active');
+  setStatus('countdown', 'DÉPART');
+
+  let n = 10;
+  numEl.className = 'cd-number';
+  numEl.textContent = n;
+  lblEl.textContent = 'Prépare-toi';
+
+  const cd = setInterval(() => {
+    n--;
+    if (n === 0) {
+      clearInterval(cd);
+      numEl.className = 'cd-number go-text';
+      numEl.textContent = 'GO';
+      lblEl.textContent = '';
+      soundGo();
+      setTimeout(() => {
+        overlay.classList.remove('active');
+        cb();
+      }, 800);
+      return;
+    }
+
+    // Animate
+    numEl.style.animation = 'none';
+    void numEl.offsetWidth;
+    numEl.style.animation = 'cdPop .25s cubic-bezier(.2,1.6,.4,1)';
+
+    if (n <= 5) {
+      // Sound + green from 5 down
+      numEl.className = 'cd-number beeping';
+      lblEl.textContent = '';
+      soundTick();
+    } else {
+      numEl.className = 'cd-number';
+      lblEl.textContent = 'Prépare-toi';
+    }
+    numEl.textContent = n;
+  }, 1000);
+}
+
+// ══════════════════════════════════════════════
+//  SCREEN TRANSITIONS
+// ══════════════════════════════════════════════
+function showTimerScreen() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('timer-screen').classList.add('active');
+  document.getElementById('tab-bar').style.display = 'none';
+}
+function showConfigScreen() {
+  document.getElementById('timer-screen').classList.remove('active');
+  document.getElementById('tab-bar').style.display = 'flex';
+  const active = document.querySelector('.tab.active').dataset.tab;
+  document.getElementById('screen-' + active).classList.add('active');
+  setStatus('', 'PRÊT');
+}
+
+// ══════════════════════════════════════════════
+//  START
+// ══════════════════════════════════════════════
+function buildIntervalPhases() {
+  const arr = [];
+  for (let r = 0; r < vals.i_reps; r++) {
+    arr.push({ type:'exo',  dur: vals.i_exo, serie: r+1, total: vals.i_reps });
+    if (r < vals.i_reps - 1 && vals.i_rest > 0)
+      arr.push({ type:'rest', dur: vals.i_rest, serie: r+1, total: vals.i_reps });
+  }
+  return arr;
+}
+function buildDegressivePhases() {
+  const arr = [];
+  degSteps.forEach((s, i) => {
+    arr.push({ type:'exo',  dur: s.exo, serie: i+1, total: degSteps.length });
+    if (i < degSteps.length - 1 && s.rest > 0)
+      arr.push({ type:'rest', dur: s.rest, serie: i+1, total: degSteps.length });
+  });
+  return arr;
+}
+
+function startInterval() {
+  phases = buildIntervalPhases();
+  if (!phases.length) return;
+  currentMode = 'interval';
+  document.getElementById('stats-row').style.display = 'flex';
+  document.getElementById('chrono-info').style.display = 'none';
+  runCountdown(() => { showTimerScreen(); launchPhases(); });
+}
+function startDegressive() {
+  if (!degSteps.length) { alert('Ajoutez au moins un palier !'); return; }
+  phases = buildDegressivePhases();
+  currentMode = 'degressive';
+  document.getElementById('stats-row').style.display = 'flex';
+  document.getElementById('chrono-info').style.display = 'none';
+  runCountdown(() => { showTimerScreen(); launchPhases(); });
+}
+function startChrono() {
+  currentMode = 'chrono';
+  chronoElapsed = 0;
+  chronoCap = timecapOn ? vals.c_cap : 0;
+  document.getElementById('stats-row').style.display = 'none';
+  document.getElementById('chrono-info').style.display = 'block';
+  runCountdown(() => { showTimerScreen(); launchChrono(); });
+}
+
+// ══════════════════════════════════════════════
+//  PHASES ENGINE
+// ══════════════════════════════════════════════
+function launchPhases() {
+  phaseIdx = 0;
+  isPaused = false;
+  document.getElementById('btn-pause').textContent = '⏸ Pause';
+  setStatus('active', 'ACTIF');
+  startPhase();
+}
+
+function startPhase() {
+  if (phaseIdx >= phases.length) { finishTimer(); return; }
+  const p = phases[phaseIdx];
+  const prevP = phases[phaseIdx - 1];
+  phaseRemaining = p.dur;
+  phaseDuration = p.dur;
+
+  // Sound: announce transition
+  if (phaseIdx === 0) {
+    soundPhaseStart();
+  } else {
+    soundTransition(p.type === 'rest');
+  }
+
+  updatePhaseUI();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(tickPhase, 1000);
+}
+
+function tickPhase() {
+  if (isPaused) return;
+  phaseRemaining--;
+  updatePhaseUI();
+  if (phaseRemaining <= 3 && phaseRemaining > 0) soundWarn();
+  if (phaseRemaining <= 0) {
+    clearInterval(timerInterval); timerInterval = null;
+    phaseIdx++;
+    setTimeout(startPhase, 200);
+  }
+}
+
+function updatePhaseUI() {
+  const p = phases[phaseIdx] || phases[phaseIdx-1];
+  if (!p) return;
+  const isRest = p.type === 'rest';
+
+  // Phase label
+  const phaseEl = document.getElementById('t-phase');
+  phaseEl.textContent = isRest ? '— Pause —' : `Exercice · Série ${p.serie}/${p.total}`;
+  phaseEl.className = 't-phase' + (isRest ? ' rest' : '');
+
+  // Ring time
+  const timeEl = document.getElementById('ring-time');
+  timeEl.textContent = fmt(phaseRemaining);
+  timeEl.className = 'ring-time' + (isRest ? ' rest' : '') + (phaseRemaining <= 5 && !isRest ? ' urgent' : '');
+
+  // Ring sub
+  const nextP = phases[phaseIdx + 1];
+  document.getElementById('ring-sub').textContent = nextP
+    ? `prochain · ${nextP.type === 'rest' ? 'pause' : 'exercice'} ${fmt(nextP.dur)}`
+    : 'dernière phase';
+
+  // Ring arc
+  const fill = document.getElementById('ring-fill');
+  const pct = phaseDuration > 0 ? phaseRemaining / phaseDuration : 0;
+  fill.style.strokeDashoffset = CIRC * (1 - pct);
+  fill.className = 'ring-fill' + (isRest ? ' rest' : '');
+
+  // Stats
+  document.getElementById('stat-serie').textContent = `${p.serie}/${p.total}`;
+  document.getElementById('stat-next').textContent = nextP ? fmt(nextP.dur) : '--';
+  let totalLeft = phaseRemaining;
+  for (let i = phaseIdx + 1; i < phases.length; i++) totalLeft += phases[i].dur;
+  document.getElementById('stat-total').textContent = fmt(totalLeft);
+}
+
+// ══════════════════════════════════════════════
+//  CHRONO ENGINE
+// ══════════════════════════════════════════════
+function launchChrono() {
+  isPaused = false;
+  document.getElementById('btn-pause').textContent = '⏸ Pause';
+  setStatus('active', 'ACTIF');
+  document.getElementById('t-phase').textContent = 'Chrono';
+  document.getElementById('t-phase').className = 't-phase';
+  document.getElementById('ring-fill').className = 'ring-fill';
+  document.getElementById('ring-fill').style.strokeDashoffset = '0';
+  document.getElementById('ring-sub').textContent = '';
+  document.getElementById('ring-time').className = 'ring-time';
+  if (timerInterval) clearInterval(timerInterval);
+  soundPhaseStart();
+  timerInterval = setInterval(tickChrono, 1000);
+}
+
+function tickChrono() {
+  if (isPaused) return;
+  chronoElapsed++;
+  const timeEl = document.getElementById('ring-time');
+  const fill = document.getElementById('ring-fill');
+  const info = document.getElementById('chrono-info');
+
+  if (chronoCap > 0) {
+    const rem = chronoCap - chronoElapsed;
+    timeEl.textContent = fmt(rem);
+    fill.style.strokeDashoffset = CIRC * (1 - rem / chronoCap);
+    info.textContent = 'Écoulé · ' + fmt(chronoElapsed);
+    if (rem <= 10 && rem > 0) {
+      soundWarn();
+      timeEl.className = 'ring-time urgent';
+    } else {
+      timeEl.className = 'ring-time';
+    }
+    if (rem <= 0) {
+      clearInterval(timerInterval); timerInterval = null;
+      timeEl.textContent = 'TIME';
+      finishTimer();
+    }
+  } else {
+    timeEl.textContent = fmt(chronoElapsed);
+    fill.style.strokeDashoffset = CIRC * (1 - Math.min(1, chronoElapsed / 3600));
+    info.textContent = '';
+  }
+}
+
+// ══════════════════════════════════════════════
+//  CONTROLS
+// ══════════════════════════════════════════════
+function togglePause() {
+  isPaused = !isPaused;
+  const btn = document.getElementById('btn-pause');
+  if (isPaused) {
+    btn.textContent = '▶ Reprendre';
+    setStatus('paused', 'PAUSE');
+  } else {
+    btn.textContent = '⏸ Pause';
+    setStatus('active', 'ACTIF');
+    soundTick();
+  }
+}
+
+function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  isPaused = false;
+  document.getElementById('btn-pause').style.display = '';
+  showConfigScreen();
+}
+
+function finishTimer() {
+  setStatus('', 'FIN');
+  soundFinished();
+  const overlay = document.getElementById('finished-overlay');
+  document.getElementById('finished-sub').textContent =
+    currentMode === 'chrono' ? 'Temps : ' + fmt(chronoElapsed) : 'Séance complète';
+  overlay.classList.add('active');
+  document.getElementById('btn-pause').style.display = 'none';
+  setTimeout(() => {
+    overlay.classList.remove('active');
+    document.getElementById('btn-pause').style.display = '';
+    stopTimer();
+  }, 3500);
+}
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+renderAll();
+degSteps = [
+  { exo: 240, rest: 60 },
+  { exo: 180, rest: 60 },
+  { exo: 120, rest: 60 },
+  { exo:  60, rest:  0 }
+];
+renderDegList();
+
+// Unlock AudioContext (iOS/Android)
+['touchstart','click','keydown'].forEach(ev =>
+  document.addEventListener(ev, () => { try { ctx(); } catch(e){} }, { once: true })
+);
+</script>
+</body>
+</html>
