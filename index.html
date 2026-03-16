@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -19,7 +18,7 @@
     description: "Interval, dégressif et chrono timer",
     start_url: ".",
     display: "standalone",
-    orientation: "portrait",
+    orientation: "any",
     background_color: "#111214",
     theme_color: "#111214",
     icons: [{
@@ -443,9 +442,7 @@ header {
 }
 .start-btn:active { transform: scale(.98); background: #3ac96e; }
 
-/* ══════════════════════════════════════
-   TIMER SCREEN
-══════════════════════════════════════ */
+/* ── TIMER SCREEN portrait ── */
 #timer-screen {
   display: none;
   flex-direction: column;
@@ -455,6 +452,10 @@ header {
   gap: 0;
 }
 #timer-screen.active { display: flex; }
+
+.timer-left  { display: none; }
+.timer-right { display: none; }
+.portrait-ctrl { display: flex; gap: 10px; width: 100%; }
 
 .t-phase {
   font-size: 11px;
@@ -581,9 +582,62 @@ header {
 .ctrl-btn.danger { color: var(--red); border-color: var(--red-dim); background: var(--red-dim); }
 .ctrl-btn.danger:active { background: var(--red); color: var(--bg); }
 
-/* ══════════════════════════════════════
-   COUNTDOWN OVERLAY
-══════════════════════════════════════ */
+@media (orientation: landscape) {
+
+  #app { max-width: 100%; }
+  .tabs { padding: 0 20px 8px; }
+  .tab  { flex: 0 0 auto; padding: 6px 14px; }
+  header { padding: 8px 20px; }
+  .screen { overflow-y: auto; }
+  .start-wrap { padding: 10px 20px; }
+
+  #timer-screen {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    gap: 0;
+    width: 100%;
+  }
+
+  /* Cacher éléments portrait */
+  #timer-screen > .t-phase { display: none; }
+  .stats-row    { display: none !important; }
+  .portrait-ctrl { display: none !important; }
+  .chrono-info  { display: none !important; }
+
+  /* Montrer colonnes landscape */
+  .timer-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    flex: 1;
+    padding-right: 20px;
+  }
+  .timer-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    flex: 1;
+    padding-left: 20px;
+  }
+
+  /* Phase label aligné droite dans colonne gauche */
+  .t-phase { text-align: right; margin-bottom: 0; min-height: auto; }
+
+  .ring-wrap { width: 200px; height: 200px; flex-shrink: 0; margin: 0; }
+  .ring-svg  { width: 200px; height: 200px; }
+
+  .stat-card { padding: 8px 12px; min-width: 110px; }
+  .stat-val  { font-size: 18px; }
+  .stat-card.serie-card .stat-val { font-size: 28px; }
+
+  .ctrl-row { flex-direction: column; width: auto; gap: 8px; }
+  .ctrl-btn { padding: 10px 16px; }
+}
+
 #countdown-overlay {
   display: none;
   position: fixed;
@@ -781,8 +835,23 @@ header {
 
   <!-- ════════════ TIMER SCREEN ════════════ -->
   <div id="timer-screen">
+
+    <!-- Phase label -->
     <div class="t-phase" id="t-phase">Exercice</div>
 
+    <!-- Colonne gauche landscape (série + prochain) -->
+    <div class="timer-left">
+      <div class="stat-card serie-card">
+        <div class="stat-val" id="stat-serie">1/5</div>
+        <div class="stat-lbl">Série</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="stat-next">01:00</div>
+        <div class="stat-lbl" id="stat-next-lbl">Prochain</div>
+      </div>
+    </div>
+
+    <!-- Ring — toujours visible -->
     <div class="ring-wrap">
       <svg class="ring-svg" viewBox="0 0 280 280">
         <circle class="ring-track" cx="140" cy="140" r="130"/>
@@ -794,27 +863,42 @@ header {
       </div>
     </div>
 
+    <!-- Stats portrait (série + prochain + restant en ligne) -->
     <div class="stats-row" id="stats-row">
       <div class="stat-card serie-card">
-        <div class="stat-val" id="stat-serie">1/5</div>
+        <div class="stat-val" id="stat-serie-p">1/5</div>
         <div class="stat-lbl">Série</div>
       </div>
       <div class="stat-card">
-        <div class="stat-val" id="stat-next">01:00</div>
-        <div class="stat-lbl">Prochain</div>
+        <div class="stat-val" id="stat-next-p">01:00</div>
+        <div class="stat-lbl" id="stat-next-lbl-p">Prochain</div>
       </div>
       <div class="stat-card">
-        <div class="stat-val" id="stat-total">--</div>
+        <div class="stat-val" id="stat-total-p">--</div>
         <div class="stat-lbl">Restant</div>
       </div>
     </div>
 
     <div class="chrono-info" id="chrono-info">00:00</div>
 
-    <div class="ctrl-row">
-      <button class="ctrl-btn danger" onclick="stopTimer()">■ Stop</button>
-      <button class="ctrl-btn primary" id="btn-pause" onclick="togglePause()">⏸ Pause</button>
+    <!-- Colonne droite landscape (restant + boutons) -->
+    <div class="timer-right">
+      <div class="stat-card">
+        <div class="stat-val" id="stat-total">--</div>
+        <div class="stat-lbl">Restant</div>
+      </div>
+      <div class="ctrl-row">
+        <button class="ctrl-btn danger" onclick="stopTimer()">■ Stop</button>
+        <button class="ctrl-btn primary" id="btn-pause" onclick="togglePause()">⏸ Pause</button>
+      </div>
     </div>
+
+    <!-- Boutons portrait -->
+    <div class="ctrl-row portrait-ctrl">
+      <button class="ctrl-btn danger" onclick="stopTimer()">■ Stop</button>
+      <button class="ctrl-btn primary" id="btn-pause-p" onclick="togglePause()">⏸ Pause</button>
+    </div>
+
   </div>
 
 </div><!-- /app -->
@@ -1265,7 +1349,7 @@ let rafId = null;          // requestAnimationFrame handle
 function launchPhases() {
   phaseIdx = 0;
   isPaused = false;
-  document.getElementById('btn-pause').textContent = '⏸ Pause';
+  setPauseBtn('⏸ Pause');
   setStatus('active', 'ACTIF');
   startPhase();
 }
@@ -1344,11 +1428,37 @@ function updatePhaseUI(remaining) {
     ? `prochain · ${nextP.type === 'rest' ? 'pause' : 'exercice'} ${fmt(nextP.dur)}`
     : 'dernière phase';
 
-  document.getElementById('stat-serie').textContent = `${p.serie}/${p.total}`;
-  document.getElementById('stat-next').textContent = nextP ? fmt(nextP.dur) : '--';
+  // Valeur "Prochain" + label coloré si c'est une pause
+  const nextVal  = nextP ? fmt(nextP.dur) : '--';
+  const nextIsRest = nextP && nextP.type === 'rest';
+  const nextColor  = nextIsRest ? 'var(--amber)' : 'var(--text)';
+  const nextLabel  = nextIsRest ? 'Pause' : (nextP ? 'Exercice' : 'Prochain');
+
+  // Landscape IDs
+  const snEl = document.getElementById('stat-next');
+  if (snEl) { snEl.textContent = nextVal; snEl.style.color = nextColor; }
+  const snLbl = document.getElementById('stat-next-lbl');
+  if (snLbl) { snLbl.textContent = nextLabel; snLbl.style.color = nextIsRest ? 'var(--amber)' : ''; }
+
+  // Portrait IDs
+  const snElP = document.getElementById('stat-next-p');
+  if (snElP) { snElP.textContent = nextVal; snElP.style.color = nextColor; }
+  const snLblP = document.getElementById('stat-next-lbl-p');
+  if (snLblP) { snLblP.textContent = nextLabel; snLblP.style.color = nextIsRest ? 'var(--amber)' : ''; }
+
+  // Série
+  const ssEl = document.getElementById('stat-serie');
+  if (ssEl) ssEl.textContent = `${p.serie}/${p.total}`;
+  const ssElP = document.getElementById('stat-serie-p');
+  if (ssElP) ssElP.textContent = `${p.serie}/${p.total}`;
+
+  // Total restant
   let totalLeft = Math.ceil(remaining);
   for (let i = phaseIdx + 1; i < phases.length; i++) totalLeft += phases[i].dur;
-  document.getElementById('stat-total').textContent = fmt(totalLeft);
+  const stEl = document.getElementById('stat-total');
+  if (stEl) stEl.textContent = fmt(totalLeft);
+  const stElP = document.getElementById('stat-total-p');
+  if (stElP) stElP.textContent = fmt(totalLeft);
 }
 
 // ══════════════════════════════════════════════
@@ -1361,7 +1471,7 @@ function launchChrono() {
   isPaused = false;
   chronoStartTs     = null;
   chronoPauseOffset = 0;
-  document.getElementById('btn-pause').textContent = '⏸ Pause';
+  setPauseBtn('⏸ Pause');
   setStatus('active', 'ACTIF');
   document.getElementById('t-phase').textContent = 'Chrono';
   document.getElementById('t-phase').className = 't-phase';
@@ -1412,32 +1522,25 @@ function rafChrono(ts) {
 // ══════════════════════════════════════════════
 //  CONTROLS
 // ══════════════════════════════════════════════
+function setPauseBtn(txt) {
+  const b1 = document.getElementById('btn-pause');
+  const b2 = document.getElementById('btn-pause-p');
+  if (b1) b1.textContent = txt;
+  if (b2) b2.textContent = txt;
+  if (b1) b1.style.display = '';
+  if (b2) b2.style.display = '';
+}
+
 function togglePause() {
   isPaused = !isPaused;
-  const btn = document.getElementById('btn-pause');
   if (isPaused) {
-    btn.textContent = '▶ Reprendre';
-    setStatus('paused', 'PAUSE');
-    // Mémorise le temps écoulé pour le chrono
-    if (currentMode === 'chrono') {
-      chronoPauseOffset = chronoElapsed;
-      chronoStartTs = null;
-    } else {
-      // Pour les phases, on mémorise le temps restant au moment de la pause
-      _pausedRemaining = phaseRemaining;
-    }
+    setPauseBtn('▶ Reprendre'); setStatus('paused', 'PAUSE');
+    if (currentMode === 'chrono') { chronoPauseOffset = chronoElapsed; chronoStartTs = null; }
+    else { _pausedRemaining = phaseRemaining; }
   } else {
-    btn.textContent = '⏸ Pause';
-    setStatus('active', 'ACTIF');
-    soundTick();
-    // Repart depuis le temps restant
-    if (currentMode === 'chrono') {
-      chronoStartTs = null; // sera réinitialisé au prochain frame
-    } else {
-      phaseStartTs = null;  // réinitialise le timestamp de phase
-      // Recalcule un startTs fictif pour que "remaining" reparte de _pausedRemaining
-      _phaseResumeOffset = _pausedRemaining;
-    }
+    setPauseBtn('⏸ Pause'); setStatus('active', 'ACTIF'); soundTick();
+    if (currentMode === 'chrono') { chronoStartTs = null; }
+    else { phaseStartTs = null; _phaseResumeOffset = _pausedRemaining; }
   }
 }
 
@@ -1451,7 +1554,7 @@ function stopTimer() {
   phaseStartTs = null;
   chronoStartTs = null;
   chronoPauseOffset = 0;
-  document.getElementById('btn-pause').style.display = '';
+  setPauseBtn('⏸ Pause');
   showConfigScreen();
 }
 function finishTimer() {
@@ -1463,10 +1566,13 @@ function finishTimer() {
   document.getElementById('finished-sub').textContent =
     currentMode === 'chrono' ? 'Temps : ' + fmt(chronoElapsed) : 'Séance complète';
   overlay.classList.add('active');
-  document.getElementById('btn-pause').style.display = 'none';
+  const b1 = document.getElementById('btn-pause');
+  const b2 = document.getElementById('btn-pause-p');
+  if (b1) b1.style.display = 'none';
+  if (b2) b2.style.display = 'none';
   setTimeout(() => {
     overlay.classList.remove('active');
-    document.getElementById('btn-pause').style.display = '';
+    setPauseBtn('⏸ Pause');
     stopTimer();
   }, 3500);
 }
