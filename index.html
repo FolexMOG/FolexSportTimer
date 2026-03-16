@@ -38,7 +38,6 @@ html, body {
   overflow: hidden;
 }
 
-/* ── APP SHELL ── */
 #app {
   display: flex;
   flex-direction: column;
@@ -125,7 +124,6 @@ header {
 .screen { display: none; flex-direction: column; flex: 1; overflow-y: auto; padding-bottom: 12px; }
 .screen.active { display: flex; }
 
-/* ── SECTION TITLE ── */
 .sec-title {
   font-size: 9px;
   font-weight: 600;
@@ -182,67 +180,31 @@ header {
   flex-shrink: 0;
 }
 .spin-btn:active { background: var(--green); color: var(--bg); border-color: var(--green); transform: scale(.93); }
+
+/* val-display is now an <input> — same visual as before + editable */
 .val-display {
   font-family: 'Syne', sans-serif;
   font-size: 17px;
   font-weight: 700;
   color: var(--text);
-  min-width: 52px;
-  text-align: center;
-}
-.val-display.small { font-size: 22px; }
-
-/* ── INLINE TIME INPUT ── */
-.time-input {
-  font-family: 'Syne', sans-serif;
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text);
-  background: transparent;
-  border: none;
-  border-bottom: 1.5px solid var(--border2);
-  border-radius: 0;
   width: 58px;
   text-align: center;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid transparent;
+  border-radius: 0;
   outline: none;
   padding: 2px 0 3px;
   caret-color: var(--green);
-  transition: border-color .2s;
+  transition: border-color .15s, color .15s;
   -webkit-appearance: none;
 }
-.time-input:focus {
+.val-display:focus {
   border-bottom-color: var(--green);
   color: var(--green);
 }
-.time-input::placeholder { color: var(--muted2); }
-/* hide number arrows */
-.time-input[type=number]::-webkit-outer-spin-button,
-.time-input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
-
-/* reps input slightly larger */
-.reps-input {
-  font-family: 'Syne', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text);
-  background: transparent;
-  border: none;
-  border-bottom: 1.5px solid var(--border2);
-  width: 48px;
-  text-align: center;
-  outline: none;
-  padding: 2px 0 3px;
-  caret-color: var(--green);
-  transition: border-color .2s;
-  -webkit-appearance: none;
-}
-.reps-input:focus { border-bottom-color: var(--green); color: var(--green); }
-.reps-input[type=number]::-webkit-outer-spin-button,
-.reps-input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
-
-/* ── SERIE BIG DISPLAY ── */
-.stat-card.serie-card { flex: 1.4; }
-.stat-card.serie-card .stat-val { font-size: 32px; color: var(--green); }
+/* smaller variant for reps */
+.val-display.small { font-size: 22px; width: 44px; }
 
 /* ── DEGRESSIVE ── */
 .deg-add-card {
@@ -251,14 +213,6 @@ header {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 14px 16px;
-}
-.deg-add-title {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 12px;
 }
 .deg-add-row {
   display: flex;
@@ -396,7 +350,6 @@ header {
 }
 #timer-screen.active { display: flex; }
 
-/* Phase label */
 .t-phase {
   font-size: 11px;
   font-weight: 600;
@@ -408,9 +361,7 @@ header {
   min-height: 16px;
 }
 .t-phase.rest { color: var(--amber); }
-.t-phase.done { color: var(--green); }
 
-/* Ring */
 .ring-wrap {
   position: relative;
   width: 220px; height: 220px;
@@ -458,7 +409,6 @@ header {
   margin-top: 6px;
 }
 
-/* Stats cards */
 .stats-row {
   display: flex;
   gap: 8px;
@@ -488,8 +438,10 @@ header {
   color: var(--muted);
   margin-top: 4px;
 }
+/* Série — plus grande */
+.stat-card.serie-card { flex: 1.4; }
+.stat-card.serie-card .stat-val { font-size: 32px; color: var(--green); }
 
-/* Chrono elapsed */
 .chrono-info {
   display: none;
   font-family: 'Syne', sans-serif;
@@ -499,7 +451,6 @@ header {
   margin-bottom: 14px;
 }
 
-/* Control buttons */
 .ctrl-row {
   display: flex;
   gap: 10px;
@@ -540,7 +491,6 @@ header {
   gap: 12px;
 }
 #countdown-overlay.active { display: flex; }
-
 .cd-number {
   font-family: 'Syne', sans-serif;
   font-size: clamp(110px, 38vw, 160px);
@@ -563,7 +513,7 @@ header {
   to   { transform: scale(1);   opacity: 1; }
 }
 
-/* Finished */
+/* ── FINISHED ── */
 .finished-overlay {
   display: none;
   position: fixed;
@@ -576,10 +526,7 @@ header {
   gap: 16px;
 }
 .finished-overlay.active { display: flex; }
-.finished-icon {
-  font-size: 56px;
-  animation: scaleIn .4s cubic-bezier(.2,1.6,.4,1);
-}
+.finished-icon { font-size: 56px; animation: scaleIn .4s cubic-bezier(.2,1.6,.4,1); }
 .finished-title {
   font-family: 'Syne', sans-serif;
   font-size: 28px;
@@ -588,21 +535,13 @@ header {
   letter-spacing: 2px;
   text-shadow: 0 0 30px var(--green-glow);
 }
-.finished-sub {
-  font-size: 13px;
-  color: var(--muted);
-  letter-spacing: 2px;
-}
-@keyframes scaleIn {
-  from { transform: scale(0); }
-  to   { transform: scale(1); }
-}
+.finished-sub { font-size: 13px; color: var(--muted); letter-spacing: 2px; }
+@keyframes scaleIn { from { transform: scale(0); } to { transform: scale(1); } }
 </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- HEADER -->
   <header>
     <div class="logo">Sport Timer</div>
     <div class="status-pill" id="status-pill">
@@ -611,7 +550,6 @@ header {
     </div>
   </header>
 
-  <!-- TABS -->
   <div class="tabs" id="tab-bar">
     <button class="tab active" data-tab="interval">Interval</button>
     <button class="tab" data-tab="degressive">Dégressif</button>
@@ -629,7 +567,8 @@ header {
         </div>
         <div class="field-ctrl">
           <button class="spin-btn" onclick="adj('i_exo',-10)">−</button>
-          <input class="time-input" id="disp-i_exo" type="text" inputmode="numeric" maxlength="5" placeholder="03:00" onblur="inputTime('i_exo',this)" onkeydown="if(event.key==='Enter')this.blur()">
+          <input class="val-display" id="disp-i_exo" type="text" inputmode="numeric" maxlength="5"
+                 onblur="inputTime('i_exo',this)" onkeydown="if(event.key==='Enter')this.blur()">
           <button class="spin-btn" onclick="adj('i_exo',10)">+</button>
         </div>
       </div>
@@ -640,7 +579,8 @@ header {
         </div>
         <div class="field-ctrl">
           <button class="spin-btn" onclick="adj('i_rest',-5)">−</button>
-          <input class="time-input" id="disp-i_rest" type="text" inputmode="numeric" maxlength="5" placeholder="01:00" onblur="inputTime('i_rest',this)" onkeydown="if(event.key==='Enter')this.blur()">
+          <input class="val-display" id="disp-i_rest" type="text" inputmode="numeric" maxlength="5"
+                 onblur="inputTime('i_rest',this)" onkeydown="if(event.key==='Enter')this.blur()">
           <button class="spin-btn" onclick="adj('i_rest',5)">+</button>
         </div>
       </div>
@@ -651,7 +591,8 @@ header {
         </div>
         <div class="field-ctrl">
           <button class="spin-btn" onclick="adj('i_reps',-1)">−</button>
-          <input class="reps-input" id="disp-i_reps" type="text" inputmode="numeric" maxlength="2" placeholder="5" onblur="inputReps('i_reps',this)" onkeydown="if(event.key==='Enter')this.blur()">
+          <input class="val-display small" id="disp-i_reps" type="text" inputmode="numeric" maxlength="2"
+                 onblur="inputReps('i_reps',this)" onkeydown="if(event.key==='Enter')this.blur()">
           <button class="spin-btn" onclick="adj('i_reps',1)">+</button>
         </div>
       </div>
@@ -667,11 +608,15 @@ header {
     <div class="deg-add-card">
       <div class="deg-add-row">
         <button class="spin-btn" onclick="adj('d_exo',-10)">−</button>
-        <input class="time-input" id="disp-d_exo" type="text" inputmode="numeric" maxlength="5" placeholder="02:00" onblur="inputTime('d_exo',this)" onkeydown="if(event.key==='Enter')this.blur()">
+        <input class="val-display" id="disp-d_exo" type="text" inputmode="numeric" maxlength="5"
+               style="font-size:15px;width:52px"
+               onblur="inputTime('d_exo',this)" onkeydown="if(event.key==='Enter')this.blur()">
         <button class="spin-btn" onclick="adj('d_exo',10)">+</button>
         <div class="deg-add-sep">Exo</div>
         <button class="spin-btn" onclick="adj('d_rest',-5)">−</button>
-        <input class="time-input" id="disp-d_rest" type="text" inputmode="numeric" maxlength="5" placeholder="01:00" onblur="inputTime('d_rest',this)" onkeydown="if(event.key==='Enter')this.blur()">
+        <input class="val-display" id="disp-d_rest" type="text" inputmode="numeric" maxlength="5"
+               style="font-size:15px;width:52px"
+               onblur="inputTime('d_rest',this)" onkeydown="if(event.key==='Enter')this.blur()">
         <button class="spin-btn" onclick="adj('d_rest',5)">+</button>
         <div class="deg-add-sep">Pause</div>
       </div>
@@ -700,7 +645,8 @@ header {
         </div>
         <div class="field-ctrl" id="timecap-field" style="display:none">
           <button class="spin-btn" onclick="adj('c_cap',-30)">−</button>
-          <input class="time-input" id="disp-c_cap" type="text" inputmode="numeric" maxlength="5" placeholder="20:00" onblur="inputTime('c_cap',this)" onkeydown="if(event.key==='Enter')this.blur()">
+          <input class="val-display" id="disp-c_cap" type="text" inputmode="numeric" maxlength="5"
+                 onblur="inputTime('c_cap',this)" onkeydown="if(event.key==='Enter')this.blur()">
           <button class="spin-btn" onclick="adj('c_cap',30)">+</button>
         </div>
       </div>
@@ -750,13 +696,11 @@ header {
 
 </div><!-- /app -->
 
-<!-- COUNTDOWN OVERLAY -->
 <div id="countdown-overlay">
   <div class="cd-number" id="cd-number">10</div>
   <div class="cd-label" id="cd-label">Prépare-toi</div>
 </div>
 
-<!-- FINISHED OVERLAY -->
 <div class="finished-overlay" id="finished-overlay">
   <div class="finished-icon">✓</div>
   <div class="finished-title">Terminé !</div>
@@ -780,132 +724,84 @@ const limits = {
 let degSteps = [];
 let timecapOn = false;
 
-// Timer state
 let timerInterval = null;
 let isPaused = false;
 let currentMode = null;
 let phases = [], phaseIdx = 0, phaseRemaining = 0, phaseDuration = 0;
 let chronoElapsed = 0, chronoCap = 0;
 
-// Ring circumference = 2π×100 ≈ 628.3
 const CIRC = 628.3;
 
 // ══════════════════════════════════════════════
-//  RICH AUDIO ENGINE
+//  AUDIO
 // ══════════════════════════════════════════════
 let audioCtx = null;
-
 function ctx() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  // Resume if suspended (iOS)
   if (audioCtx.state === 'suspended') audioCtx.resume();
   return audioCtx;
 }
-
-// Low-level: multi-oscillator tone with envelope
-function playTone({ freqs = [440], type = 'sine', attack = 0.005, decay = 0.1, sustain = 0.3, release = 0.15, vol = 0.25, detune = 0 } = {}) {
+function playTone({ freqs=[440], type='sine', attack=0.005, decay=0.1, sustain=0.3, release=0.15, vol=0.25 }={}) {
   try {
-    const c = ctx();
-    const master = c.createGain();
+    const c = ctx(), master = c.createGain(), now = c.currentTime;
     master.connect(c.destination);
-    const now = c.currentTime;
     const dur = attack + decay + sustain + release;
     master.gain.setValueAtTime(0, now);
     master.gain.linearRampToValueAtTime(vol, now + attack);
     master.gain.linearRampToValueAtTime(vol * 0.7, now + attack + decay);
     master.gain.setValueAtTime(vol * 0.7, now + attack + decay + sustain);
     master.gain.linearRampToValueAtTime(0.0001, now + dur);
-
-    freqs.forEach((f, i) => {
-      const osc = c.createOscillator();
-      osc.type = type;
-      osc.frequency.value = f;
-      osc.detune.value = detune * i;
-
-      // Add slight filter for warmth
-      const filt = c.createBiquadFilter();
-      filt.type = 'lowpass';
-      filt.frequency.value = 3200;
-      filt.Q.value = 0.7;
-
-      osc.connect(filt);
-      filt.connect(master);
-      osc.start(now);
-      osc.stop(now + dur + 0.05);
+    freqs.forEach(f => {
+      const osc = c.createOscillator(), filt = c.createBiquadFilter();
+      osc.type = type; osc.frequency.value = f;
+      filt.type = 'lowpass'; filt.frequency.value = 3200; filt.Q.value = 0.7;
+      osc.connect(filt); filt.connect(master);
+      osc.start(now); osc.stop(now + dur + 0.05);
     });
   } catch(e) {}
 }
-
-// Warm click/tick for countdown (5,4,3,2,1)
-function soundTick() {
-  playTone({ freqs:[880, 1760], type:'sine', attack:0.003, decay:0.04, sustain:0.0, release:0.08, vol:0.22 });
+function soundTick()       { playTone({ freqs:[880,1760], attack:0.003, decay:0.04, sustain:0.0, release:0.08, vol:0.22 }); }
+function soundWarn()       { playTone({ freqs:[660,990],  attack:0.003, decay:0.06, sustain:0.02, release:0.12, vol:0.3 }); }
+function soundPhaseStart() { playTone({ freqs:[523,784],  attack:0.005, decay:0.15, sustain:0.2,  release:0.3,  vol:0.28 }); }
+function soundTransition(toRest) {
+  if (toRest) {
+    playTone({ freqs:[784,659], attack:0.005, decay:0.1, sustain:0.15, release:0.25, vol:0.3 });
+    setTimeout(() => playTone({ freqs:[523], attack:0.005, decay:0.1, sustain:0.1, release:0.3, vol:0.25 }), 180);
+  } else {
+    playTone({ freqs:[523,659], attack:0.005, decay:0.08, sustain:0.1, release:0.2, vol:0.28 });
+    setTimeout(() => playTone({ freqs:[784,1047], attack:0.005, decay:0.08, sustain:0.08, release:0.2, vol:0.28 }), 160);
+  }
 }
-
-// Deep resonant tick for last 3 secs of a phase
-function soundWarn() {
-  playTone({ freqs:[660, 990], type:'sine', attack:0.003, decay:0.06, sustain:0.02, release:0.12, vol:0.3 });
-}
-
-// Rich GO sound — ascending chord
 function soundGo() {
   try {
-    const c = ctx();
-    const now = c.currentTime;
-    // Chord: root + major third + fifth
-    [[523, 0], [659, 0.06], [784, 0.12], [1047, 0.2]].forEach(([f, t]) => {
-      const osc = c.createOscillator();
-      const g = c.createGain();
-      const filt = c.createBiquadFilter();
-      filt.type = 'lowpass';
-      filt.frequency.value = 4000;
-      osc.type = 'sine';
-      osc.frequency.value = f;
+    const c = ctx(), now = c.currentTime;
+    [[523,0],[659,.06],[784,.12],[1047,.2]].forEach(([f,t]) => {
+      const osc = c.createOscillator(), g = c.createGain(), filt = c.createBiquadFilter();
+      filt.type = 'lowpass'; filt.frequency.value = 4000;
+      osc.type = 'sine'; osc.frequency.value = f;
       osc.connect(filt); filt.connect(g); g.connect(c.destination);
       const s = now + t;
       g.gain.setValueAtTime(0, s);
-      g.gain.linearRampToValueAtTime(0.22, s + 0.01);
-      g.gain.linearRampToValueAtTime(0.1, s + 0.2);
-      g.gain.linearRampToValueAtTime(0, s + 0.55);
-      osc.start(s); osc.stop(s + 0.65);
+      g.gain.linearRampToValueAtTime(0.22, s+.01);
+      g.gain.linearRampToValueAtTime(0.1,  s+.2);
+      g.gain.linearRampToValueAtTime(0,    s+.55);
+      osc.start(s); osc.stop(s+.65);
     });
   } catch(e) {}
 }
-
-// Phase start — two-tone bell
-function soundPhaseStart() {
-  playTone({ freqs:[523, 784], type:'sine', attack:0.005, decay:0.15, sustain:0.2, release:0.3, vol:0.28 });
-}
-
-// Phase transition (exo → rest or rest → exo)
-function soundTransition(toRest) {
-  if (toRest) {
-    // Descending: relaxation signal
-    playTone({ freqs:[784, 659], type:'sine', attack:0.005, decay:0.1, sustain:0.15, release:0.25, vol:0.3 });
-    setTimeout(() => playTone({ freqs:[523], type:'sine', attack:0.005, decay:0.1, sustain:0.1, release:0.3, vol:0.25 }), 180);
-  } else {
-    // Ascending: activation signal
-    playTone({ freqs:[523, 659], type:'sine', attack:0.005, decay:0.08, sustain:0.1, release:0.2, vol:0.28 });
-    setTimeout(() => playTone({ freqs:[784, 1047], type:'sine', attack:0.005, decay:0.08, sustain:0.08, release:0.2, vol:0.28 }), 160);
-  }
-}
-
-// Finished — triumphant arpeggio
 function soundFinished() {
   try {
-    const c = ctx();
-    const now = c.currentTime;
-    [523, 659, 784, 1047, 1319].forEach((f, i) => {
-      const osc = c.createOscillator();
-      const g = c.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = f;
+    const c = ctx(), now = c.currentTime;
+    [523,659,784,1047,1319].forEach((f,i) => {
+      const osc = c.createOscillator(), g = c.createGain();
+      osc.type = 'sine'; osc.frequency.value = f;
       osc.connect(g); g.connect(c.destination);
-      const s = now + i * 0.1;
+      const s = now + i*.1;
       g.gain.setValueAtTime(0, s);
-      g.gain.linearRampToValueAtTime(0.25, s + 0.01);
-      g.gain.linearRampToValueAtTime(0.08, s + 0.25);
-      g.gain.linearRampToValueAtTime(0, s + 0.6);
-      osc.start(s); osc.stop(s + 0.7);
+      g.gain.linearRampToValueAtTime(0.25, s+.01);
+      g.gain.linearRampToValueAtTime(0.08, s+.25);
+      g.gain.linearRampToValueAtTime(0, s+.6);
+      osc.start(s); osc.stop(s+.7);
     });
   } catch(e) {}
 }
@@ -919,38 +815,34 @@ function fmt(sec) {
 }
 
 // ══════════════════════════════════════════════
-//  SPIN CONTROLS
+//  SPIN + TEXT INPUT
 // ══════════════════════════════════════════════
 function adj(key, delta) {
   const [mn, mx] = limits[key];
   vals[key] = Math.min(mx, Math.max(mn, vals[key] + delta));
   renderVal(key);
 }
+
 function renderVal(key) {
   const el = document.getElementById('disp-' + key);
   if (!el) return;
-  const v = key === 'i_reps' ? String(vals[key]) : fmt(vals[key]);
-  // works for both <div> and <input>
-  if (el.tagName === 'INPUT') el.value = v;
-  else el.textContent = v;
+  el.value = key === 'i_reps' ? String(vals[key]) : fmt(vals[key]);
 }
+
 function renderAll() { Object.keys(vals).forEach(renderVal); }
 
-// Parse "MM:SS" or plain seconds typed by user
+// Parse typed value: "1:30" | "130" | "90" | "300"
 function parseTimeInput(raw) {
-  raw = raw.trim().replace(/[^0-9:]/g, '');
+  raw = (raw || '').trim().replace(/[^0-9:]/g, '');
   if (!raw) return null;
   if (raw.includes(':')) {
     const [m, s] = raw.split(':').map(Number);
     return (isNaN(m) ? 0 : m) * 60 + (isNaN(s) ? 0 : s);
   }
-  // plain number: treat as seconds if ≤99, else minutes*100+seconds (e.g. 130 → 1:30)
   const n = parseInt(raw, 10);
   if (isNaN(n)) return null;
-  if (raw.length <= 2) return n;              // e.g. "45" → 45s
-  if (raw.length === 3) return Math.floor(n/100)*60 + (n%100); // e.g. "130" → 1:30
-  if (raw.length === 4) return Math.floor(n/100)*60 + (n%100); // e.g. "0300" → 3:00
-  return n;
+  if (raw.length <= 2) return n;                        // "45" → 45s
+  return Math.floor(n / 100) * 60 + (n % 100);         // "130" → 1:30
 }
 
 function inputTime(key, el) {
@@ -959,7 +851,7 @@ function inputTime(key, el) {
     const [mn, mx] = limits[key];
     vals[key] = Math.min(mx, Math.max(mn, sec));
   }
-  renderVal(key); // reformat display
+  renderVal(key);
 }
 
 function inputReps(key, el) {
@@ -1035,15 +927,12 @@ function runCountdown(cb) {
   const overlay = document.getElementById('countdown-overlay');
   const numEl   = document.getElementById('cd-number');
   const lblEl   = document.getElementById('cd-label');
-
   overlay.classList.add('active');
   setStatus('countdown', 'DÉPART');
-
   let n = 10;
   numEl.className = 'cd-number';
   numEl.textContent = n;
   lblEl.textContent = 'Prépare-toi';
-
   const cd = setInterval(() => {
     n--;
     if (n === 0) {
@@ -1052,20 +941,13 @@ function runCountdown(cb) {
       numEl.textContent = 'GO';
       lblEl.textContent = '';
       soundGo();
-      setTimeout(() => {
-        overlay.classList.remove('active');
-        cb();
-      }, 800);
+      setTimeout(() => { overlay.classList.remove('active'); cb(); }, 800);
       return;
     }
-
-    // Animate
     numEl.style.animation = 'none';
     void numEl.offsetWidth;
     numEl.style.animation = 'cdPop .25s cubic-bezier(.2,1.6,.4,1)';
-
     if (n <= 5) {
-      // Sound + green from 5 down
       numEl.className = 'cd-number beeping';
       lblEl.textContent = '';
       soundTick();
@@ -1150,26 +1032,17 @@ function launchPhases() {
   setStatus('active', 'ACTIF');
   startPhase();
 }
-
 function startPhase() {
   if (phaseIdx >= phases.length) { finishTimer(); return; }
   const p = phases[phaseIdx];
-  const prevP = phases[phaseIdx - 1];
   phaseRemaining = p.dur;
   phaseDuration = p.dur;
-
-  // Sound: announce transition
-  if (phaseIdx === 0) {
-    soundPhaseStart();
-  } else {
-    soundTransition(p.type === 'rest');
-  }
-
+  if (phaseIdx === 0) soundPhaseStart();
+  else soundTransition(p.type === 'rest');
   updatePhaseUI();
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(tickPhase, 1000);
 }
-
 function tickPhase() {
   if (isPaused) return;
   phaseRemaining--;
@@ -1181,35 +1054,23 @@ function tickPhase() {
     setTimeout(startPhase, 200);
   }
 }
-
 function updatePhaseUI() {
   const p = phases[phaseIdx] || phases[phaseIdx-1];
   if (!p) return;
   const isRest = p.type === 'rest';
-
-  // Phase label
   const phaseEl = document.getElementById('t-phase');
   phaseEl.textContent = isRest ? '— Pause —' : `Exercice · Série ${p.serie}/${p.total}`;
   phaseEl.className = 't-phase' + (isRest ? ' rest' : '');
-
-  // Ring time
   const timeEl = document.getElementById('ring-time');
   timeEl.textContent = fmt(phaseRemaining);
   timeEl.className = 'ring-time' + (isRest ? ' rest' : '') + (phaseRemaining <= 5 && !isRest ? ' urgent' : '');
-
-  // Ring sub
   const nextP = phases[phaseIdx + 1];
   document.getElementById('ring-sub').textContent = nextP
     ? `prochain · ${nextP.type === 'rest' ? 'pause' : 'exercice'} ${fmt(nextP.dur)}`
     : 'dernière phase';
-
-  // Ring arc
   const fill = document.getElementById('ring-fill');
-  const pct = phaseDuration > 0 ? phaseRemaining / phaseDuration : 0;
-  fill.style.strokeDashoffset = CIRC * (1 - pct);
+  fill.style.strokeDashoffset = CIRC * (1 - (phaseDuration > 0 ? phaseRemaining / phaseDuration : 0));
   fill.className = 'ring-fill' + (isRest ? ' rest' : '');
-
-  // Stats
   document.getElementById('stat-serie').textContent = `${p.serie}/${p.total}`;
   document.getElementById('stat-next').textContent = nextP ? fmt(nextP.dur) : '--';
   let totalLeft = phaseRemaining;
@@ -1234,25 +1095,19 @@ function launchChrono() {
   soundPhaseStart();
   timerInterval = setInterval(tickChrono, 1000);
 }
-
 function tickChrono() {
   if (isPaused) return;
   chronoElapsed++;
   const timeEl = document.getElementById('ring-time');
   const fill = document.getElementById('ring-fill');
   const info = document.getElementById('chrono-info');
-
   if (chronoCap > 0) {
     const rem = chronoCap - chronoElapsed;
     timeEl.textContent = fmt(rem);
     fill.style.strokeDashoffset = CIRC * (1 - rem / chronoCap);
     info.textContent = 'Écoulé · ' + fmt(chronoElapsed);
-    if (rem <= 10 && rem > 0) {
-      soundWarn();
-      timeEl.className = 'ring-time urgent';
-    } else {
-      timeEl.className = 'ring-time';
-    }
+    if (rem <= 10 && rem > 0) { soundWarn(); timeEl.className = 'ring-time urgent'; }
+    else { timeEl.className = 'ring-time'; }
     if (rem <= 0) {
       clearInterval(timerInterval); timerInterval = null;
       timeEl.textContent = 'TIME';
@@ -1271,23 +1126,15 @@ function tickChrono() {
 function togglePause() {
   isPaused = !isPaused;
   const btn = document.getElementById('btn-pause');
-  if (isPaused) {
-    btn.textContent = '▶ Reprendre';
-    setStatus('paused', 'PAUSE');
-  } else {
-    btn.textContent = '⏸ Pause';
-    setStatus('active', 'ACTIF');
-    soundTick();
-  }
+  if (isPaused) { btn.textContent = '▶ Reprendre'; setStatus('paused', 'PAUSE'); }
+  else          { btn.textContent = '⏸ Pause';     setStatus('active', 'ACTIF'); soundTick(); }
 }
-
 function stopTimer() {
   if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
   isPaused = false;
   document.getElementById('btn-pause').style.display = '';
   showConfigScreen();
 }
-
 function finishTimer() {
   setStatus('', 'FIN');
   soundFinished();
@@ -1315,7 +1162,6 @@ degSteps = [
 ];
 renderDegList();
 
-// Unlock AudioContext (iOS/Android)
 ['touchstart','click','keydown'].forEach(ev =>
   document.addEventListener(ev, () => { try { ctx(); } catch(e){} }, { once: true })
 );
