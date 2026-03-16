@@ -18,7 +18,7 @@
     description: "Interval, dégressif et chrono timer",
     start_url: ".",
     display: "standalone",
-    orientation: "portrait",
+    orientation: "any",
     background_color: "#111214",
     theme_color: "#111214",
     icons: [{
@@ -581,8 +581,81 @@ header {
 .ctrl-btn.danger:active { background: var(--red); color: var(--bg); }
 
 /* ══════════════════════════════════════
-   COUNTDOWN OVERLAY
+   LANDSCAPE
 ══════════════════════════════════════ */
+@media (orientation: landscape) {
+
+  /* App shell : élargit la colonne centrale */
+  #app { max-width: 100%; flex-direction: row; flex-wrap: wrap; }
+
+  /* Header + tabs restent en haut sur toute la largeur */
+  header { width: 100%; flex-shrink: 0; padding: 8px 20px; }
+  .tabs  { width: 100%; flex-shrink: 0; padding: 0 20px 8px; }
+
+  /* Screens config : deux colonnes */
+  .screen {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    overflow-y: auto;
+    width: 100%;
+  }
+  .sec-title       { width: 100%; }
+  .config-card     { flex: 1; min-width: 260px; }
+  .deg-add-card    { flex: 1; min-width: 240px; margin-bottom: 0; }
+  .deg-list        { flex: 1; min-width: 240px; padding: 0 10px; }
+  .summary-card    { width: 100%; }
+  .start-wrap      { width: 100%; margin-top: 12px; }
+
+  /* Timer screen : ring gauche, infos droite */
+  #timer-screen {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 10px 24px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .ring-wrap {
+    width: 220px; height: 220px;
+    flex-shrink: 0;
+    margin: 0;
+  }
+  .ring-svg { width: 220px; height: 220px; }
+
+  /* Recalcul du ring en paysage (r=100, circ=628) — géré par CSS uniquement
+     Le JS utilise toujours CIRC=816.8 (r=130) ; on réduit visuellement via CSS scale */
+  .ring-wrap { transform: scale(0.79); transform-origin: center; }
+
+  .t-phase {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+
+  /* Panneau droit */
+  .timer-right {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .stats-row { margin-bottom: 0; }
+  .stat-card { padding: 8px 6px; }
+  .stat-val  { font-size: 16px; }
+  .stat-card.serie-card .stat-val { font-size: 26px; }
+
+  .ctrl-row { width: 100%; }
+  .chrono-info { margin-bottom: 6px; }
+}
+
 #countdown-overlay {
   display: none;
   position: fixed;
@@ -793,26 +866,28 @@ header {
       </div>
     </div>
 
-    <div class="stats-row" id="stats-row">
-      <div class="stat-card serie-card">
-        <div class="stat-val" id="stat-serie">1/5</div>
-        <div class="stat-lbl">Série</div>
+    <div class="timer-right">
+      <div class="stats-row" id="stats-row">
+        <div class="stat-card serie-card">
+          <div class="stat-val" id="stat-serie">1/5</div>
+          <div class="stat-lbl">Série</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-next">01:00</div>
+          <div class="stat-lbl">Prochain</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-total">--</div>
+          <div class="stat-lbl">Restant</div>
+        </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-val" id="stat-next">01:00</div>
-        <div class="stat-lbl">Prochain</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" id="stat-total">--</div>
-        <div class="stat-lbl">Restant</div>
-      </div>
-    </div>
 
-    <div class="chrono-info" id="chrono-info">00:00</div>
+      <div class="chrono-info" id="chrono-info">00:00</div>
 
-    <div class="ctrl-row">
-      <button class="ctrl-btn danger" onclick="stopTimer()">■ Stop</button>
-      <button class="ctrl-btn primary" id="btn-pause" onclick="togglePause()">⏸ Pause</button>
+      <div class="ctrl-row">
+        <button class="ctrl-btn danger" onclick="stopTimer()">■ Stop</button>
+        <button class="ctrl-btn primary" id="btn-pause" onclick="togglePause()">⏸ Pause</button>
+      </div>
     </div>
   </div>
 
