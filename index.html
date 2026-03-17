@@ -14,7 +14,7 @@
 (function(){
   const manifest = {
     name: "WOD Clock", short_name: "WOD Clock",
-    description: "Interval, dégressif et chrono",
+    description: "Fractionné, progressif et chrono",
     start_url: ".", display: "standalone", orientation: "portrait",
     background_color: "#111214", theme_color: "#111214",
     icons: [{ src: "https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }]
@@ -345,8 +345,8 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
   </header>
 
   <div class="tabs" id="tab-bar">
-    <button class="tab active" data-tab="interval">Interval</button>
-    <button class="tab" data-tab="degressive">Dégressif</button>
+    <button class="tab active" data-tab="interval">Fractionné</button>
+    <button class="tab" data-tab="degressive">Progressif</button>
     <button class="tab" data-tab="chrono">Chrono</button>
   </div>
 
