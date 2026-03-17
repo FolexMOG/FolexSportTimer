@@ -1483,6 +1483,7 @@ function startInterval() {
   currentMode = 'interval';
   document.getElementById('stats-row').style.display = 'flex';
   document.getElementById('chrono-info').style.display = 'none';
+  acquireWakeLock();
   runCountdown(() => { showTimerScreen(); launchPhases(); });
 }
 function startDegressive() {
@@ -1491,6 +1492,7 @@ function startDegressive() {
   currentMode = 'degressive';
   document.getElementById('stats-row').style.display = 'flex';
   document.getElementById('chrono-info').style.display = 'none';
+  acquireWakeLock();
   runCountdown(() => { showTimerScreen(); launchPhases(); });
 }
 function startChrono() {
@@ -1499,6 +1501,7 @@ function startChrono() {
   chronoCap = timecapOn ? vals.c_cap : 0;
   document.getElementById('stats-row').style.display = 'none';
   document.getElementById('chrono-info').style.display = 'block';
+  acquireWakeLock();
   runCountdown(() => { showTimerScreen(); launchChrono(); });
 }
 
@@ -1717,6 +1720,7 @@ function stopTimer() {
   chronoStartTs = null;
   chronoPauseOffset = 0;
   setPauseBtn('⏸ Pause');
+  releaseWakeLock();
   showConfigScreen();
 }
 function finishTimer() {
@@ -1738,6 +1742,33 @@ function finishTimer() {
     stopTimer();
   }, 3500);
 }
+
+// ══════════════════════════════════════════════
+//  WAKE LOCK — écran allumé pendant le timer
+// ══════════════════════════════════════════════
+let _wakeLock = null;
+
+async function acquireWakeLock() {
+  if (!('wakeLock' in navigator)) return;
+  try {
+    _wakeLock = await navigator.wakeLock.request('screen');
+    // Si l'OS relâche le lock (ex: notif), on le réacquiert automatiquement
+    _wakeLock.addEventListener('release', () => {
+      if (rafId !== null || timerInterval !== null) acquireWakeLock();
+    });
+  } catch(e) {}
+}
+
+function releaseWakeLock() {
+  if (_wakeLock) { _wakeLock.release().catch(() => {}); _wakeLock = null; }
+}
+
+// Réacquérir si l'utilisateur revient sur l'app pendant qu'elle tourne
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && (rafId !== null || timerInterval !== null)) {
+    acquireWakeLock();
+  }
+});
 
 // ══════════════════════════════════════════════
 //  PRESETS
