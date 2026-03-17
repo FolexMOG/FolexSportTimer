@@ -10,7 +10,6 @@
 <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png">
 <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png">
 <script>
-// ── Inline Web App Manifest (blob pour PWA single-file) ──
 (function(){
   const manifest = {
     name: "Sport Timer",
@@ -56,9 +55,7 @@
   --muted2:   #3f3f46;
   --radius:   20px;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
 html, body {
   height: 100%; height: 100dvh;
   background: var(--bg);
@@ -66,7 +63,6 @@ html, body {
   font-family: 'Bebas Neue', sans-serif;
   overflow: hidden;
 }
-
 #app {
   display: flex;
   flex-direction: column;
@@ -75,8 +71,6 @@ html, body {
   margin: 0 auto;
   position: relative;
 }
-
-/* ── HEADER ── */
 header {
   padding: 14px 20px 10px;
   display: flex;
@@ -87,7 +81,6 @@ header {
 .logo {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 13px;
-  
   letter-spacing: 4px;
   text-transform: uppercase;
   color: var(--muted);
@@ -103,7 +96,6 @@ header {
   font-size: 10px;
   letter-spacing: 1px;
   color: var(--muted);
-  
   transition: all .3s;
 }
 .status-pill .dot {
@@ -119,8 +111,6 @@ header {
 .status-pill.countdown { border-color: #2d0f0f; color: var(--red); }
 .status-pill.countdown .dot { background: var(--red); animation: blink .6s infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
-
-/* ── TABS ── */
 .tabs {
   display: flex;
   gap: 4px;
@@ -133,7 +123,6 @@ header {
   border-radius: 10px;
   font-family: 'Bebas Neue', sans-serif;
   font-size: 10px;
-  
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
@@ -148,21 +137,15 @@ header {
   border-color: rgba(74,222,128,.2);
   color: var(--green);
 }
-
-/* ── SCREENS ── */
 .screen { display: none; flex-direction: column; flex: 1; overflow-y: auto; padding-bottom: 12px; }
 .screen.active { display: flex; }
-
 .sec-title {
   font-size: 9px;
-  
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--muted);
   padding: 12px 20px 8px;
 }
-
-/* ── CONFIG ROWS ── */
 .config-card {
   margin: 0 20px;
   background: var(--surface);
@@ -180,7 +163,6 @@ header {
 .field-row:last-child { border-bottom: none; }
 .field-label {
   font-size: 13px;
-  
   color: var(--text);
 }
 .field-sub {
@@ -205,16 +187,12 @@ header {
   display: flex; align-items: center; justify-content: center;
   transition: all .12s;
   font-family: 'Bebas Neue', sans-serif;
-  
   flex-shrink: 0;
 }
 .spin-btn:active { background: var(--green); color: var(--bg); border-color: var(--green); transform: scale(.93); }
-
-/* val-display is now an <input> — same visual as before + editable */
 .val-display {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 17px;
-  
   color: var(--text);
   width: 58px;
   text-align: center;
@@ -232,10 +210,7 @@ header {
   border-bottom-color: var(--green);
   color: var(--green);
 }
-/* smaller variant for reps */
 .val-display.small { font-size: 22px; width: 44px; }
-
-/* ── DEGRESSIVE ── */
 .deg-add-card {
   margin: 0 20px;
   background: var(--surface);
@@ -254,7 +229,6 @@ header {
   letter-spacing: 1px;
   color: var(--muted);
   text-transform: uppercase;
-  
   flex-shrink: 0;
 }
 .add-btn {
@@ -266,14 +240,12 @@ header {
   color: var(--green);
   font-family: 'Bebas Neue', sans-serif;
   font-size: 11px;
-  
   letter-spacing: 2px;
   text-transform: uppercase;
   cursor: pointer;
   transition: all .12s;
 }
 .add-btn:active { background: var(--green); color: var(--bg); }
-
 .deg-list { padding: 0 20px; display: flex; flex-direction: column; gap: 6px; }
 .deg-item {
   display: flex;
@@ -324,14 +296,12 @@ header {
 .deg-num {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 11px;
-  
   color: var(--muted);
   min-width: 22px;
 }
 .deg-times {
   flex: 1;
   font-size: 13px;
-  
   color: var(--text);
 }
 .deg-times em { color: var(--muted); font-style: normal; }
@@ -349,8 +319,6 @@ header {
   padding: 20px;
   letter-spacing: 1px;
 }
-
-/* ── SUMMARY CARD ── */
 .summary-card {
   margin: 10px 20px 0;
   background: var(--surface);
@@ -370,7 +338,6 @@ header {
 }
 .summary-lbl {
   font-size: 9px;
-  
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--muted);
@@ -388,8 +355,6 @@ header {
   background: var(--border);
   flex-shrink: 0;
 }
-
-/* ── PRESETS ── */
 .preset-section {
   padding: 4px 20px 10px;
 }
@@ -450,8 +415,6 @@ header {
   transition: all .12s;
 }
 .preset-save-btn:active { background: var(--green); color: var(--bg); }
-
-/* Modal de nommage */
 .preset-modal-wrap {
   display: none;
   position: fixed;
@@ -510,8 +473,6 @@ header {
   border-color: var(--green);
 }
 .preset-modal-btns .pm-confirm:active { background: #3ac96e; }
-
-/* ── TOGGLE ── */
 .toggle-row {
   display: flex;
   align-items: center;
@@ -538,9 +499,7 @@ header {
 }
 .toggle.on { background: var(--green-dim); }
 .toggle.on::after { left: 21px; background: var(--green); box-shadow: 0 0 8px var(--green-glow); }
-.toggle-label { font-size: 13px;  color: var(--text); }
-
-/* ── START BUTTON ── */
+.toggle-label { font-size: 13px; color: var(--text); }
 .start-wrap {
   padding: 16px 20px 8px;
   margin-top: auto;
@@ -553,7 +512,6 @@ header {
   color: #0a0f0c;
   font-family: 'Bebas Neue', sans-serif;
   font-size: 14px;
-  
   letter-spacing: 2px;
   text-transform: uppercase;
   border: none;
@@ -563,7 +521,6 @@ header {
   transition: all .12s;
 }
 .start-btn:active { transform: scale(.98); background: #3ac96e; }
-
 /* ── TIMER SCREEN portrait ── */
 #timer-screen {
   display: none;
@@ -574,14 +531,11 @@ header {
   gap: 0;
 }
 #timer-screen.active { display: flex; }
-
 .timer-left  { display: none; }
 .timer-right { display: none; }
 .portrait-ctrl { display: flex; gap: 10px; width: 100%; }
-
 .t-phase {
   font-size: 11px;
-  
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--green);
@@ -590,7 +544,6 @@ header {
   min-height: 16px;
 }
 .t-phase.rest { color: var(--amber); }
-
 .ring-wrap {
   position: relative;
   width: 280px; height: 280px;
@@ -621,7 +574,6 @@ header {
 .ring-time {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 72px;
-  
   color: var(--text);
   line-height: 1;
   letter-spacing: 2px;
@@ -631,12 +583,10 @@ header {
 .ring-time.urgent { color: var(--red); }
 .ring-sub {
   font-size: 11px;
-  
   color: var(--muted);
   letter-spacing: 1px;
   margin-top: 6px;
 }
-
 .stats-row {
   display: flex;
   gap: 8px;
@@ -654,22 +604,18 @@ header {
 .stat-val {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 20px;
-  
   color: var(--text);
   line-height: 1;
 }
 .stat-lbl {
   font-size: 9px;
-  
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--muted);
   margin-top: 4px;
 }
-/* Série — plus grande */
 .stat-card.serie-card { flex: 1.4; }
 .stat-card.serie-card .stat-val { font-size: 32px; color: var(--green); }
-
 .chrono-info {
   display: none;
   font-family: 'Bebas Neue', sans-serif;
@@ -678,7 +624,6 @@ header {
   letter-spacing: 2px;
   margin-bottom: 14px;
 }
-
 .ctrl-row {
   display: flex;
   gap: 10px;
@@ -690,7 +635,6 @@ header {
   border-radius: 14px;
   font-family: 'Bebas Neue', sans-serif;
   font-size: 12px;
-  
   letter-spacing: 1px;
   cursor: pointer;
   border: 1px solid var(--border2);
@@ -704,15 +648,14 @@ header {
 .ctrl-btn.danger { color: var(--red); border-color: var(--red-dim); background: var(--red-dim); }
 .ctrl-btn.danger:active { background: var(--red); color: var(--bg); }
 
+/* ── LANDSCAPE ── */
 @media (orientation: landscape) {
-
   #app { max-width: 100%; }
   .tabs { padding: 0 20px 8px; }
   .tab  { flex: 0 0 auto; padding: 6px 14px; }
   header { padding: 8px 20px; }
   .screen { overflow-y: auto; }
   .start-wrap { padding: 10px 20px; }
-
   #timer-screen {
     flex-direction: row;
     align-items: center;
@@ -721,20 +664,19 @@ header {
     gap: 0;
     width: 100%;
   }
-
   /* Cacher éléments portrait */
   #timer-screen > .t-phase { display: none; }
   .stats-row    { display: none !important; }
   .portrait-ctrl { display: none !important; }
   .chrono-info  { display: none !important; }
-
   /* Montrer colonnes landscape */
   .timer-left {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 8px;
-    flex: 1;
+    width: 180px;
+    flex-shrink: 0;
     padding-right: 20px;
   }
   .timer-right {
@@ -742,20 +684,17 @@ header {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
-    flex: 1;
+    width: 180px;
+    flex-shrink: 0;
     padding-left: 20px;
   }
-
   /* Phase label aligné droite dans colonne gauche */
   .t-phase { text-align: right; margin-bottom: 0; min-height: auto; }
-
-  .ring-wrap { width: 200px; height: 200px; flex-shrink: 0; margin: 0; }
-  .ring-svg  { width: 200px; height: 200px; }
-
+  .ring-wrap { width: 260px; height: 260px; flex-shrink: 0; margin: 0; }
+  .ring-svg  { width: 260px; height: 260px; }
   .stat-card { padding: 8px 12px; min-width: 110px; }
   .stat-val  { font-size: 18px; }
   .stat-card.serie-card .stat-val { font-size: 28px; }
-
   .ctrl-row { flex-direction: column; width: auto; gap: 8px; }
   .ctrl-btn { padding: 10px 16px; }
 }
@@ -775,7 +714,6 @@ header {
 .cd-number {
   font-family: 'Bebas Neue', sans-serif;
   font-size: clamp(140px, 45vw, 200px);
-  
   color: var(--text);
   line-height: 1;
   animation: cdPop .25s cubic-bezier(.2,1.6,.4,1);
@@ -787,14 +725,11 @@ header {
   letter-spacing: 5px;
   text-transform: uppercase;
   color: var(--muted);
-  
 }
 @keyframes cdPop {
   from { transform: scale(1.3); opacity: .4; }
   to   { transform: scale(1);   opacity: 1; }
 }
-
-/* ── FINISHED ── */
 .finished-overlay {
   display: none;
   position: fixed;
@@ -811,7 +746,6 @@ header {
 .finished-title {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 28px;
-  
   color: var(--green);
   letter-spacing: 2px;
   text-shadow: 0 0 30px var(--green-glow);
@@ -822,7 +756,6 @@ header {
 </head>
 <body>
 <div id="app">
-
   <header>
     <img src="https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png" alt="Sport Timer" style="height:32px;width:auto;display:block;">
     <div class="status-pill" id="status-pill">
@@ -830,14 +763,12 @@ header {
       <span id="status-text">PRÊT</span>
     </div>
   </header>
-
   <div class="tabs" id="tab-bar">
     <button class="tab active" data-tab="interval">Interval</button>
     <button class="tab" data-tab="degressive">Dégressif</button>
     <button class="tab" data-tab="chrono">Chrono</button>
   </div>
-
-  <!-- ════════════ INTERVAL ════════════ -->
+  <!-- INTERVAL -->
   <div class="screen active" id="screen-interval">
     <div class="sec-title">Configuration</div>
     <div class="config-card">
@@ -899,8 +830,7 @@ header {
       <button class="start-btn" onclick="startInterval()">Lancer</button>
     </div>
   </div>
-
-  <!-- ════════════ DÉGRESSIF ════════════ -->
+  <!-- DÉGRESSIF -->
   <div class="screen" id="screen-degressive">
     <div class="sec-title">Ajouter un palier</div>
     <div class="deg-add-card">
@@ -920,10 +850,8 @@ header {
       </div>
       <button class="add-btn" onclick="addDegStep()">+ Ajouter ce palier</button>
     </div>
-
     <div class="sec-title" style="margin-top:16px">Paliers programmés</div>
     <div class="deg-list" id="deg-list"></div>
-
     <div class="summary-card" id="summary-degressive">
       <div class="summary-item">
         <span class="summary-lbl">Exercice total</span>
@@ -945,6 +873,7 @@ header {
       <button class="start-btn" onclick="startDegressive()">Lancer</button>
     </div>
   </div>
+  <!-- CHRONO -->
   <div class="screen" id="screen-chrono">
     <div class="sec-title">Configuration</div>
     <div class="config-card">
@@ -974,14 +903,9 @@ header {
       <button class="start-btn" onclick="startChrono()">Lancer</button>
     </div>
   </div>
-
-  <!-- ════════════ TIMER SCREEN ════════════ -->
+  <!-- TIMER SCREEN -->
   <div id="timer-screen">
-
-    <!-- Phase label -->
     <div class="t-phase" id="t-phase">Exercice</div>
-
-    <!-- Colonne gauche landscape (série + prochain) -->
     <div class="timer-left">
       <div class="stat-card serie-card">
         <div class="stat-val" id="stat-serie">1/5</div>
@@ -992,8 +916,6 @@ header {
         <div class="stat-lbl" id="stat-next-lbl">Prochain</div>
       </div>
     </div>
-
-    <!-- Ring — toujours visible -->
     <div class="ring-wrap">
       <svg class="ring-svg" viewBox="0 0 280 280">
         <circle class="ring-track" cx="140" cy="140" r="130"/>
@@ -1004,8 +926,6 @@ header {
         <div class="ring-sub" id="ring-sub">— exercice —</div>
       </div>
     </div>
-
-    <!-- Stats portrait (série + prochain + restant en ligne) -->
     <div class="stats-row" id="stats-row">
       <div class="stat-card serie-card">
         <div class="stat-val" id="stat-serie-p">1/5</div>
@@ -1020,10 +940,7 @@ header {
         <div class="stat-lbl">Restant</div>
       </div>
     </div>
-
     <div class="chrono-info" id="chrono-info">00:00</div>
-
-    <!-- Colonne droite landscape (restant + boutons) -->
     <div class="timer-right">
       <div class="stat-card">
         <div class="stat-val" id="stat-total">--</div>
@@ -1034,17 +951,12 @@ header {
         <button class="ctrl-btn primary" id="btn-pause" onclick="togglePause()">⏸ Pause</button>
       </div>
     </div>
-
-    <!-- Boutons portrait -->
     <div class="ctrl-row portrait-ctrl">
       <button class="ctrl-btn danger" onclick="stopTimer()">■ Stop</button>
       <button class="ctrl-btn primary" id="btn-pause-p" onclick="togglePause()">⏸ Pause</button>
     </div>
-
   </div>
-
-</div><!-- /app -->
-
+</div>
 <!-- PRESET MODAL -->
 <div class="preset-modal-wrap" id="preset-modal-wrap">
   <div class="preset-modal">
@@ -1056,22 +968,16 @@ header {
     </div>
   </div>
 </div>
-
 <div id="countdown-overlay">
   <div class="cd-number" id="cd-number">10</div>
   <div class="cd-label" id="cd-label">Prépare-toi</div>
 </div>
-
 <div class="finished-overlay" id="finished-overlay">
   <div class="finished-icon">✓</div>
   <div class="finished-title">Terminé !</div>
   <div class="finished-sub" id="finished-sub">Bien joué</div>
 </div>
-
 <script>
-// ══════════════════════════════════════════════
-//  CONFIG STATE
-// ══════════════════════════════════════════════
 const vals = {
   i_exo: 180, i_rest: 60, i_reps: 5,
   d_exo: 120, d_rest: 60,
@@ -1084,18 +990,12 @@ const limits = {
 };
 let degSteps = [];
 let timecapOn = false;
-
 let timerInterval = null;
 let isPaused = false;
 let currentMode = null;
 let phases = [], phaseIdx = 0, phaseRemaining = 0, phaseDuration = 0;
 let chronoElapsed = 0, chronoCap = 0;
-
 const CIRC = 816.8;
-
-// ══════════════════════════════════════════════
-//  AUDIO
-// ══════════════════════════════════════════════
 let audioCtx = null;
 function ctx() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1166,18 +1066,10 @@ function soundFinished() {
     });
   } catch(e) {}
 }
-
-// ══════════════════════════════════════════════
-//  FORMAT
-// ══════════════════════════════════════════════
 function fmt(sec) {
   sec = Math.max(0, Math.round(sec));
   return String(Math.floor(sec/60)).padStart(2,'0') + ':' + String(sec%60).padStart(2,'0');
 }
-
-// ══════════════════════════════════════════════
-//  SPIN + TEXT INPUT
-// ══════════════════════════════════════════════
 function adj(key, delta) {
   const [mn, mx] = limits[key];
   vals[key] = Math.min(mx, Math.max(mn, vals[key] + delta));
@@ -1185,16 +1077,12 @@ function adj(key, delta) {
   updateSummaryInterval();
   saveState();
 }
-
 function renderVal(key) {
   const el = document.getElementById('disp-' + key);
   if (!el) return;
   el.value = key === 'i_reps' ? String(vals[key]) : fmt(vals[key]);
 }
-
 function renderAll() { Object.keys(vals).forEach(renderVal); updateSummaryInterval(); }
-
-// Parse typed value: "1:30" | "130" | "90" | "300"
 function parseTimeInput(raw) {
   raw = (raw || '').trim().replace(/[^0-9:]/g, '');
   if (!raw) return null;
@@ -1204,10 +1092,9 @@ function parseTimeInput(raw) {
   }
   const n = parseInt(raw, 10);
   if (isNaN(n)) return null;
-  if (raw.length <= 2) return n;                        // "45" → 45s
-  return Math.floor(n / 100) * 60 + (n % 100);         // "130" → 1:30
+  if (raw.length <= 2) return n;
+  return Math.floor(n / 100) * 60 + (n % 100);
 }
-
 function inputTime(key, el) {
   const sec = parseTimeInput(el.value);
   if (sec !== null) {
@@ -1218,7 +1105,6 @@ function inputTime(key, el) {
   updateSummaryInterval();
   saveState();
 }
-
 function inputReps(key, el) {
   const n = parseInt(el.value, 10);
   if (!isNaN(n)) {
@@ -1229,15 +1115,12 @@ function inputReps(key, el) {
   updateSummaryInterval();
   saveState();
 }
-
-// ── SUMMARY CALCULATIONS ──
 function updateSummaryInterval() {
   const exoTotal   = vals.i_exo * vals.i_reps;
   const restTotal  = vals.i_rest * Math.max(0, vals.i_reps - 1);
   document.getElementById('sum-i-exo').textContent   = fmt(exoTotal);
   document.getElementById('sum-i-total').textContent = fmt(exoTotal + restTotal);
 }
-
 function updateSummaryDegressive() {
   if (!degSteps.length) {
     document.getElementById('sum-d-exo').textContent   = '—';
@@ -1249,10 +1132,6 @@ function updateSummaryDegressive() {
   document.getElementById('sum-d-exo').textContent   = fmt(exoTotal);
   document.getElementById('sum-d-total').textContent = fmt(exoTotal + restTotal);
 }
-
-// ══════════════════════════════════════════════
-//  TABS
-// ══════════════════════════════════════════════
 document.querySelectorAll('.tab').forEach(btn => {
   btn.addEventListener('click', () => {
     if (document.getElementById('timer-screen').classList.contains('active')) return;
@@ -1262,19 +1141,11 @@ document.querySelectorAll('.tab').forEach(btn => {
     document.getElementById('screen-' + btn.dataset.tab).classList.add('active');
   });
 });
-
-// ══════════════════════════════════════════════
-//  TIMECAP TOGGLE
-// ══════════════════════════════════════════════
 function toggleTimecap() {
   timecapOn = !timecapOn;
   document.getElementById('timecap-toggle').classList.toggle('on', timecapOn);
   document.getElementById('timecap-field').style.display = timecapOn ? 'flex' : 'none';
 }
-
-// ══════════════════════════════════════════════
-//  DEGRESSIVE STEPS
-// ══════════════════════════════════════════════
 function addDegStep() {
   degSteps.push({ exo: vals.d_exo, rest: vals.d_rest });
   renderDegList();
@@ -1304,11 +1175,9 @@ function renderDegList() {
       <button class="deg-del" onclick="removeDeg(${i})">✕</button>
     </div>
   `).join('');
-
   updateSummaryDegressive();
   initDragDrop();
 }
-
 function moveDeg(i, dir) {
   const j = i + dir;
   if (j < 0 || j >= degSteps.length) return;
@@ -1316,15 +1185,10 @@ function moveDeg(i, dir) {
   renderDegList();
   saveState();
 }
-
-// ── Drag & drop (desktop + touch) ──
 let _dragIdx = null;
-
 function initDragDrop() {
   const items = document.querySelectorAll('.deg-item');
-
   items.forEach(item => {
-    // Desktop drag
     item.addEventListener('dragstart', e => {
       _dragIdx = +item.dataset.idx;
       setTimeout(() => item.classList.add('dragging'), 0);
@@ -1348,18 +1212,14 @@ function initDragDrop() {
         saveState();
       }
     });
-
-    // Touch drag
     const handle = item.querySelector('.deg-handle');
     let touchStartY = 0, touchItem = null;
-
     handle.addEventListener('touchstart', e => {
       touchStartY = e.touches[0].clientY;
       touchItem = item;
       _dragIdx = +item.dataset.idx;
       item.classList.add('dragging');
     }, { passive: true });
-
     handle.addEventListener('touchmove', e => {
       e.preventDefault();
       const y = e.touches[0].clientY;
@@ -1371,7 +1231,6 @@ function initDragDrop() {
       });
       if (target && target !== item) target.classList.add('drag-over');
     }, { passive: false });
-
     handle.addEventListener('touchend', e => {
       item.classList.remove('dragging');
       const all = [...document.querySelectorAll('.deg-item')];
@@ -1390,19 +1249,11 @@ function initDragDrop() {
     });
   });
 }
-
-// ══════════════════════════════════════════════
-//  STATUS PILL
-// ══════════════════════════════════════════════
 function setStatus(state, label) {
   const pill = document.getElementById('status-pill');
   pill.className = 'status-pill' + (state ? ' ' + state : '');
   document.getElementById('status-text').textContent = label;
 }
-
-// ══════════════════════════════════════════════
-//  COUNTDOWN
-// ══════════════════════════════════════════════
 function runCountdown(cb) {
   const overlay = document.getElementById('countdown-overlay');
   const numEl   = document.getElementById('cd-number');
@@ -1438,10 +1289,6 @@ function runCountdown(cb) {
     numEl.textContent = n;
   }, 1000);
 }
-
-// ══════════════════════════════════════════════
-//  SCREEN TRANSITIONS
-// ══════════════════════════════════════════════
 function showTimerScreen() {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('timer-screen').classList.add('active');
@@ -1454,10 +1301,6 @@ function showConfigScreen() {
   document.getElementById('screen-' + active).classList.add('active');
   setStatus('', 'PRÊT');
 }
-
-// ══════════════════════════════════════════════
-//  START
-// ══════════════════════════════════════════════
 function buildIntervalPhases() {
   const arr = [];
   for (let r = 0; r < vals.i_reps; r++) {
@@ -1476,7 +1319,6 @@ function buildDegressivePhases() {
   });
   return arr;
 }
-
 function startInterval() {
   phases = buildIntervalPhases();
   if (!phases.length) return;
@@ -1504,13 +1346,8 @@ function startChrono() {
   acquireWakeLock();
   runCountdown(() => { showTimerScreen(); launchChrono(); });
 }
-
-// ══════════════════════════════════════════════
-//  PHASES ENGINE  (rAF pour anneau fluide)
-// ══════════════════════════════════════════════
-let phaseStartTs = null;   // timestamp du début de la phase courante
-let rafId = null;          // requestAnimationFrame handle
-
+let phaseStartTs = null;
+let rafId = null;
 function launchPhases() {
   phaseIdx = 0;
   isPaused = false;
@@ -1518,106 +1355,76 @@ function launchPhases() {
   setStatus('active', 'ACTIF');
   startPhase();
 }
-
 function startPhase() {
   if (phaseIdx >= phases.length) { finishTimer(); return; }
   const p = phases[phaseIdx];
   phaseRemaining = p.dur;
   phaseDuration  = p.dur;
-  phaseStartTs   = null;   // sera initialisé au 1er frame
-
+  phaseStartTs   = null;
   if (phaseIdx === 0) soundPhaseStart();
   else soundTransition(p.type === 'rest');
-
-  updatePhaseUI(p.dur);  // affichage immédiat
-
+  updatePhaseUI(p.dur);
   if (rafId) cancelAnimationFrame(rafId);
   rafId = requestAnimationFrame(rafPhase);
 }
-
 function rafPhase(ts) {
   if (isPaused) { rafId = requestAnimationFrame(rafPhase); return; }
-
   if (phaseStartTs === null) {
-    // Calcule un startTs fictif pour repartir depuis le bon endroit
     const offset = _phaseResumeOffset > 0 ? _phaseResumeOffset : phases[phaseIdx].dur;
     phaseStartTs = ts - (phases[phaseIdx].dur - offset) * 1000;
     _phaseResumeOffset = 0;
   }
-
   const elapsed   = (ts - phaseStartTs) / 1000;
   const p         = phases[phaseIdx];
   const remaining = Math.max(0, p.dur - elapsed);
-
-  // Mise à jour anneau — continu
   const fill = document.getElementById('ring-fill');
   fill.style.strokeDashoffset = CIRC * (1 - remaining / p.dur);
   fill.className = 'ring-fill' + (p.type === 'rest' ? ' rest' : '');
-
-  // Mise à jour affichage secondes (seulement quand la seconde change)
   const remRounded = Math.ceil(remaining);
   if (remRounded !== phaseRemaining) {
     phaseRemaining = remRounded;
     updatePhaseUI(remaining);
-    // Sons d'alerte sur les 3 dernières secondes
     if (phaseRemaining <= 3 && phaseRemaining > 0) soundWarn();
   }
-
   if (remaining <= 0) {
-    // Phase terminée
     updatePhaseUI(0);
     fill.style.strokeDashoffset = CIRC;
     phaseIdx++;
     setTimeout(startPhase, 200);
     return;
   }
-
   rafId = requestAnimationFrame(rafPhase);
 }
-
 function updatePhaseUI(remaining) {
   const p = phases[phaseIdx] || phases[phaseIdx - 1];
   if (!p) return;
   const isRest = p.type === 'rest';
-
   const phaseEl = document.getElementById('t-phase');
   phaseEl.textContent = isRest ? '— Pause —' : `Exercice · Série ${p.serie}/${p.total}`;
   phaseEl.className = 't-phase' + (isRest ? ' rest' : '');
-
   const timeEl = document.getElementById('ring-time');
   timeEl.textContent = fmt(Math.ceil(remaining));
   timeEl.className = 'ring-time' + (isRest ? ' rest' : '') + (remaining <= 5 && !isRest ? ' urgent' : '');
-
   const nextP = phases[phaseIdx + 1];
   document.getElementById('ring-sub').textContent = nextP
     ? `prochain · ${nextP.type === 'rest' ? 'pause' : 'exercice'} ${fmt(nextP.dur)}`
     : 'dernière phase';
-
-  // Valeur "Prochain" + label coloré si c'est une pause
   const nextVal  = nextP ? fmt(nextP.dur) : '--';
   const nextIsRest = nextP && nextP.type === 'rest';
   const nextColor  = nextIsRest ? 'var(--amber)' : 'var(--text)';
   const nextLabel  = nextIsRest ? 'Pause' : (nextP ? 'Exercice' : 'Prochain');
-
-  // Landscape IDs
   const snEl = document.getElementById('stat-next');
   if (snEl) { snEl.textContent = nextVal; snEl.style.color = nextColor; }
   const snLbl = document.getElementById('stat-next-lbl');
   if (snLbl) { snLbl.textContent = nextLabel; snLbl.style.color = nextIsRest ? 'var(--amber)' : ''; }
-
-  // Portrait IDs
   const snElP = document.getElementById('stat-next-p');
   if (snElP) { snElP.textContent = nextVal; snElP.style.color = nextColor; }
   const snLblP = document.getElementById('stat-next-lbl-p');
   if (snLblP) { snLblP.textContent = nextLabel; snLblP.style.color = nextIsRest ? 'var(--amber)' : ''; }
-
-  // Série
   const ssEl = document.getElementById('stat-serie');
   if (ssEl) ssEl.textContent = `${p.serie}/${p.total}`;
   const ssElP = document.getElementById('stat-serie-p');
   if (ssElP) ssElP.textContent = `${p.serie}/${p.total}`;
-
-  // Total restant
   let totalLeft = Math.ceil(remaining);
   for (let i = phaseIdx + 1; i < phases.length; i++) totalLeft += phases[i].dur;
   const stEl = document.getElementById('stat-total');
@@ -1625,13 +1432,8 @@ function updatePhaseUI(remaining) {
   const stElP = document.getElementById('stat-total-p');
   if (stElP) stElP.textContent = fmt(totalLeft);
 }
-
-// ══════════════════════════════════════════════
-//  CHRONO ENGINE  (rAF pour anneau fluide)
-// ══════════════════════════════════════════════
 let chronoStartTs = null;
 let chronoPauseOffset = 0;
-
 function launchChrono() {
   isPaused = false;
   chronoStartTs     = null;
@@ -1648,27 +1450,21 @@ function launchChrono() {
   if (rafId) cancelAnimationFrame(rafId);
   rafId = requestAnimationFrame(rafChrono);
 }
-
 function rafChrono(ts) {
   if (isPaused) { rafId = requestAnimationFrame(rafChrono); return; }
   if (chronoStartTs === null) chronoStartTs = ts;
-
   const elapsed = (ts - chronoStartTs) / 1000 + chronoPauseOffset;
   chronoElapsed = elapsed;
-
   const timeEl = document.getElementById('ring-time');
   const fill   = document.getElementById('ring-fill');
   const info   = document.getElementById('chrono-info');
-
   if (chronoCap > 0) {
     const rem = Math.max(0, chronoCap - elapsed);
     timeEl.textContent = fmt(Math.ceil(rem));
     fill.style.strokeDashoffset = CIRC * (1 - rem / chronoCap);
     info.textContent = 'Écoulé · ' + fmt(Math.floor(elapsed));
-
     if (rem <= 10 && rem > 0) timeEl.className = 'ring-time urgent';
     else timeEl.className = 'ring-time';
-
     if (rem <= 0) {
       timeEl.textContent = 'TIME';
       fill.style.strokeDashoffset = CIRC;
@@ -1680,13 +1476,8 @@ function rafChrono(ts) {
     fill.style.strokeDashoffset = CIRC * (1 - Math.min(1, elapsed / 3600));
     info.textContent = '';
   }
-
   rafId = requestAnimationFrame(rafChrono);
 }
-
-// ══════════════════════════════════════════════
-//  CONTROLS
-// ══════════════════════════════════════════════
 function setPauseBtn(txt) {
   const b1 = document.getElementById('btn-pause');
   const b2 = document.getElementById('btn-pause-p');
@@ -1695,7 +1486,6 @@ function setPauseBtn(txt) {
   if (b1) b1.style.display = '';
   if (b2) b2.style.display = '';
 }
-
 function togglePause() {
   isPaused = !isPaused;
   if (isPaused) {
@@ -1708,10 +1498,8 @@ function togglePause() {
     else { phaseStartTs = null; _phaseResumeOffset = _pausedRemaining; }
   }
 }
-
 let _pausedRemaining = 0;
 let _phaseResumeOffset = 0;
-
 function stopTimer() {
   if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
   if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
@@ -1742,52 +1530,36 @@ function finishTimer() {
     stopTimer();
   }, 3500);
 }
-
-// ══════════════════════════════════════════════
-//  WAKE LOCK — écran allumé pendant le timer
-// ══════════════════════════════════════════════
 let _wakeLock = null;
-
 async function acquireWakeLock() {
   if (!('wakeLock' in navigator)) return;
   try {
     _wakeLock = await navigator.wakeLock.request('screen');
-    // Si l'OS relâche le lock (ex: notif), on le réacquiert automatiquement
     _wakeLock.addEventListener('release', () => {
       if (rafId !== null || timerInterval !== null) acquireWakeLock();
     });
   } catch(e) {}
 }
-
 function releaseWakeLock() {
   if (_wakeLock) { _wakeLock.release().catch(() => {}); _wakeLock = null; }
 }
-
-// Réacquérir si l'utilisateur revient sur l'app pendant qu'elle tourne
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && (rafId !== null || timerInterval !== null)) {
     acquireWakeLock();
   }
 });
-
-// ══════════════════════════════════════════════
-//  PRESETS
-// ══════════════════════════════════════════════
 const PRESETS_KEY = 'sporttimer_presets';
 let presets = { interval: [], degressive: [], chrono: [] };
 let _pendingPresetMode = null;
-
 function loadPresets() {
   try {
     const raw = localStorage.getItem(PRESETS_KEY);
     if (raw) presets = { interval: [], degressive: [], chrono: [], ...JSON.parse(raw) };
   } catch(e) {}
 }
-
 function savePresets() {
   try { localStorage.setItem(PRESETS_KEY, JSON.stringify(presets)); } catch(e) {}
 }
-
 function openPresetModal(mode) {
   _pendingPresetMode = mode;
   const input = document.getElementById('preset-name-input');
@@ -1795,17 +1567,14 @@ function openPresetModal(mode) {
   document.getElementById('preset-modal-wrap').classList.add('active');
   setTimeout(() => input.focus(), 100);
 }
-
 function closePresetModal() {
   document.getElementById('preset-modal-wrap').classList.remove('active');
   _pendingPresetMode = null;
 }
-
 function confirmSavePreset() {
   const name = document.getElementById('preset-name-input').value.trim();
   if (!name || !_pendingPresetMode) return;
   const mode = _pendingPresetMode;
-
   let config;
   if (mode === 'interval') {
     config = { exo: vals.i_exo, rest: vals.i_rest, reps: vals.i_reps };
@@ -1814,13 +1583,11 @@ function confirmSavePreset() {
   } else {
     config = { cap: timecapOn ? vals.c_cap : 0, timecapOn };
   }
-
   presets[mode].push({ name, config });
   savePresets();
   renderPresets(mode);
   closePresetModal();
 }
-
 function loadPreset(mode, idx) {
   const p = presets[mode][idx];
   if (!p) return;
@@ -1842,17 +1609,14 @@ function loadPreset(mode, idx) {
   }
   saveState();
 }
-
 function deletePreset(mode, idx) {
   presets[mode].splice(idx, 1);
   savePresets();
   renderPresets(mode);
 }
-
 function renderPresets(mode) {
   const bar = document.getElementById('presets-' + mode);
   if (!bar) return;
-  // Keep save button
   bar.innerHTML = `<button class="preset-save-btn" onclick="openPresetModal('${mode}')">+ Sauvegarder</button>`;
   presets[mode].forEach((p, i) => {
     const chip = document.createElement('div');
@@ -1864,34 +1628,24 @@ function renderPresets(mode) {
     bar.appendChild(chip);
   });
 }
-
 function renderAllPresets() {
   ['interval','degressive','chrono'].forEach(renderPresets);
 }
-
-// Enter key in modal
 document.getElementById('preset-name-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') confirmSavePreset();
   if (e.key === 'Escape') closePresetModal();
 });
-
-// ══════════════════════════════════════════════
-//  PERSISTENCE — localStorage
-// ══════════════════════════════════════════════
 const STORAGE_KEY = 'sporttimer_state';
-
 function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ vals, degSteps }));
   } catch(e) {}
 }
-
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return;
     const s = JSON.parse(raw);
-    // Restore vals — only known keys, clamp to limits
     if (s.vals) {
       Object.keys(s.vals).forEach(k => {
         if (k in vals && k in limits) {
@@ -1900,49 +1654,32 @@ function loadState() {
         }
       });
     }
-    // Restore degSteps
     if (Array.isArray(s.degSteps) && s.degSteps.length) {
       degSteps = s.degSteps.filter(s => s.exo > 0);
     }
   } catch(e) {}
 }
-
-// ══════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════
 loadState();
 loadPresets();
 renderAll();
 renderDegList();
 renderAllPresets();
-
 ['touchstart','click','keydown'].forEach(ev =>
   document.addEventListener(ev, () => { try { ctx(); } catch(e){} }, { once: true })
 );
-
-// ── Inline Service Worker (requis pour PWA installable sur Android) ──
 if ('serviceWorker' in navigator) {
   const swCode = `
     const CACHE = 'sport-timer-v1';
-    self.addEventListener('install', e => {
-      self.skipWaiting();
-    });
-    self.addEventListener('activate', e => {
-      e.waitUntil(clients.claim());
-    });
+    self.addEventListener('install', e => { self.skipWaiting(); });
+    self.addEventListener('activate', e => { e.waitUntil(clients.claim()); });
     self.addEventListener('fetch', e => {
-      e.respondWith(
-        caches.match(e.request).then(r => r || fetch(e.request))
-      );
+      e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
     });
   `;
   const swBlob = new Blob([swCode], {type: 'application/javascript'});
   const swUrl  = URL.createObjectURL(swBlob);
   navigator.serviceWorker.register(swUrl, {scope: '/'})
-    .catch(() => {
-      // scope '/' peut échouer sur fichier local — on réessaie sans scope
-      navigator.serviceWorker.register(swUrl).catch(() => {});
-    });
+    .catch(() => { navigator.serviceWorker.register(swUrl).catch(() => {}); });
 }
 </script>
 </body>
