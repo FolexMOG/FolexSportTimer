@@ -30,16 +30,18 @@
 :root {
   --bg:#111214; --surface:#18191c; --border:#1f2124; --border2:#2a2b30;
   --accent:#4ade80; --accent-dim:#1e3a2a; --accent-glow:rgba(74,222,128,.18);
-  --accent2:#4ade80;
   --amber:#fbbf24; --amber-dim:#2d2008;
   --red:#f87171; --red-dim:#2d0f0f;
   --text:#e4e4e7; --muted:#52525b; --muted2:#3f3f46; --radius:20px;
-  --ring-grad-start:#4ade80; --ring-grad-end:#4ade80;
 }
 /* Default = green (existing) — kept as-is */
 body[data-skin="default"] {
   --bg:#111214; --surface:#18191c; --border:#1f2124; --border2:#2a2b30;
   --accent:#4ade80; --accent-dim:#1e3a2a; --accent-glow:rgba(74,222,128,.18);
+  --accent2:#4ade80;
+  --amber:#fbbf24; --amber-dim:#2d2008;
+  --red:#f87171; --red-dim:#2d0f0f;
+  --text:#e4e4e7; --muted:#52525b; --muted2:#3f3f46;
   --ring-grad-start:#4ade80; --ring-grad-end:#4ade80;
 }
 body[data-skin="carbon"] {
@@ -124,6 +126,8 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
 .skin-option-dot[data-s="white"]    { background: linear-gradient(135deg, #18181b, #6366f1); border-color: #aaa; }
 .skin-option-dot[data-s="military"] { background: linear-gradient(135deg, #a3c45e, #d4e157); }
 .skin-option-name { font-size: 12px; letter-spacing: 1px; color: var(--text); }
+.skin-option-sep { height: 1px; background: var(--border); margin: 4px 0; }
+#custom-dot { background: linear-gradient(135deg, #4ade80, #4ade80); }
 
 /* ── TABS ── */
 .tabs { display: flex; gap: 4px; padding: 0 20px 12px; flex-shrink: 0; }
@@ -142,7 +146,7 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
 .field-label { font-size: 13px; color: var(--text); }
 .field-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
 .field-ctrl { display: flex; align-items: center; gap: 10px; }
-.spin-btn { width: 34px; height: 34px; background: var(--border); border: 1px solid var(--border2); color: var(--text); font-size: 20px; line-height: 1; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all .12s; font-family: 'Bebas Neue', sans-serif; flex-shrink: 0; }
+.spin-btn { width: 34px; height: 34px; background: var(--spin-bg, var(--border)); border: 1px solid var(--border2); color: var(--text); font-size: 20px; line-height: 1; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all .12s; font-family: 'Bebas Neue', sans-serif; flex-shrink: 0; }
 .spin-btn:active { background: var(--accent); color: var(--bg); border-color: var(--accent); transform: scale(.93); }
 .val-display { font-family: 'Bebas Neue', sans-serif; font-size: 17px; color: var(--text); width: 58px; text-align: center; background: transparent; border: none; border-bottom: 1.5px solid transparent; border-radius: 0; outline: none; padding: 2px 0 3px; caret-color: var(--accent); transition: border-color .15s, color .15s; -webkit-appearance: none; }
 .val-display:focus { border-bottom-color: var(--accent); color: var(--accent); }
@@ -318,6 +322,8 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
           <div class="skin-option" data-s="ice"      onclick="setSkin('ice')">     <div class="skin-option-dot" data-s="ice"></div>      <span class="skin-option-name">Ice Blue</span></div>
           <div class="skin-option" data-s="white"    onclick="setSkin('white')">   <div class="skin-option-dot" data-s="white"></div>    <span class="skin-option-name">Ghost White</span></div>
           <div class="skin-option" data-s="military" onclick="setSkin('military')"><div class="skin-option-dot" data-s="military"></div> <span class="skin-option-name">Military</span></div>
+          <div class="skin-option-sep"></div>
+          <div class="skin-option" data-s="custom" onclick="openCustomSkin()"><div class="skin-option-dot" data-s="custom" id="custom-dot"></div> <span class="skin-option-name">Personnalisé…</span></div>
         </div>
       </div>
     </div>
@@ -487,6 +493,43 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
     </div>
   </div>
 </div>
+<!-- CUSTOM SKIN MODAL -->
+<div class="preset-modal-wrap" id="custom-skin-modal">
+  <div class="preset-modal" style="width:300px;gap:16px;">
+    <div class="preset-modal-title">Thème personnalisé</div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div><div class="field-label" style="font-size:12px;">Fond</div><div class="field-sub">Couleur de fond</div></div>
+        <input type="color" id="custom-bg" value="#111214" oninput="previewCustom()" style="width:44px;height:44px;border:none;border-radius:10px;cursor:pointer;padding:2px;background:var(--surface);">
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div><div class="field-label" style="font-size:12px;">Accent 1</div><div class="field-sub">Couleur principale</div></div>
+        <input type="color" id="custom-accent" value="#4ade80" oninput="previewCustom()" style="width:44px;height:44px;border:none;border-radius:10px;cursor:pointer;padding:2px;background:var(--surface);">
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div><div class="field-label" style="font-size:12px;">Accent 2</div><div class="field-sub">2e couleur du ring</div></div>
+        <input type="color" id="custom-accent2" value="#4ade80" oninput="previewCustom()" style="width:44px;height:44px;border:none;border-radius:10px;cursor:pointer;padding:2px;background:var(--surface);">
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;padding:4px 0;">
+      <svg width="80" height="80" viewBox="0 0 80 80" style="transform:rotate(-90deg);overflow:visible;">
+        <defs>
+          <linearGradient id="previewGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop id="prev-stop1" offset="0%" stop-color="#4ade80"/>
+            <stop id="prev-stop2" offset="100%" stop-color="#4ade80"/>
+          </linearGradient>
+        </defs>
+        <circle cx="40" cy="40" r="34" fill="none" stroke="#2a2b30" stroke-width="7"/>
+        <circle id="preview-ring" cx="40" cy="40" r="34" fill="none" stroke="url(#previewGrad)" stroke-width="7" stroke-linecap="round" stroke-dasharray="213" stroke-dashoffset="60"/>
+      </svg>
+    </div>
+    <div class="preset-modal-btns">
+      <button onclick="closeCustomSkin()">Annuler</button>
+      <button class="pm-confirm" onclick="applyCustomSkin()">Appliquer</button>
+    </div>
+  </div>
+</div>
+
 <div id="countdown-overlay">
   <div class="cd-number" id="cd-number">10</div>
   <div class="cd-label" id="cd-label">Prépare-toi</div>
@@ -516,26 +559,156 @@ document.addEventListener('click', e => {
 });
 
 function setSkin(name) {
+  // Nettoyer tout résidu du thème custom
+  const existing = document.getElementById('custom-skin-style');
+  if (existing) existing.remove();
+  document.body.classList.remove('skin-custom');
+  // Retirer TOUS les styles inline (variables custom + background/color)
+  document.body.style.cssText = '';
+
   document.body.setAttribute('data-skin', name);
-  // Update gradient stops
   const s = SKINS[name] || SKINS.default;
   document.getElementById('grad-stop1').setAttribute('stop-color', s.start);
   document.getElementById('grad-stop2').setAttribute('stop-color', s.end);
-  // Update trigger button color
   document.getElementById('skin-trigger').style.background =
     `linear-gradient(135deg, ${s.start}, ${s.end || s.start})`;
-  // Update active option
+  document.getElementById('custom-dot').style.background =
+    `linear-gradient(135deg, ${s.start}, ${s.end || s.start})`;
   document.querySelectorAll('.skin-option').forEach(d => d.classList.toggle('active', d.dataset.s === name));
-  // Close dropdown
   document.getElementById('skin-dropdown').classList.remove('open');
-  // Persist
   try { localStorage.setItem('sporttimer_skin', name); } catch(e){}
 }
 function loadSkin() {
   try {
     const s = localStorage.getItem('sporttimer_skin') || 'default';
+    if (s === 'custom') {
+      const c = JSON.parse(localStorage.getItem('sporttimer_custom') || 'null');
+      if (c) {
+        applyCustomVars(c.bg, c.accent, c.accent2);
+        // Restaurer le trigger dot couleur custom
+        document.getElementById('skin-trigger').style.background =
+          `linear-gradient(135deg,${c.accent},${c.accent2})`;
+        return;
+      }
+    }
     setSkin(s);
   } catch(e) { setSkin('default'); }
+}
+
+// ── Custom skin ──
+function openCustomSkin() {
+  // Pre-fill with current custom values if any
+  try {
+    const c = JSON.parse(localStorage.getItem('sporttimer_custom') || 'null');
+    if (c) {
+      document.getElementById('custom-bg').value = c.bg;
+      document.getElementById('custom-accent').value = c.accent;
+      document.getElementById('custom-accent2').value = c.accent2;
+    }
+  } catch(e) {}
+  previewCustom();
+  document.getElementById('skin-dropdown').classList.remove('open');
+  document.getElementById('custom-skin-modal').classList.add('active');
+}
+function closeCustomSkin() {
+  document.getElementById('custom-skin-modal').classList.remove('active');
+}
+function previewCustom() {
+  const a1 = document.getElementById('custom-accent').value;
+  const a2 = document.getElementById('custom-accent2').value;
+  document.getElementById('prev-stop1').setAttribute('stop-color', a1);
+  document.getElementById('prev-stop2').setAttribute('stop-color', a2);
+  document.getElementById('preview-ring').style.stroke = 'url(#previewGrad)';
+}
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return {r,g,b};
+}
+function lighten(hex, factor) {
+  const {r,g,b} = hexToRgb(hex);
+  const lr = Math.round(r + (255-r)*factor), lg = Math.round(g + (255-g)*factor), lb = Math.round(b + (255-b)*factor);
+  return `#${lr.toString(16).padStart(2,'0')}${lg.toString(16).padStart(2,'0')}${lb.toString(16).padStart(2,'0')}`;
+}
+function darken(hex, factor) {
+  const {r,g,b} = hexToRgb(hex);
+  const dr = Math.round(r * (1 - factor));
+  const dg = Math.round(g * (1 - factor));
+  const db = Math.round(b * (1 - factor));
+  return `#${dr.toString(16).padStart(2,'0')}${dg.toString(16).padStart(2,'0')}${db.toString(16).padStart(2,'0')}`;
+}
+function applyCustomVars(bg, accent, accent2) {
+  const {r,g,b} = hexToRgb(bg);
+  const lum    = r*0.299 + g*0.587 + b*0.114;
+  const isDark = lum < 128;
+
+  let surface, border, border2, muted, muted2, text, red, redDim, amber, amberDim;
+
+  if (isDark) {
+    surface  = lighten(bg, 0.07);
+    border   = lighten(bg, 0.15);
+    border2  = lighten(bg, 0.24);
+    muted    = lighten(bg, 0.40);
+    muted2   = lighten(bg, 0.26);
+    text     = '#e4e4e7';
+    red = '#f87171'; redDim = '#2d0f0f';
+    amber = '#fbbf24'; amberDim = '#2d2008';
+  } else {
+    surface  = darken(bg, 0.02);   // #f7f7f7 sur blanc — cadres légèrement gris
+    border   = darken(bg, 0.10);   // #e6e6e6
+    border2  = darken(bg, 0.17);   // #d4d4d4
+    muted    = darken(bg, 0.37);   // #a1a1a1
+    muted2   = darken(bg, 0.27);   // #bababc
+    text     = '#18181b';
+    red = '#dc2626'; redDim = '#fee2e2';
+    amber = '#d97706'; amberDim = '#fef3c7';
+  }
+
+  const {r:ar,g:ag,b:ab} = hexToRgb(accent);
+  const dimF = isDark ? 0.20 : 0.82;
+  const adR  = isDark ? Math.round(ar*dimF) : Math.round(ar+(255-ar)*dimF);
+  const adG  = isDark ? Math.round(ag*dimF) : Math.round(ag+(255-ag)*dimF);
+  const adB  = isDark ? Math.round(ab*dimF) : Math.round(ab+(255-ab)*dimF);
+  const accentDim  = `#${adR.toString(16).padStart(2,'0')}${adG.toString(16).padStart(2,'0')}${adB.toString(16).padStart(2,'0')}`;
+  const accentGlow = `rgba(${ar},${ag},${ab},.22)`;
+
+  // Supprimer ancien style injecté
+  const old = document.getElementById('custom-skin-style');
+  if (old) old.remove();
+  document.body.classList.remove('skin-custom');
+  // Retirer data-skin pour qu'aucun body[data-skin] ne s'applique
+  document.body.removeAttribute('data-skin');
+
+  // Appliquer les variables directement en inline style sur body
+  // (inline style > toute règle CSS, donc priorité absolue)
+  const vars = {
+    '--bg': bg, '--surface': surface, '--border': border, '--border2': border2,
+    '--accent': accent, '--accent-dim': accentDim, '--accent-glow': accentGlow,
+    '--text': text, '--muted': muted, '--muted2': muted2,
+    '--red': red, '--red-dim': redDim, '--amber': amber, '--amber-dim': amberDim
+  };
+  Object.entries(vars).forEach(([k,v]) => document.body.style.setProperty(k, v));
+  document.body.style.background = bg;
+  document.body.style.color = text;
+
+  // Ring gradient
+  document.getElementById('grad-stop1').setAttribute('stop-color', accent);
+  document.getElementById('grad-stop2').setAttribute('stop-color', accent2);
+
+  // Trigger + custom dot
+  document.getElementById('skin-trigger').style.background = `linear-gradient(135deg,${accent},${accent2})`;
+  document.getElementById('custom-dot').style.background   = `linear-gradient(135deg,${accent},${accent2})`;
+  document.querySelectorAll('.skin-option').forEach(d => d.classList.toggle('active', d.dataset.s === 'custom'));
+}
+function applyCustomSkin() {
+  const bg      = document.getElementById('custom-bg').value;
+  const accent  = document.getElementById('custom-accent').value;
+  const accent2 = document.getElementById('custom-accent2').value;
+  applyCustomVars(bg, accent, accent2);
+  try {
+    localStorage.setItem('sporttimer_skin', 'custom');
+    localStorage.setItem('sporttimer_custom', JSON.stringify({bg, accent, accent2}));
+  } catch(e) {}
+  closeCustomSkin();
 }
 
 // ══ CONFIG STATE ══
