@@ -342,6 +342,12 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
           <button class="spin-btn" onclick="adj('i_reps',1)">+</button>
         </div>
       </div>
+      <div class="field-row">
+        <div class="toggle-row">
+          <button class="toggle on" id="countdown-toggle-interval" onclick="toggleCountdown()"></button>
+          <div><div class="toggle-label">Décompte</div><div class="field-sub">10 secondes avant départ</div></div>
+        </div>
+      </div>
     </div>
     <div class="summary-card" id="summary-interval">
       <div class="summary-item"><span class="summary-lbl">Exercice total</span><span class="summary-val" id="sum-i-exo">—</span></div>
@@ -380,6 +386,14 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
       <div class="summary-sep"></div>
       <div class="summary-item"><span class="summary-lbl">Durée totale</span><span class="summary-val" id="sum-d-total">—</span></div>
     </div>
+    <div class="config-card" style="margin:10px 20px 0;">
+      <div class="field-row">
+        <div class="toggle-row">
+          <button class="toggle on" id="countdown-toggle-degressive" onclick="toggleCountdown()"></button>
+          <div><div class="toggle-label">Décompte</div><div class="field-sub">10 secondes avant départ</div></div>
+        </div>
+      </div>
+    </div>
     <div class="preset-section">
       <div class="sec-title" style="padding:8px 0 4px">Presets</div>
       <div class="preset-bar" id="presets-degressive">
@@ -402,6 +416,12 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
           <button class="spin-btn" onclick="adj('c_cap',-30)">−</button>
           <input class="val-display" id="disp-c_cap" type="text" inputmode="numeric" maxlength="5" onblur="inputTime('c_cap',this)" onkeydown="if(event.key==='Enter')this.blur()">
           <button class="spin-btn" onclick="adj('c_cap',30)">+</button>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="toggle-row">
+          <button class="toggle on" id="countdown-toggle-chrono" onclick="toggleCountdown()"></button>
+          <div><div class="toggle-label">Décompte</div><div class="field-sub">10 secondes avant départ</div></div>
         </div>
       </div>
     </div>
@@ -682,7 +702,7 @@ function applyCustomSkin() {
 // ══ CONFIG STATE ══
 const vals = { i_exo:180, i_rest:60, i_reps:5, d_exo:120, d_rest:60, c_cap:1200 };
 const limits = { i_exo:[10,3600], i_rest:[0,600], i_reps:[1,50], d_exo:[10,3600], d_rest:[0,600], c_cap:[60,7200] };
-let degSteps = [], timecapOn = false, timerInterval = null, isPaused = false, currentMode = null;
+let degSteps = [], timecapOn = false, countdownOn = true, timerInterval = null, isPaused = false, currentMode = null;
 let phases = [], phaseIdx = 0, phaseRemaining = 0, phaseDuration = 0;
 let chronoElapsed = 0, chronoCap = 0;
 const CIRC = 816.8;
@@ -771,6 +791,15 @@ document.querySelectorAll('.tab').forEach(btn => {
 
 function toggleTimecap() { timecapOn=!timecapOn; document.getElementById('timecap-toggle').classList.toggle('on',timecapOn); document.getElementById('timecap-field').style.display=timecapOn?'flex':'none'; }
 
+function toggleCountdown() {
+  countdownOn = !countdownOn;
+  ['interval','degressive','chrono'].forEach(m => {
+    const el = document.getElementById('countdown-toggle-' + m);
+    if (el) el.classList.toggle('on', countdownOn);
+  });
+  try { localStorage.setItem('sporttimer_countdown', countdownOn ? '1' : '0'); } catch(e) {}
+}
+
 // ══ DEG STEPS ══
 function addDegStep() { degSteps.push({exo:vals.d_exo,rest:vals.d_rest}); renderDegList(); saveState(); }
 function removeDeg(i) { degSteps.splice(i,1); renderDegList(); saveState(); }
@@ -829,9 +858,9 @@ function showConfigScreen(){document.getElementById('timer-screen').classList.re
 function buildIntervalPhases(){const arr=[];for(let r=0;r<vals.i_reps;r++){arr.push({type:'exo',dur:vals.i_exo,serie:r+1,total:vals.i_reps});if(r<vals.i_reps-1&&vals.i_rest>0)arr.push({type:'rest',dur:vals.i_rest,serie:r+1,total:vals.i_reps});}return arr;}
 function buildDegressivePhases(){const arr=[];degSteps.forEach((s,i)=>{arr.push({type:'exo',dur:s.exo,serie:i+1,total:degSteps.length});if(i<degSteps.length-1&&s.rest>0)arr.push({type:'rest',dur:s.rest,serie:i+1,total:degSteps.length});});return arr;}
 
-function startInterval(){phases=buildIntervalPhases();if(!phases.length)return;currentMode='interval';document.getElementById('stats-row').style.display='flex';document.getElementById('chrono-info').style.display='none';acquireWakeLock();runCountdown(()=>{showTimerScreen();launchPhases();});}
-function startDegressive(){if(!degSteps.length){alert('Ajoutez au moins un palier !');return;}phases=buildDegressivePhases();currentMode='degressive';document.getElementById('stats-row').style.display='flex';document.getElementById('chrono-info').style.display='none';acquireWakeLock();runCountdown(()=>{showTimerScreen();launchPhases();});}
-function startChrono(){currentMode='chrono';chronoElapsed=0;chronoCap=timecapOn?vals.c_cap:0;document.getElementById('stats-row').style.display='none';document.getElementById('chrono-info').style.display='block';acquireWakeLock();runCountdown(()=>{showTimerScreen();launchChrono();});}
+function startInterval(){phases=buildIntervalPhases();if(!phases.length)return;currentMode='interval';document.getElementById('stats-row').style.display='flex';document.getElementById('chrono-info').style.display='none';acquireWakeLock();if(countdownOn){runCountdown(()=>{showTimerScreen();launchPhases();});}else{showTimerScreen();launchPhases();}}
+function startDegressive(){if(!degSteps.length){alert('Ajoutez au moins un palier !');return;}phases=buildDegressivePhases();currentMode='degressive';document.getElementById('stats-row').style.display='flex';document.getElementById('chrono-info').style.display='none';acquireWakeLock();if(countdownOn){runCountdown(()=>{showTimerScreen();launchPhases();});}else{showTimerScreen();launchPhases();}}
+function startChrono(){currentMode='chrono';chronoElapsed=0;chronoCap=timecapOn?vals.c_cap:0;document.getElementById('stats-row').style.display='none';document.getElementById('chrono-info').style.display='block';acquireWakeLock();if(countdownOn){runCountdown(()=>{showTimerScreen();launchChrono();});}else{showTimerScreen();launchChrono();}}
 
 // ══ PHASES ENGINE ══
 let phaseStartTs=null,rafId=null;
@@ -960,6 +989,11 @@ function loadState(){
 
 // ══ INIT ══
 loadState(); loadPresets(); loadSkin();
+// Restore countdown preference
+try {
+  const cd = localStorage.getItem('sporttimer_countdown');
+  if (cd === '0') { countdownOn = false; ['interval','degressive','chrono'].forEach(m => { const el = document.getElementById('countdown-toggle-'+m); if(el) el.classList.remove('on'); }); }
+} catch(e) {}
 renderAll(); renderDegList(); renderAllPresets();
 
 ['touchstart','click','keydown'].forEach(ev=>document.addEventListener(ev,()=>{try{ctx();}catch(e){}},{once:true}));
