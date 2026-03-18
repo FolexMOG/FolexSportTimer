@@ -309,6 +309,10 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
 .stat-card.serie-card { flex: 1.4; }
 .stat-card.serie-card .stat-val { font-size: 32px; color: var(--accent); }
 .chrono-info { display: none; font-family: 'Bebas Neue', sans-serif; font-size: 13px; color: var(--muted); letter-spacing: 2px; margin-bottom: 14px; }
+.lap-item { display: flex; align-items: center; justify-content: space-between; padding: 5px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 1px; }
+.lap-num { color: var(--muted); }
+.lap-split { color: var(--accent); }
+.lap-total { color: var(--muted2); font-size: 10px; }
 
 /* ── CTRL BUTTONS ── */
 .ctrl-row { display: flex; gap: 10px; width: 100%; }
@@ -508,8 +512,8 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
       <button class="add-btn" onclick="addFTExercise()" style="margin-top:8px;">+ Ajouter cet exercice</button>
       <div style="display:flex;gap:6px;align-items:center;margin-top:6px;">
         <button class="add-btn" onclick="resetFTExercises()" style="flex:1;background:var(--red-dim);border-color:rgba(248,113,113,.2);color:var(--red);">✕ Réinitialiser</button>
-        <button onclick="openFTExport()" title="Exporter" style="width:36px;height:36px;flex-shrink:0;background:var(--surface);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬆</button>
-        <button onclick="openFTImport()" title="Importer" style="width:36px;height:36px;flex-shrink:0;background:var(--surface);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬇</button>
+        <button onclick="openFTExport()" title="Exporter" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬆</button>
+        <button onclick="openFTImport()" title="Importer" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬇</button>
       </div>
     </div>
 
@@ -524,6 +528,12 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
       <div class="summary-item"><span class="summary-lbl">Total</span><span class="summary-val" id="ft-sum-total">—</span></div>
     </div>
 
+    <div class="preset-section">
+      <div class="sec-title" style="padding:8px 0 4px">Presets</div>
+      <div class="preset-bar" id="presets-fortime">
+        <button class="preset-save-btn" onclick="openPresetModal('fortime')">+ Sauvegarder</button>
+      </div>
+    </div>
     <div class="bottom-bar">
       <button class="start-btn" onclick="startForTime()">Lancer</button>
     </div>
@@ -569,12 +579,6 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
 
 <!-- FOR TIME TIMER SCREEN -->
 <div id="ft-timer-screen" style="display:none;flex-direction:column;height:100%;background:var(--bg);">
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px 8px;">
-    <div class="app-logo-wrap"><img src="https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png" style="height:32px;border-radius:8px;"></div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <div class="status-pill active" id="ft-status-pill"><div class="status-dot active"></div><span id="ft-status-text">ACTIF</span></div>
-    </div>
-  </div>
 
   <!-- 3 stats -->
   <div class="stats-row" id="ft-stats-row">
@@ -637,8 +641,10 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
     <div class="chrono-info" id="chrono-info">00:00</div>
     <div class="ctrl-row portrait-ctrl">
       <button class="ctrl-btn danger" onclick="stopTimer()">■ Stop</button>
+      <button class="ctrl-btn" id="btn-lap" onclick="addLap()" style="display:none;background:var(--surface);border-color:var(--border2);color:var(--text);">⊕ Lap</button>
       <button class="ctrl-btn primary" id="btn-pause-p" onclick="togglePause()">⏸ Pause</button>
     </div>
+    <div id="lap-list" style="display:none;flex-direction:column;gap:4px;width:100%;max-height:160px;overflow-y:auto;margin-top:8px;padding:0 2px;"></div>
   </div>
 
 </div><!-- /app -->
@@ -778,10 +784,12 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
   <div class="cd-number" id="cd-number">10</div>
   <div class="cd-label" id="cd-label">Prépare-toi</div>
 </div>
-<div class="finished-overlay" id="finished-overlay">
+<div class="finished-overlay" id="finished-overlay" style="justify-content:flex-start;padding:40px 24px 24px;overflow-y:auto;">
   <div class="finished-icon">✓</div>
   <div class="finished-title">Terminé !</div>
   <div class="finished-sub" id="finished-sub">Bien joué</div>
+  <div id="finished-laps" style="display:none;width:100%;max-width:340px;margin-top:12px;display:flex;flex-direction:column;gap:5px;"></div>
+  <button id="finished-back-btn" onclick="finishedBack()" style="display:none;margin-top:20px;padding:14px 40px;background:var(--accent);color:var(--bg);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;border-radius:14px;border:none;cursor:pointer;">← Retour</button>
 </div>
 
 <script>
@@ -1810,22 +1818,31 @@ function ftTogglePause() {
   }
 }
 
+function showFTFinishedOverlay(elapsed, completed) {
+  hideFTTimerScreen();
+  const label = completed ? 'For Time — Terminé !' : 'For Time — Arrêté';
+  document.getElementById('finished-sub').textContent = label + ' · ' + fmt(Math.floor(elapsed));
+  document.getElementById('finished-laps').style.display = 'none';
+  const backBtn = document.getElementById('finished-back-btn');
+  if (backBtn) backBtn.style.display = '';
+  document.getElementById('finished-overlay').classList.add('active');
+  soundFinished();
+}
+
 function ftStop() {
   if (ftState.rafId) cancelAnimationFrame(ftState.rafId);
   releaseWakeLock();
-  hideFTTimerScreen();
+  if (ftState.elapsed > 0) {
+    showFTFinishedOverlay(ftState.elapsed, false);
+  } else {
+    hideFTTimerScreen();
+  }
 }
 
 function ftFinished() {
   if (ftState.rafId) cancelAnimationFrame(ftState.rafId);
-  const elapsed = ftState.elapsed;
   releaseWakeLock();
-  hideFTTimerScreen();
-  // Afficher overlay de fin
-  const ov = document.getElementById('finished-overlay');
-  document.getElementById('finished-sub').textContent = `For Time — ${fmt(Math.floor(elapsed))}`;
-  ov.classList.add('active');
-  setTimeout(() => ov.classList.remove('active'), 3500);
+  showFTFinishedOverlay(ftState.elapsed, true);
 }
 
 function showFTTimerScreen() {
@@ -1979,7 +1996,36 @@ function updatePhaseUI(remaining){
 
 // ══ CHRONO ENGINE ══
 let chronoStartTs=null,chronoPauseOffset=0;
+let _laps = [];
+
+function addLap() {
+  const elapsed = chronoElapsed;
+  const prev = _laps.length ? _laps[_laps.length-1].total : 0;
+  const split = elapsed - prev;
+  _laps.push({ total: elapsed, split });
+  renderLaps();
+}
+
+function renderLaps() {
+  const list = document.getElementById('lap-list');
+  if (!list) return;
+  list.style.display = 'flex';
+  list.innerHTML = _laps.slice().reverse().map((l, ri) => {
+    const i = _laps.length - ri;
+    return `<div class="lap-item">
+      <span class="lap-num">Lap ${i}</span>
+      <span class="lap-split">${fmt(l.split)}</span>
+      <span class="lap-total">${fmt(l.total)}</span>
+    </div>`;
+  }).join('');
+}
+
 function launchChrono(){
+  _laps = [];
+  const lapList = document.getElementById('lap-list');
+  if(lapList){ lapList.style.display='none'; lapList.innerHTML=''; }
+  const lapBtn = document.getElementById('btn-lap');
+  if(lapBtn) lapBtn.style.display='';
   isPaused=false;chronoStartTs=null;chronoPauseOffset=0;setPauseBtn('⏸ Pause');setStatus('active','ACTIF');
   document.getElementById('t-phase').textContent='Chrono';document.getElementById('t-phase').className='t-phase';
   document.getElementById('ring-fill').className='ring-fill';document.getElementById('ring-fill').style.strokeDashoffset='0';
@@ -2007,15 +2053,78 @@ function togglePause(){
   else{setPauseBtn('⏸ Pause');setStatus('active','ACTIF');soundTick();if(currentMode==='chrono'){chronoStartTs=null;}else{phaseStartTs=null;_phaseResumeOffset=_pausedRemaining;}}
 }
 let _pausedRemaining=0,_phaseResumeOffset=0;
-function stopTimer(){if(rafId){cancelAnimationFrame(rafId);rafId=null;}if(timerInterval){clearInterval(timerInterval);timerInterval=null;}isPaused=false;phaseStartTs=null;chronoStartTs=null;chronoPauseOffset=0;setPauseBtn('⏸ Pause');releaseWakeLock();showConfigScreen();}
+function stopTimer(){
+  if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+  isPaused=false;phaseStartTs=null;chronoPauseOffset=0;setPauseBtn('⏸ Pause');releaseWakeLock();
+  // Chrono → afficher overlay avec temps écoulé + laps
+  if(currentMode==='chrono' && chronoElapsed > 0){
+    const laps = _laps.slice();
+    setStatus('','FIN');soundFinished();
+    const lapInfo = laps.length ? ` · ${laps.length} lap${laps.length>1?'s':''}` : '';
+    document.getElementById('finished-sub').textContent = 'Chrono · ' + fmt(Math.floor(chronoElapsed)) + lapInfo;
+    // Afficher les laps dans l'overlay
+    const lapsEl = document.getElementById('finished-laps');
+    const backBtn = document.getElementById('finished-back-btn');
+    if (lapsEl) {
+      if (laps.length) {
+        lapsEl.style.display = 'flex';
+        lapsEl.innerHTML = laps.map((l, i) => `
+          <div class="lap-item">
+            <span class="lap-num">Lap ${i+1}</span>
+            <span class="lap-split">${fmt(l.split)}</span>
+            <span class="lap-total">${fmt(l.total)}</span>
+          </div>`).join('');
+      } else {
+        lapsEl.style.display = 'none';
+      }
+    }
+    if (backBtn) backBtn.style.display = '';
+    document.getElementById('finished-overlay').classList.add('active');
+    // Ne pas fermer automatiquement — attendre le clic Retour
+  } else {
+    showConfigScreen();
+  }
+  _laps = [];
+  chronoStartTs=null;
+  const lapList = document.getElementById('lap-list');
+  if(lapList){ lapList.style.display='none'; lapList.innerHTML=''; }
+  const lapBtn = document.getElementById('btn-lap');
+  if(lapBtn) lapBtn.style.display='none';
+}
+
+function finishedBack() {
+  document.getElementById('finished-overlay').classList.remove('active');
+  document.getElementById('finished-laps').style.display='none';
+  document.getElementById('finished-back-btn').style.display='none';
+  showConfigScreen();
+}
 function finishTimer(){
   if(rafId){cancelAnimationFrame(rafId);rafId=null;}if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
-  setStatus('','FIN');soundFinished();
+  setStatus('','FIN');soundFinished();releaseWakeLock();
   const overlay=document.getElementById('finished-overlay');
-  document.getElementById('finished-sub').textContent=currentMode==='chrono'?'Temps : '+fmt(chronoElapsed):'Séance complète';
+  const laps = _laps.slice();
+  const lapInfo = laps.length ? ` · ${laps.length} lap${laps.length>1?'s':''}` : '';
+  document.getElementById('finished-sub').textContent = currentMode==='chrono'
+    ? 'Chrono · '+fmt(Math.floor(chronoElapsed))+lapInfo
+    : 'Séance complète';
+  // Laps dans l'overlay
+  const lapsEl = document.getElementById('finished-laps');
+  const backBtn = document.getElementById('finished-back-btn');
+  if (lapsEl) {
+    if (laps.length) {
+      lapsEl.style.display='flex';
+      lapsEl.innerHTML = laps.map((l,i)=>`<div class="lap-item"><span class="lap-num">Lap ${i+1}</span><span class="lap-split">${fmt(l.split)}</span><span class="lap-total">${fmt(l.total)}</span></div>`).join('');
+    } else { lapsEl.style.display='none'; }
+  }
+  if (backBtn) backBtn.style.display='';
   overlay.classList.add('active');
   const b1=document.getElementById('btn-pause'),b2=document.getElementById('btn-pause-p');if(b1)b1.style.display='none';if(b2)b2.style.display='none';
-  setTimeout(()=>{overlay.classList.remove('active');setPauseBtn('⏸ Pause');stopTimer();},3500);
+  _laps=[];
+  const lapList=document.getElementById('lap-list');
+  if(lapList){lapList.style.display='none';lapList.innerHTML='';}
+  const lapBtn=document.getElementById('btn-lap');
+  if(lapBtn)lapBtn.style.display='none';
 }
 
 // ══ WAKE LOCK ══
@@ -2026,7 +2135,7 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 
 // ══ PRESETS ══
 const PRESETS_KEY='sporttimer_presets';
-let presets={interval:[],degressive:[],chrono:[]},_pendingPresetMode=null;
+let presets={interval:[],degressive:[],chrono:[],fortime:[]},_pendingPresetMode=null;
 function loadPresets(){try{const raw=localStorage.getItem(PRESETS_KEY);if(raw)presets={interval:[],degressive:[],chrono:[],...JSON.parse(raw)};}catch(e){}}
 function savePresets(){try{localStorage.setItem(PRESETS_KEY,JSON.stringify(presets));}catch(e){}}
 function openPresetModal(mode){_pendingPresetMode=mode;const input=document.getElementById('preset-name-input');input.value='';document.getElementById('preset-modal-wrap').classList.add('active');setTimeout(()=>input.focus(),100);}
@@ -2036,6 +2145,7 @@ function confirmSavePreset(){
   const mode=_pendingPresetMode;let config;
   if(mode==='interval')config={exo:vals.i_exo,rest:vals.i_rest,reps:vals.i_reps};
   else if(mode==='degressive')config={steps:JSON.parse(JSON.stringify(degSteps))};
+  else if(mode==='fortime')config={rounds:ftVals.ft_rounds,exercises:JSON.parse(JSON.stringify(ftExercises))};
   else config={cap:timecapOn?vals.c_cap:0,timecapOn};
   presets[mode].push({name,config});savePresets();renderPresets(mode);closePresetModal();
 }
@@ -2043,6 +2153,7 @@ function loadPreset(mode,idx){
   const p=presets[mode][idx];if(!p)return;
   if(mode==='interval'){vals.i_exo=p.config.exo;vals.i_rest=p.config.rest;vals.i_reps=p.config.reps;renderAll();updateSummaryInterval();}
   else if(mode==='degressive'){degSteps=JSON.parse(JSON.stringify(p.config.steps));renderDegList();}
+  else if(mode==='fortime'){ftVals.ft_rounds=p.config.rounds;ftExercises=JSON.parse(JSON.stringify(p.config.exercises));renderFTVal('ft_rounds');renderFTList();}
   else{timecapOn=p.config.timecapOn;if(timecapOn)vals.c_cap=p.config.cap;document.getElementById('timecap-toggle').classList.toggle('on',timecapOn);document.getElementById('timecap-field').style.display=timecapOn?'flex':'none';renderAll();}
   saveState();
 }
@@ -2052,7 +2163,7 @@ function renderPresets(mode){
   bar.innerHTML=`<button class="preset-save-btn" onclick="openPresetModal('${mode}')">+ Sauvegarder</button>`;
   presets[mode].forEach((p,i)=>{const chip=document.createElement('div');chip.className='preset-chip';chip.innerHTML=`<button class="preset-load" onclick="loadPreset('${mode}',${i})">${p.name}</button><button class="preset-del" onclick="deletePreset('${mode}',${i})">✕</button>`;bar.appendChild(chip);});
 }
-function renderAllPresets(){['interval','degressive','chrono'].forEach(renderPresets);}
+function renderAllPresets(){['interval','degressive','chrono','fortime'].forEach(renderPresets);}
 document.getElementById('preset-name-input').addEventListener('keydown',e=>{if(e.key==='Enter')confirmSavePreset();if(e.key==='Escape')closePresetModal();});
 
 // ══ PERSISTENCE ══
