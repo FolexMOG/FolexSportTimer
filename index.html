@@ -70,7 +70,7 @@ body[data-skin="military"] {
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; height: 100dvh; background: var(--bg); color: var(--text); font-family: 'Bebas Neue', sans-serif; overflow: hidden; }
-#app { display: flex; flex-direction: column; height: 100dvh; max-width: 420px; margin: 0 auto; position: relative; }
+#app { display: flex; flex-direction: column; height: 100dvh; max-width: 420px; margin: 0 auto; position: relative; overflow: hidden; }
 
 /* ── HEADER ── */
 header { padding: 14px 20px 10px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 8px; }
@@ -136,8 +136,31 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
 .tab.active { background: var(--accent-dim); border-color: rgba(255,255,255,.1); color: var(--accent); }
 
 /* ── SCREENS ── */
-.screen { display: none; flex-direction: column; flex: 1; overflow-y: auto; padding-bottom: 12px; }
-.screen.active { display: flex; }
+.swipe-container {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  min-height: 0;
+  width: 100%;
+}
+.swipe-track {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+}
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;
+  width: 100%;
+  flex-shrink: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 12px;
+  height: 100%;
+}
 .sec-title { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); padding: 12px 20px 8px; }
 
 /* ── CONFIG ── */
@@ -350,8 +373,11 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
     <button class="tab" data-tab="chrono">Chrono</button>
   </div>
 
+  <!-- SWIPE CONTAINER -->
+  <div class="swipe-container" id="swipe-container">
+  <div class="swipe-track" id="swipe-track">
   <!-- INTERVAL -->
-  <div class="screen active" id="screen-interval">
+  <div class="screen" id="screen-interval">
     <div class="sec-title">Configuration</div>
     <div class="config-card">
       <div class="field-row">
@@ -483,6 +509,8 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
       <button class="start-btn" onclick="startChrono()">Lancer</button>
     </div>
   </div>
+  </div><!-- /swipe-track -->
+  </div><!-- /swipe-container -->
 
   <!-- TIMER SCREEN -->
   <div id="timer-screen">
@@ -559,17 +587,17 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
     <div style="display:flex;align-items:center;gap:10px;">
       <div style="display:flex;flex-direction:column;gap:6px;flex:1;">
         <div style="display:flex;align-items:center;gap:8px;">
-          <div id="swatch-bg" onclick="cpickSelect('bg')" style="width:28px;height:28px;border-radius:7px;border:1px solid rgba(255,255,255,.15);flex-shrink:0;cursor:pointer;"></div>
+          <div id="swatch-bg"      style="width:28px;height:28px;border-radius:7px;border:1px solid rgba(255,255,255,.15);flex-shrink:0;"></div>
           <span style="font-size:10px;letter-spacing:1px;color:var(--muted);">FOND</span>
           <span id="hex-bg" style="font-size:10px;font-family:monospace;color:var(--muted);margin-left:auto;"></span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <div id="swatch-accent" onclick="cpickSelect('accent')" style="width:28px;height:28px;border-radius:7px;border:1px solid rgba(255,255,255,.15);flex-shrink:0;cursor:pointer;"></div>
+          <div id="swatch-accent"  style="width:28px;height:28px;border-radius:7px;border:1px solid rgba(255,255,255,.15);flex-shrink:0;"></div>
           <span style="font-size:10px;letter-spacing:1px;color:var(--muted);">ACCENT 1</span>
           <span id="hex-accent" style="font-size:10px;font-family:monospace;color:var(--muted);margin-left:auto;"></span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <div id="swatch-accent2" onclick="cpickSelect('accent2')" style="width:28px;height:28px;border-radius:7px;border:1px solid rgba(255,255,255,.15);flex-shrink:0;cursor:pointer;"></div>
+          <div id="swatch-accent2" style="width:28px;height:28px;border-radius:7px;border:1px solid rgba(255,255,255,.15);flex-shrink:0;"></div>
           <span style="font-size:10px;letter-spacing:1px;color:var(--muted);">ACCENT 2</span>
           <span id="hex-accent2" style="font-size:10px;font-family:monospace;color:var(--muted);margin-left:auto;"></span>
         </div>
@@ -796,12 +824,6 @@ function cpickSelect(target) {
   cpick.target = target;
   document.querySelectorAll('.cpick-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('cpick-tab-'+target).classList.add('active');
-  // Highlight active swatch
-  ['bg','accent','accent2'].forEach(k => {
-    const s = document.getElementById('swatch-'+k);
-    if (s) s.style.outline = k === target ? '2px solid var(--accent)' : 'none';
-    if (s) s.style.outlineOffset = '2px';
-  });
   cpickDrawSV();
   cpickUpdateCursors();
 }
@@ -1022,13 +1044,69 @@ function updateSummaryInterval() { const e=vals.i_exo*vals.i_reps,r=vals.i_rest*
 function updateSummaryDegressive() { if(!degSteps.length){document.getElementById('sum-d-exo').textContent='—';document.getElementById('sum-d-total').textContent='—';return;} const e=degSteps.reduce((a,s)=>a+s.exo,0),r=degSteps.reduce((a,s)=>a+s.rest,0); document.getElementById('sum-d-exo').textContent=fmt(e); document.getElementById('sum-d-total').textContent=fmt(e+r); }
 
 // ══ TABS ══
+const MODES = ['interval','degressive','chrono'];
+let currentTabIdx = 0;
+
+function switchTab(idx, animate=true) {
+  if (idx < 0 || idx >= MODES.length) return;
+  currentTabIdx = idx;
+  const track = document.getElementById('swipe-track');
+  track.style.transition = animate ? 'transform .3s cubic-bezier(.4,0,.2,1)' : 'none';
+  const W = document.getElementById('swipe-container').offsetWidth;
+  track.style.transform = 'translateX(-' + (idx * W) + 'px)';
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.querySelector('.tab[data-tab="'+MODES[idx]+'"]').classList.add('active');
+}
+
 document.querySelectorAll('.tab').forEach(btn => {
   btn.addEventListener('click', () => {
-    if(document.getElementById('timer-screen').classList.contains('active'))return;
-    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
-    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById('screen-'+btn.dataset.tab).classList.add('active');
+    if (document.getElementById('timer-screen').classList.contains('active')) return;
+    const idx = MODES.indexOf(btn.dataset.tab);
+    if (idx >= 0) switchTab(idx);
   });
 });
+
+// Swipe detection
+(function() {
+  const container = document.getElementById('swipe-container');
+  let startX = 0, startY = 0, startIdx = 0, isDragging = false, isHoriz = null;
+
+  container.addEventListener('touchstart', e => {
+    if (document.getElementById('timer-screen').classList.contains('active')) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    startIdx = currentTabIdx;
+    isDragging = true;
+    isHoriz = null;
+    document.getElementById('swipe-track').style.transition = 'none';
+  }, { passive: true });
+
+  container.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    const dx = e.touches[0].clientX - startX;
+    const dy = e.touches[0].clientY - startY;
+    if (isHoriz === null) {
+      isHoriz = Math.abs(dx) > Math.abs(dy);
+    }
+    if (!isHoriz) return; // scroll vertical — ne pas interférer
+    e.preventDefault();
+    const W = container.offsetWidth;
+    const basePx = startIdx * W;
+    const movePx = -dx;
+    const clampedPx = Math.max(0, Math.min(W * 2, basePx + movePx));
+    document.getElementById('swipe-track').style.transform = 'translateX(-' + clampedPx + 'px)';
+  }, { passive: false });
+
+  container.addEventListener('touchend', e => {
+    if (!isDragging || !isHoriz) { isDragging = false; return; }
+    isDragging = false;
+    const dx = e.changedTouches[0].clientX - startX;
+    const threshold = container.offsetWidth * 0.25;
+    if (dx < -threshold && startIdx < MODES.length - 1) switchTab(startIdx + 1);
+    else if (dx > threshold && startIdx > 0) switchTab(startIdx - 1);
+    else switchTab(startIdx); // snap back
+  });
+})();
 
 function toggleTimecap() { timecapOn=!timecapOn; document.getElementById('timecap-toggle').classList.toggle('on',timecapOn); document.getElementById('timecap-field').style.display=timecapOn?'flex':'none'; }
 
@@ -1201,7 +1279,7 @@ function runCountdown(cb){
 }
 
 function showTimerScreen(){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('timer-screen').classList.add('active');document.getElementById('tab-bar').style.display='none';}
-function showConfigScreen(){document.getElementById('timer-screen').classList.remove('active');document.getElementById('tab-bar').style.display='flex';const active=document.querySelector('.tab.active').dataset.tab;document.getElementById('screen-'+active).classList.add('active');setStatus('','PRÊT');}
+function showConfigScreen(){document.getElementById('timer-screen').classList.remove('active');document.getElementById('tab-bar').style.display='flex';switchTab(currentTabIdx, false);setStatus('','PRÊT');}
 
 // ══ BUILD PHASES ══
 function buildIntervalPhases(){const arr=[];for(let r=0;r<vals.i_reps;r++){arr.push({type:'exo',dur:vals.i_exo,serie:r+1,total:vals.i_reps});if(r<vals.i_reps-1&&vals.i_rest>0)arr.push({type:'rest',dur:vals.i_rest,serie:r+1,total:vals.i_reps});}return arr;}
