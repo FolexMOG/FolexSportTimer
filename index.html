@@ -540,6 +540,15 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
       </div>
     </div>
     <div class="bottom-bar">
+      <div class="countdown-row">
+        <button class="toggle on" id="countdown-toggle-fortime" onclick="toggleCountdown('fortime')"></button>
+        <span class="countdown-lbl">Décompte</span>
+        <div class="field-ctrl" style="margin-left:auto">
+          <button class="spin-btn" onclick="adj('cd_dur',-5)" style="width:28px;height:28px;font-size:16px">−</button>
+          <input class="val-display cd-dur-input" type="text" inputmode="numeric" maxlength="3" onblur="inputCdDur(this)" onkeydown="if(event.key==='Enter')this.blur()">
+          <button class="spin-btn" onclick="adj('cd_dur',5)" style="width:28px;height:28px;font-size:16px">+</button>
+        </div>
+      </div>
       <button class="start-btn" onclick="startForTime()">Lancer</button>
     </div>
   </div>
@@ -1120,7 +1129,7 @@ function applyCustomSkin() {
 const vals = { i_exo:180, i_rest:60, i_reps:5, d_exo:120, d_rest:60, c_cap:1200, cd_dur:10 };
 const limits = { i_exo:[10,3600], i_rest:[0,600], i_reps:[1,50], d_exo:[10,3600], d_rest:[0,600], c_cap:[60,7200], cd_dur:[3,60] };
 let degSteps = [], timecapOn = false, timerInterval = null, isPaused = false, currentMode = null;
-const countdownOn = { interval: true, degressive: true, chrono: true };
+const countdownOn = { interval: true, degressive: true, chrono: true, fortime: true };
 let phases = [], phaseIdx = 0, phaseRemaining = 0, phaseDuration = 0;
 let chronoElapsed = 0, chronoCap = 0;
 const CIRC = 816.8;
@@ -1762,6 +1771,11 @@ function startForTime() {
   if (!ftExercises.length) { alert('Ajoutez au moins un exercice !'); return; }
   ftState = { round:1, exIdx:0, startTs:null, elapsed:0, paused:false, pauseOffset:0, rafId:null };
   acquireWakeLock();
+  if (countdownOn.fortime) {
+    showFTTimerScreen();
+    runCountdown(() => { renderFTActiveList(); renderFTCurrentEx(); ftState.startTs=performance.now(); ftState.rafId=requestAnimationFrame(ftRaf); });
+    return;
+  }
   showFTTimerScreen();
   renderFTActiveList();
   renderFTCurrentEx();
@@ -2210,7 +2224,7 @@ try {
     const cd = localStorage.getItem('sporttimer_countdown');
     if (cd) {
       const saved = JSON.parse(cd);
-      ['interval','degressive','chrono'].forEach(m => {
+      ['interval','degressive','chrono','fortime'].forEach(m => {
         if (saved[m] === false) {
           countdownOn[m] = false;
           const el = document.getElementById('countdown-toggle-'+m);
