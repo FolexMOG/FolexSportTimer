@@ -178,7 +178,7 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
 
 /* ── DEGRESSIVE ── */
 .deg-add-card { margin: 0 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
-.deg-add-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.deg-add-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; }
 .deg-add-sep { font-size: 9px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; flex-shrink: 0; }
 .add-btn { width: 100%; padding: 10px; background: var(--accent-dim); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; color: var(--accent); font-family: 'Bebas Neue', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all .12s; }
 .add-btn:active { background: var(--accent); color: var(--bg); }
@@ -432,7 +432,7 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
 
   <!-- DÉGRESSIF -->
   <div class="screen" id="screen-degressive">
-    <div class="sec-title">Ajouter un palier</div>
+    <div class="sec-title">Ajouter un palier <span style="color:var(--muted2)">(Exo / Pause)</span></div>
     <div class="deg-add-card">
       <div class="deg-add-row">
         <button class="spin-btn" onclick="adj('d_exo',-10)">−</button>
@@ -631,6 +631,23 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
 
 <!-- IMPORT WOD MODAL -->
 <input type="file" id="import-wod-file" accept=".json" style="display:none" onchange="handleImportWOD(this)">
+
+<!-- EXPORT WOD MODAL -->
+<div class="preset-modal-wrap" id="export-wod-modal">
+  <div class="preset-modal" style="width:300px;gap:14px;">
+    <div class="preset-modal-title">Exporter le WOD</div>
+    <div style="font-size:11px;color:var(--muted);letter-spacing:1px;">Donne un nom à ce WOD</div>
+    <input type="text" id="export-wod-name" maxlength="32" placeholder="Ex: Legs Day, HIIT Cardio..."
+      style="background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--text);outline:none;caret-color:var(--accent);width:100%;"
+      onkeydown="if(event.key==='Enter')confirmExportWOD();">
+    <div class="preset-modal-btns">
+      <button onclick="closeExportWOD()">Annuler</button>
+      <button class="pm-confirm" onclick="confirmExportWOD()">Télécharger</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT WOD MODAL -->
 <div class="preset-modal-wrap" id="import-wod-modal">
   <div class="preset-modal" style="width:300px;gap:14px;">
     <div class="preset-modal-title">Importer un WOD</div>
@@ -1153,9 +1170,19 @@ function resetDegSteps() { degSteps = []; renderDegList(); saveState(); }
 // ── EXPORT / IMPORT WOD ──
 function exportWOD() {
   if (!degSteps.length) { alert('Aucun palier à exporter.'); return; }
+  document.getElementById('export-wod-name').value = '';
+  document.getElementById('export-wod-modal').classList.add('active');
+  setTimeout(() => document.getElementById('export-wod-name').focus(), 100);
+}
+function closeExportWOD() {
+  document.getElementById('export-wod-modal').classList.remove('active');
+}
+function confirmExportWOD() {
+  const name = document.getElementById('export-wod-name').value.trim() || 'WOD';
   const wod = {
     app: 'SportTimer',
     v: 1,
+    name: name,
     date: new Date().toISOString().slice(0,10),
     steps: degSteps.map(s => ({ exo: s.exo, rest: s.rest, name: s.name || '' }))
   };
@@ -1163,11 +1190,13 @@ function exportWOD() {
   const blob = new Blob([json], { type: 'application/json' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  const date = wod.date.replace(/-/g,'');
+  const safeName = name.replace(/[^a-zA-Z0-9À-ÿ\s_-]/g, '').trim().replace(/\s+/g, '-');
   a.href     = url;
-  a.download = `WOD-${date}.json`;
+  a.download = `${safeName}.json`;
   a.click();
   URL.revokeObjectURL(url);
+  closeExportWOD();
+  showWodToast(`"${name}" exporté ✓`);
 }
 
 function openImportWOD() {
