@@ -1263,23 +1263,70 @@ function setupDragDrop(){
 function setStatus(state,label){const pill=document.getElementById('status-pill');pill.className='status-pill'+(state?' '+state:'');document.getElementById('status-text').textContent=label;}
 
 // ══ COUNTDOWN ══
+let _cdInterval = null; // référence globale pour pouvoir l'annuler
+
 function runCountdown(cb){
   const overlay=document.getElementById('countdown-overlay'),numEl=document.getElementById('cd-number'),lblEl=document.getElementById('cd-label');
   overlay.classList.add('active');setStatus('countdown','DÉPART');
   let n=vals.cd_dur;
   const beepFrom = Math.min(5, n);
   numEl.className='cd-number';numEl.textContent=n;lblEl.textContent='Prépare-toi';
-  const cd=setInterval(()=>{
+
+  // Pousser un état history pour intercepter le back Android
+  history.pushState({ sport: 'countdown' }, '');
+
+  _cdInterval = setInterval(()=>{
     n--;
-    if(n===0){clearInterval(cd);numEl.className='cd-number go-text';numEl.textContent='GO';lblEl.textContent='';soundGo();setTimeout(()=>{overlay.classList.remove('active');cb();},800);return;}
+    if(n===0){clearInterval(_cdInterval);_cdInterval=null;numEl.className='cd-number go-text';numEl.textContent='GO';lblEl.textContent='';soundGo();setTimeout(()=>{overlay.classList.remove('active');cb();},800);return;}
     numEl.style.animation='none';void numEl.offsetWidth;numEl.style.animation='cdPop .25s cubic-bezier(.2,1.6,.4,1)';
     if(n<=beepFrom){numEl.className='cd-number beeping';lblEl.textContent='';soundTick();}else{numEl.className='cd-number';lblEl.textContent='Prépare-toi';}
     numEl.textContent=n;
   },1000);
 }
 
-function showTimerScreen(){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('timer-screen').classList.add('active');document.getElementById('tab-bar').style.display='none';}
-function showConfigScreen(){document.getElementById('timer-screen').classList.remove('active');document.getElementById('tab-bar').style.display='flex';switchTab(currentTabIdx, false);setStatus('','PRÊT');}
+function cancelCountdown() {
+  if (_cdInterval) { clearInterval(_cdInterval); _cdInterval = null; }
+  document.getElementById('countdown-overlay').classList.remove('active');
+  releaseWakeLock();
+  setStatus('', 'PRÊT');
+}
+
+// Interception du bouton back Android/browser
+window.addEventListener('popstate', e => {
+  const overlay = document.getElementById('countdown-overlay');
+  const timerActive = document.getElementById('timer-screen').classList.contains('active');
+
+  if (overlay.classList.contains('active')) {
+    // Countdown en cours → annuler et rester sur la config
+    cancelCountdown();
+    // Repousser un état pour ne pas quitter l'app au prochain back
+    history.pushState({ sport: 'app' }, '');
+    return;
+  }
+  if (timerActive) {
+    // Timer actif → stopper et revenir à la config
+    stopTimer();
+    history.pushState({ sport: 'app' }, '');
+    return;
+  }
+  // Sinon laisser passer (quitter l'app normalement)
+});
+
+// Pousser un état initial au chargement pour avoir un "back" à intercepter
+history.pushState({ sport: 'app' }, '');
+
+function showTimerScreen(){
+  document.getElementById('swipe-container').style.display='none';
+  document.getElementById('timer-screen').classList.add('active');
+  document.getElementById('tab-bar').style.display='none';
+}
+function showConfigScreen(){
+  document.getElementById('timer-screen').classList.remove('active');
+  document.getElementById('swipe-container').style.display='';
+  document.getElementById('tab-bar').style.display='flex';
+  switchTab(currentTabIdx, false);
+  setStatus('','PRÊT');
+}
 
 // ══ BUILD PHASES ══
 function buildIntervalPhases(){const arr=[];for(let r=0;r<vals.i_reps;r++){arr.push({type:'exo',dur:vals.i_exo,serie:r+1,total:vals.i_reps});if(r<vals.i_reps-1&&vals.i_rest>0)arr.push({type:'rest',dur:vals.i_rest,serie:r+1,total:vals.i_reps});}return arr;}
