@@ -449,10 +449,15 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
         <input class="val-display" id="disp-d_rest" type="text" inputmode="numeric" maxlength="5" style="font-size:15px;width:52px" onblur="inputTime('d_rest',this)" onkeydown="if(event.key==='Enter')this.blur()">
         <button class="spin-btn" onclick="adj('d_rest',5)">+</button>
       </div>
-      <div style="margin-bottom:12px;">
-        <input type="text" id="disp-d_name" maxlength="24" placeholder="Nom de l'exercice (optionnel)"
+      <div style="margin-bottom:6px;">
+        <input type="text" id="disp-d_name" maxlength="40" placeholder="Nom de l'exercice (optionnel)"
           style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:var(--text);outline:none;caret-color:var(--accent);"
-          onkeydown="if(event.key==='Enter')this.blur()">
+          onkeydown="if(event.key==='Enter')document.getElementById('disp-d_desc').focus()">
+      </div>
+      <div style="margin-bottom:10px;">
+        <input type="text" id="disp-d_desc" maxlength="60" placeholder="Description optionnelle (technique, charge...)"
+          style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:7px 12px;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--muted);outline:none;caret-color:var(--accent);"
+          onkeydown="if(event.key==='Enter')addDegStep()">
       </div>
       <button class="add-btn" onclick="addDegStep()">+ Ajouter ce palier</button>
       <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">
@@ -631,6 +636,7 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
       <div class="ring-center">
         <div class="ring-time" id="ring-time">00:00</div>
         <div class="ring-sub" id="ring-sub">— exercice —</div>
+        <div id="ring-desc" style="font-size:10px;color:var(--muted2);letter-spacing:.5px;margin-top:3px;font-family:'DM Sans',sans-serif;"></div>
       </div>
     </div>
     <div class="stats-row" id="stats-row">
@@ -1292,9 +1298,12 @@ function toggleCountdown(mode) {
 // ══ DEG STEPS ══
 function addDegStep() {
   const nameEl = document.getElementById('disp-d_name');
+  const descEl = document.getElementById('disp-d_desc');
   const name = nameEl ? nameEl.value.trim() : '';
-  degSteps.push({exo:vals.d_exo, rest:vals.d_rest, name});
+  const desc = descEl ? descEl.value.trim() : '';
+  degSteps.push({exo:vals.d_exo, rest:vals.d_rest, name, desc});
   if (nameEl) nameEl.value = '';
+  if (descEl) descEl.value = '';
   renderDegList(); saveState();
 }
 function removeDeg(i) { degSteps.splice(i,1); renderDegList(); saveState(); }
@@ -1312,7 +1321,7 @@ function buildWODData(name) {
   return {
     app: 'SportTimer', v: 1, name,
     date: new Date().toISOString().slice(0,10),
-    steps: degSteps.map(s => ({ exo: s.exo, rest: s.rest, name: s.name || '' }))
+    steps: degSteps.map(s => ({ exo: s.exo, rest: s.rest, name: s.name || '', desc: s.desc || '' }))
   };
 }
 function confirmExportDownload() {
@@ -1352,7 +1361,7 @@ function handleImportWOD(input) {
       const data = JSON.parse(e.target.result);
       if (!data.steps || !Array.isArray(data.steps)) throw new Error();
       const imported = data.steps
-        .map(s => ({ exo: +s.exo, rest: +s.rest, name: s.name || '' }))
+        .map(s => ({ exo: +s.exo, rest: +s.rest, name: s.name || '', desc: s.desc || '' }))
         .filter(s => s.exo > 0);
       if (!imported.length) throw new Error();
       degSteps = imported;
@@ -1386,11 +1395,14 @@ function renderDegList() {
     <div class="deg-item" data-idx="${i}" draggable="true">
       <div class="deg-handle" title="Glisser pour réordonner">⠿</div>
       <div class="deg-num">#${i+1}</div>
-      <div class="deg-times">
-        <span>${fmt(s.exo)}</span>
-        <span style="color:var(--muted2);margin:0 3px">/</span>
-        <span style="color:var(--muted)">${fmt(s.rest)}</span>
-        ${s.name ? `<span class="deg-name">${s.name}</span>` : ''}
+      <div style="flex:1;min-width:0;">
+        <div class="deg-times">
+          <span>${fmt(s.exo)}</span>
+          <span style="color:var(--muted2);margin:0 3px">/</span>
+          <span style="color:var(--muted)">${fmt(s.rest)}</span>
+          ${s.name ? `<span class="deg-name">${s.name}</span>` : ''}
+          ${s.desc ? `<span style="font-size:10px;color:var(--muted2);font-family:'Bebas Neue',sans-serif;letter-spacing:1px;"> · ${s.desc}</span>` : ''}
+        </div>
       </div>
       <div class="deg-move">
         <button class="deg-mv-btn" onclick="moveDeg(${i},-1)" ${i===0?'style="opacity:.2;pointer-events:none"':''}>▲</button>
@@ -1576,8 +1588,7 @@ function renderFTList() {
         <div class="deg-handle">⠿</div>
         <div class="deg-num">#${i+1}</div>
         <div style="flex:1;min-width:0;">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--text);letter-spacing:1px;">${ex.name}</div>
-          ${ex.desc ? `<div style="font-size:9px;color:var(--muted);margin-top:1px;">${ex.desc}</div>` : ''}
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--text);letter-spacing:1px;">${ex.name}${ex.desc ? `<span style="font-size:10px;color:var(--muted2);font-family:'Bebas Neue',sans-serif;letter-spacing:1px;"> · ${ex.desc}</span>` : ''}</div>
         </div>
         <div class="deg-move">
           <button class="deg-mv-btn" onclick="moveFT(${i},-1)" ${i===0?'style="opacity:.2;pointer-events:none"':''}>▲</button>
@@ -1944,7 +1955,7 @@ function showConfigScreen(){
 
 // ══ BUILD PHASES ══
 function buildIntervalPhases(){const arr=[];for(let r=0;r<vals.i_reps;r++){arr.push({type:'exo',dur:vals.i_exo,serie:r+1,total:vals.i_reps});if(r<vals.i_reps-1&&vals.i_rest>0)arr.push({type:'rest',dur:vals.i_rest,serie:r+1,total:vals.i_reps});}return arr;}
-function buildDegressivePhases(){const arr=[];degSteps.forEach((s,i)=>{arr.push({type:'exo',dur:s.exo,serie:i+1,total:degSteps.length,name:s.name||''});if(i<degSteps.length-1&&s.rest>0)arr.push({type:'rest',dur:s.rest,serie:i+1,total:degSteps.length,nextName:degSteps[i+1]?degSteps[i+1].name||'':'',name:s.name||''});});return arr;}
+function buildDegressivePhases(){const arr=[];degSteps.forEach((s,i)=>{arr.push({type:'exo',dur:s.exo,serie:i+1,total:degSteps.length,name:s.name||'',desc:s.desc||''});if(i<degSteps.length-1&&s.rest>0)arr.push({type:'rest',dur:s.rest,serie:i+1,total:degSteps.length,nextName:degSteps[i+1]?degSteps[i+1].name||'':'',nextDesc:degSteps[i+1]?degSteps[i+1].desc||'':'',name:s.name||'',desc:s.desc||''});});return arr;}
 
 function startInterval(){phases=buildIntervalPhases();if(!phases.length)return;currentMode='interval';document.getElementById('stats-row').style.display='flex';document.getElementById('chrono-info').style.display='none';acquireWakeLock();if(countdownOn.interval){runCountdown(()=>{showTimerScreen();launchPhases();});}else{showTimerScreen();launchPhases();}}
 function startDegressive(){if(!degSteps.length){alert('Ajoutez au moins un palier !');return;}phases=buildDegressivePhases();currentMode='degressive';document.getElementById('stats-row').style.display='flex';document.getElementById('chrono-info').style.display='none';acquireWakeLock();if(countdownOn.degressive){runCountdown(()=>{showTimerScreen();launchPhases();});}else{showTimerScreen();launchPhases();}}
@@ -1984,6 +1995,9 @@ function updatePhaseUI(remaining){
   }
   phaseEl.className='t-phase'+(isRest?' rest':'');
   const timeEl=document.getElementById('ring-time');timeEl.textContent=fmt(Math.ceil(remaining));timeEl.className='ring-time'+(isRest?' rest':'')+(remaining<=5&&!isRest?' urgent':'');
+  // Description de l'exercice courant
+  const descEl = document.getElementById('ring-desc');
+  if (descEl) descEl.textContent = (!isRest && p.desc) ? p.desc : '';
   // Durant une pause en mode dégressif : afficher le nom du prochain exercice
   let subText = '';
   if (nextP) {
