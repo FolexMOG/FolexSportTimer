@@ -449,11 +449,10 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
           onkeydown="if(event.key==='Enter')this.blur()">
       </div>
       <button class="add-btn" onclick="addDegStep()">+ Ajouter ce palier</button>
-      <button class="add-btn" onclick="resetDegSteps()" style="margin-top:8px;background:var(--red-dim);border-color:rgba(248,113,113,.2);color:var(--red);">✕ Réinitialiser les paliers</button>
-      <div style="display:flex;gap:8px;margin-top:8px;">
-        <button class="add-btn" onclick="openShareWOD()" style="flex:1;">⬆ Partager</button>
-        <button class="add-btn" onclick="openExportWOD()" style="flex:1;">↓ Exporter</button>
-        <button class="add-btn" onclick="openImportWOD()" style="flex:1;">↑ Importer</button>
+      <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">
+        <button class="add-btn" onclick="resetDegSteps()" style="flex:1;background:var(--red-dim);border-color:rgba(248,113,113,.2);color:var(--red);">✕ Réinitialiser</button>
+        <button onclick="openExportWOD()" title="Exporter WOD" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬆</button>
+        <button onclick="openImportWOD()" title="Importer WOD" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬇</button>
       </div>
     </div>
     <div class="sec-title" style="margin-top:16px">Paliers programmés</div>
@@ -632,21 +631,6 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
 
 <!-- IMPORT WOD MODAL -->
 <input type="file" id="import-wod-file" accept=".json" style="display:none" onchange="handleImportWOD(this)">
-
-<!-- SHARE WOD MODAL -->
-<div class="preset-modal-wrap" id="export-wod-modal">
-  <div class="preset-modal" style="width:300px;gap:14px;">
-    <div class="preset-modal-title">Partager le WOD</div>
-    <div style="font-size:11px;color:var(--muted);letter-spacing:1px;">Donne un nom à ce WOD</div>
-    <input type="text" id="export-wod-name" maxlength="32" placeholder="Ex: Legs Day, HIIT Cardio..."
-      style="background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--text);outline:none;caret-color:var(--accent);width:100%;"
-      onkeydown="if(event.key==='Enter')confirmExportWOD();">
-    <div class="preset-modal-btns">
-      <button onclick="closeExportWOD()">Annuler</button>
-      <button class="pm-confirm" onclick="confirmExportWOD()">⬆ Partager</button>
-    </div>
-  </div>
-</div>
 
 <!-- EXPORT WOD MODAL -->
 <div class="preset-modal-wrap" id="dl-wod-modal">
@@ -1184,20 +1168,11 @@ function removeDeg(i) { degSteps.splice(i,1); renderDegList(); saveState(); }
 function resetDegSteps() { degSteps = []; renderDegList(); saveState(); }
 
 // ── EXPORT / IMPORT WOD ──
-function openShareWOD() {
-  if (!degSteps.length) { alert('Aucun palier à partager.'); return; }
-  document.getElementById('export-wod-name').value = '';
-  document.getElementById('export-wod-modal').classList.add('active');
-  setTimeout(() => document.getElementById('export-wod-name').focus(), 100);
-}
 function openExportWOD() {
   if (!degSteps.length) { alert('Aucun palier à exporter.'); return; }
   document.getElementById('dl-wod-name').value = '';
   document.getElementById('dl-wod-modal').classList.add('active');
   setTimeout(() => document.getElementById('dl-wod-name').focus(), 100);
-}
-function closeExportWOD() {
-  document.getElementById('export-wod-modal').classList.remove('active');
 }
 function buildWODData(name) {
   return {
@@ -1205,31 +1180,6 @@ function buildWODData(name) {
     date: new Date().toISOString().slice(0,10),
     steps: degSteps.map(s => ({ exo: s.exo, rest: s.rest, name: s.name || '' }))
   };
-}
-function confirmExportWOD() {
-  const name = document.getElementById('export-wod-name').value.trim() || 'WOD';
-  const json = JSON.stringify(buildWODData(name), null, 2);
-  const safeName = name.replace(/[^a-zA-Z0-9À-ÿ\s_-]/g,'').trim().replace(/\s+/g,'-') || 'WOD';
-  const blob = new Blob([json], { type: 'application/json' });
-  const file = new File([blob], `${safeName}.json`, { type: 'application/json' });
-
-  // Vérifier si le partage de fichiers est réellement supporté
-  const canShareFiles = navigator.share && navigator.canShare && navigator.canShare({ files: [file] });
-
-  if (canShareFiles) {
-    navigator.share({ title: name, text: 'WOD Sport Timer', files: [file] })
-      .then(() => closeExportWOD())
-      .catch(e => { if (e.name !== 'AbortError') { closeExportWOD(); downloadWOD(blob, safeName, name); } });
-  } else {
-    // Fallback : téléchargement + partage texte si dispo
-    closeExportWOD();
-    downloadWOD(blob, safeName, name);
-    if (navigator.share) {
-      setTimeout(() => {
-        navigator.share({ title: name, text: `WOD Sport Timer — ${name}\n\nImporte ce fichier dans l'app.` }).catch(()=>{});
-      }, 500);
-    }
-  }
 }
 function confirmExportDownload() {
   const name = document.getElementById('dl-wod-name').value.trim() || 'WOD';
