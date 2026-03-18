@@ -1188,15 +1188,29 @@ function confirmExportWOD() {
   };
   const json = JSON.stringify(wod, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
   const safeName = name.replace(/[^a-zA-Z0-9À-ÿ\s_-]/g, '').trim().replace(/\s+/g, '-');
-  a.href     = url;
-  a.download = `${safeName}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+  const file = new File([blob], `${safeName}.json`, { type: 'application/json' });
   closeExportWOD();
-  showWodToast(`"${name}" exporté ✓`);
+
+  // Web Share API — partage natif (WhatsApp, iMessage, Mail, AirDrop...)
+  if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+    navigator.share({
+      title: name,
+      text: `WOD Sport Timer : ${name}`,
+      files: [file]
+    }).catch(() => {
+      // Annulé par l'utilisateur — pas d'erreur
+    });
+  } else {
+    // Fallback : téléchargement direct
+    const url = URL.createObjectURL(blob);
+    const a   = document.createElement('a');
+    a.href     = url;
+    a.download = `${safeName}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showWodToast(`"${name}" exporté ✓`);
+  }
 }
 
 function openImportWOD() {
