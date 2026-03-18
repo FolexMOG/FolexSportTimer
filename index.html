@@ -1212,9 +1212,24 @@ function confirmExportWOD() {
   const safeName = name.replace(/[^a-zA-Z0-9À-ÿ\s_-]/g,'').trim().replace(/\s+/g,'-') || 'WOD';
   const blob = new Blob([json], { type: 'application/json' });
   const file = new File([blob], `${safeName}.json`, { type: 'application/json' });
-  navigator.share({ title: name, text: 'WOD Sport Timer', files: [file] })
-    .then(() => closeExportWOD())
-    .catch(e => { if (e.name !== 'AbortError') alert('Le partage de fichiers n\'est pas supporté sur ce navigateur.'); });
+
+  // Vérifier si le partage de fichiers est réellement supporté
+  const canShareFiles = navigator.share && navigator.canShare && navigator.canShare({ files: [file] });
+
+  if (canShareFiles) {
+    navigator.share({ title: name, text: 'WOD Sport Timer', files: [file] })
+      .then(() => closeExportWOD())
+      .catch(e => { if (e.name !== 'AbortError') { closeExportWOD(); downloadWOD(blob, safeName, name); } });
+  } else {
+    // Fallback : téléchargement + partage texte si dispo
+    closeExportWOD();
+    downloadWOD(blob, safeName, name);
+    if (navigator.share) {
+      setTimeout(() => {
+        navigator.share({ title: name, text: `WOD Sport Timer — ${name}\n\nImporte ce fichier dans l'app.` }).catch(()=>{});
+      }, 500);
+    }
+  }
 }
 function confirmExportDownload() {
   const name = document.getElementById('dl-wod-name').value.trim() || 'WOD';
