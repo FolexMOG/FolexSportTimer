@@ -1177,7 +1177,7 @@ function exportWOD() {
 function closeExportWOD() {
   document.getElementById('export-wod-modal').classList.remove('active');
 }
-function confirmExportWOD() {
+async function confirmExportWOD() {
   const name = document.getElementById('export-wod-name').value.trim() || 'WOD';
   const wod = {
     app: 'SportTimer',
@@ -1193,21 +1193,28 @@ function confirmExportWOD() {
   closeExportWOD();
 
   // Web Share API — partage natif (WhatsApp, iMessage, Mail, AirDrop...)
-  if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-    navigator.share({
-      title: name,
-      text: `WOD Sport Timer : ${name}`,
-      files: [file]
-    }).catch(() => {
-      // Annulé par l'utilisateur — pas d'erreur
-    });
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: name,
+        text: `WOD Sport Timer : ${name}`,
+        files: [file]
+      });
+    } catch(e) {
+      // Annulé ou fichiers non supportés → fallback téléchargement
+      if (e.name !== 'AbortError') {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `${safeName}.json`; a.click();
+        URL.revokeObjectURL(url);
+        showWodToast(`"${name}" exporté ✓`);
+      }
+    }
   } else {
-    // Fallback : téléchargement direct
+    // Pas de Web Share API → téléchargement direct
     const url = URL.createObjectURL(blob);
     const a   = document.createElement('a');
-    a.href     = url;
-    a.download = `${safeName}.json`;
-    a.click();
+    a.href = url; a.download = `${safeName}.json`; a.click();
     URL.revokeObjectURL(url);
     showWodToast(`"${name}" exporté ✓`);
   }
