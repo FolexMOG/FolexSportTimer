@@ -6,7 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="screen-orientation" content="portrait">
-<meta name="theme-color" content="#111214">
+<meta name="theme-color" content="#111214" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#111214" id="meta-theme-color">
 <title>WOD Clock</title>
 <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png">
 <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png">
@@ -69,6 +70,7 @@ body[data-skin="military"] {
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { background: var(--bg); }
 html, body { height: 100%; height: 100dvh; background: var(--bg); color: var(--text); font-family: 'Bebas Neue', sans-serif; overflow: hidden; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
 #app { display: flex; flex-direction: column; height: 100dvh; max-width: 420px; margin: 0 auto; position: relative; overflow: hidden; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
 
@@ -855,6 +857,21 @@ document.addEventListener('click', e => {
     document.getElementById('skin-dropdown').classList.remove('open');
 });
 
+function updateThemeColor(color) {
+  const meta = document.getElementById('meta-theme-color');
+  if (meta) meta.setAttribute('content', color);
+  // Essayer aussi via l'API navigator si disponible
+  try {
+    const metas = document.querySelectorAll('meta[name="theme-color"]');
+    metas.forEach(m => m.setAttribute('content', color));
+  } catch(e) {}
+}
+
+function getSkinBg(name) {
+  const map = { default:'#111214', carbon:'#0e0e10', ice:'#080d14', white:'#f4f4f5', military:'#0d0f0a' };
+  return map[name] || '#111214';
+}
+
 function setSkin(name) {
   // Nettoyer tout résidu du thème custom
   const existing = document.getElementById('custom-skin-style');
@@ -864,6 +881,7 @@ function setSkin(name) {
   document.body.style.cssText = '';
 
   document.body.setAttribute('data-skin', name);
+  document.documentElement.style.background = getSkinBg(name);
   const s = SKINS[name] || SKINS.default;
   document.getElementById('grad-stop1').setAttribute('stop-color', s.start);
   document.getElementById('grad-stop2').setAttribute('stop-color', s.end);
@@ -873,6 +891,7 @@ function setSkin(name) {
   document.querySelectorAll('.skin-option').forEach(d => d.classList.toggle('active', d.dataset.s === name));
   document.getElementById('skin-dropdown').classList.remove('open');
   try { localStorage.setItem('sporttimer_skin', name); } catch(e){}
+  updateThemeColor(getSkinBg(name));
 }
 function loadSkin() {
   try {
@@ -896,6 +915,8 @@ function loadSkin() {
     }
     setSkin(s);
   } catch(e) { setSkin('default'); }
+  // Sync html bg pour couvrir les barres système
+  document.documentElement.style.background = getSkinBg(document.body.getAttribute('data-skin') || 'default');
 }
 
 // ── Custom skin ──
@@ -1133,6 +1154,8 @@ function applyCustomVars(bg, accent, accent2) {
   Object.entries(vars).forEach(([k,v]) => document.body.style.setProperty(k, v));
   document.body.style.background = bg;
   document.body.style.color = text;
+  document.documentElement.style.background = bg; // couvre la status bar
+  updateThemeColor(bg); // met à jour la barre système Android
 
   // Ring gradient
   document.getElementById('grad-stop1').setAttribute('stop-color', accent);
