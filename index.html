@@ -629,9 +629,16 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
           <stop id="ft-grad-stop1" offset="0%" stop-color="#4ade80"/>
           <stop id="ft-grad-stop2" offset="100%" stop-color="#4ade80"/>
         </linearGradient>
+        <linearGradient id="ftRingGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop id="ft-grad2-stop1" offset="0%" stop-color="#4ade80"/>
+          <stop id="ft-grad2-stop2" offset="100%" stop-color="#4ade80"/>
+        </linearGradient>
       </defs>
       <circle class="ring-track" cx="140" cy="140" r="130"/>
       <circle class="ring-fill" id="ft-ring-fill" cx="140" cy="140" r="130" style="stroke:url(#ftRingGrad)"/>
+      <circle class="ring-track" cx="140" cy="140" r="115" style="stroke-width:8;"/>
+      <circle class="ring-fill" id="ft-ring-fill-progress" cx="140" cy="140" r="115"
+        style="stroke:url(#ftRingGrad2);stroke-width:8;stroke-dasharray:722.6;stroke-dashoffset:722.6;display:none;"/>
     </svg>
     <div class="ring-center">
       <div class="ring-time" id="ft-ring-time">00:00</div>
@@ -960,6 +967,11 @@ function setSkin(name) {
   const s = SKINS[name] || SKINS.default;
   document.getElementById('grad-stop1').setAttribute('stop-color', s.start);
   document.getElementById('grad-stop2').setAttribute('stop-color', s.end);
+  // Gradients For Time
+  document.getElementById('ft-grad-stop1').setAttribute('stop-color', s.start);
+  document.getElementById('ft-grad-stop2').setAttribute('stop-color', s.end);
+  document.getElementById('ft-grad2-stop1').setAttribute('stop-color', s.end);
+  document.getElementById('ft-grad2-stop2').setAttribute('stop-color', s.start);
   document.getElementById('skin-trigger').style.background =
     `linear-gradient(135deg, ${s.start}, ${s.end || s.start})`;
   // custom-dot conserve toujours les couleurs du thème personnalisé — ne pas écraser
@@ -1249,6 +1261,11 @@ function applyCustomVars(bg, accent, accent2) {
   // Ring gradient
   document.getElementById('grad-stop1').setAttribute('stop-color', accent);
   document.getElementById('grad-stop2').setAttribute('stop-color', accent2);
+  // Gradients For Time
+  document.getElementById('ft-grad-stop1').setAttribute('stop-color', accent);
+  document.getElementById('ft-grad-stop2').setAttribute('stop-color', accent2);
+  document.getElementById('ft-grad2-stop1').setAttribute('stop-color', accent2);
+  document.getElementById('ft-grad2-stop2').setAttribute('stop-color', accent);
 
   // Trigger + custom dot
   document.getElementById('skin-trigger').style.background = `linear-gradient(135deg,${accent},${accent2})`;
@@ -2003,6 +2020,8 @@ function startForTime() {
   // Init ring
   const fill = document.getElementById('ft-ring-fill');
   if (fill) fill.style.strokeDashoffset = String(CIRC);
+  const fill2 = document.getElementById('ft-ring-fill-progress');
+  if (fill2) { fill2.style.strokeDashoffset = '722.6'; fill2.style.display = 'none'; }
   const timeEl = document.getElementById('ft-ring-time');
   if (timeEl) { timeEl.textContent = '00:00'; timeEl.className = 'ring-time'; }
   const subEl = document.getElementById('ft-ring-sub');
@@ -2028,24 +2047,34 @@ function ftRaf(ts) {
   ftState.elapsed = (ts - ftState.startTs + ftState.pauseOffset) / 1000;
 
   const fill  = document.getElementById('ft-ring-fill');
+  const fill2 = document.getElementById('ft-ring-fill-progress');
   const timeEl = document.getElementById('ft-ring-time');
   const subEl  = document.getElementById('ft-ring-sub');
+  const CIRC2 = 722.6; // 2 * π * 115
 
   if (ftTimecapOn && ftVals.ft_cap > 0) {
     const cap = ftVals.ft_cap;
     const elapsed = ftState.elapsed;
     const rem = Math.max(0, cap - elapsed);
-    // Ring avance de 0 vers le cap (elapsed / cap)
+    // Cercle principal : progression du temps écoulé
     if (fill) fill.style.strokeDashoffset = CIRC * (1 - Math.min(1, elapsed / cap));
+    // Cercle secondaire : progression des exercices validés
+    const totalSteps = ftVals.ft_rounds * ftExercises.length;
+    const donePct = totalSteps > 0 ? ftState.validated / totalSteps : 0;
+    if (fill2) {
+      fill2.style.display = '';
+      fill2.style.strokeDashoffset = CIRC2 * (1 - donePct);
+    }
     // Centre : temps écoulé qui monte
     timeEl.textContent = fmt(Math.floor(elapsed));
     timeEl.className = 'ring-time' + (rem <= 10 && rem > 0 ? ' urgent' : '');
-    if (subEl) subEl.textContent = '';
+    if (subEl) subEl.textContent = ftState.validated + ' / ' + totalSteps;
     // Stat box haut gauche : temps restant
     document.getElementById('ft-stat-time').textContent = fmt(Math.ceil(rem));
     if (rem <= 0) { ftFinished(); return; }
   } else {
     // Sans time cap : anneau avance selon les validations
+    if (fill2) fill2.style.display = 'none';
     const totalSteps = ftVals.ft_rounds * ftExercises.length;
     const donePct = totalSteps > 0 ? ftState.validated / totalSteps : 0;
     if (fill) fill.style.strokeDashoffset = CIRC * (1 - donePct);
@@ -2112,14 +2141,12 @@ function renderFTActiveList() {
       <span style="flex:1;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:${nameColor};${decoration}">${ex.name}</span>
     </div>`;
   }).join('');
-  
-  // Scroll automatique pour garder l'exercice courant en 2ème position
+  // Scroll auto : garder l'exercice courant en 2ème position visible
   setTimeout(() => {
-    const currentEl = list.querySelector(`[data-ex-idx="${ftState.exIdx}"]`);
-    if (currentEl) {
-      const itemHeight = currentEl.offsetHeight + 3; // +3 pour le gap
-      const targetScroll = Math.max(0, (ftState.exIdx - 1) * itemHeight);
-      list.scrollTo({ top: targetScroll, behavior: 'smooth' });
+    const cur = list.querySelector(`[data-ex-idx="${ftState.exIdx}"]`);
+    if (cur) {
+      const targetTop = Math.max(0, cur.offsetTop - cur.offsetHeight);
+      list.scrollTo({ top: targetTop, behavior: 'smooth' });
     }
   }, 50);
 }
