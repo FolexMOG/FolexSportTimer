@@ -622,7 +622,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
   </div>
 
   <!-- Ring -->
-  <div class="ring-wrap" style="flex-shrink:0;align-self:center;">
+  <div class="ring-wrap" style="flex-shrink:1;align-self:center;min-height:160px;">
     <svg class="ring-svg" viewBox="0 0 280 280">
       <defs>
         <linearGradient id="ftRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -2144,10 +2144,12 @@ function renderFTActiveList() {
   // Scroll auto : garder l'exercice courant en 2ème position visible
   setTimeout(() => {
     const cur = list.querySelector(`[data-ex-idx="${ftState.exIdx}"]`);
-    if (cur) {
-      const targetTop = Math.max(0, cur.offsetTop - cur.offsetHeight);
-      list.scrollTo({ top: targetTop, behavior: 'smooth' });
-    }
+    if (!cur || ftState.exIdx === 0) { list.scrollTop = 0; return; }
+    const listRect = list.getBoundingClientRect();
+    const curRect  = cur.getBoundingClientRect();
+    const itemH    = cur.offsetHeight + 3; // 3 = gap
+    const relativeTop = list.scrollTop + (curRect.top - listRect.top);
+    list.scrollTo({ top: Math.max(0, relativeTop - itemH), behavior: 'smooth' });
   }, 50);
 }
 
