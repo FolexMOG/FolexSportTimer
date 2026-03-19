@@ -498,16 +498,28 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
   <div class="screen" id="screen-fortime">
     <div class="sec-title">Ajouter un exercice</div>
     <div class="deg-add-card">
-      <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);">
-        <button class="spin-btn" onclick="adjFT('ft_rounds',-1)">−</button>
-        <div style="text-align:center;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+        <!-- Rounds -->
+        <div style="display:flex;align-items:center;gap:6px;flex:1;">
+          <span style="font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;white-space:nowrap;">Rounds</span>
+          <button class="spin-btn" onclick="adjFT('ft_rounds',-1)" style="width:28px;height:28px;">−</button>
           <input class="val-display small" id="disp-ft_rounds" type="text" inputmode="numeric" maxlength="2"
-            onblur="inputFTRounds(this)" onkeydown="if(event.key==='Enter')this.blur()" style="color:var(--amber);">
-          <div style="font-size:8px;letter-spacing:1.5px;color:var(--muted);margin-top:2px;text-transform:uppercase;">Rounds</div>
+            onblur="inputFTRounds(this)" onkeydown="if(event.key==='Enter')this.blur()" style="color:var(--amber);width:32px;">
+          <button class="spin-btn" onclick="adjFT('ft_rounds',1)" style="width:28px;height:28px;">+</button>
         </div>
-        <button class="spin-btn" onclick="adjFT('ft_rounds',1)">+</button>
-        <div style="font-size:9px;color:var(--muted2);letter-spacing:1px;margin-left:4px;" id="ft-rounds-hint"></div>
+        <!-- Time Cap -->
+        <div style="display:flex;align-items:center;gap:6px;flex:1;justify-content:flex-end;">
+          <button class="toggle" id="ft-timecap-toggle" onclick="toggleFTTimecap()"></button>
+          <span style="font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;white-space:nowrap;">Cap</span>
+          <div id="ft-timecap-field" style="display:none;align-items:center;gap:4px;">
+            <button class="spin-btn" onclick="adjFT('ft_cap',-30)" style="width:28px;height:28px;">−</button>
+            <input class="val-display" id="disp-ft_cap" type="text" inputmode="numeric" maxlength="5"
+              onblur="inputFTCap(this)" onkeydown="if(event.key==='Enter')this.blur()" style="width:48px;font-size:14px;">
+            <button class="spin-btn" onclick="adjFT('ft_cap',30)" style="width:28px;height:28px;">+</button>
+          </div>
+        </div>
       </div>
+      <div id="ft-rounds-hint" style="font-size:9px;color:var(--muted2);letter-spacing:1px;margin-bottom:8px;text-align:center;"></div>
       <input type="text" id="ft-name-input" maxlength="40" placeholder="Nom de l'exercice (ex: 20 Squats)"
         class="deg-name-field"
         onkeydown="if(event.key==='Enter')document.getElementById('ft-desc-input').focus()">
@@ -596,24 +608,42 @@ header { padding: 14px 20px 10px; display: flex; align-items: center; justify-co
 
   <!-- 3 stats -->
   <div class="stats-row" id="ft-stats-row">
-    <div class="stat-card"><div class="stat-val" id="ft-stat-time" style="color:var(--accent);">00:00</div><div class="stat-lbl">Temps</div></div>
+    <div class="stat-card"><div class="stat-val" id="ft-stat-time" style="color:var(--accent);">00:00</div><div class="stat-lbl" id="ft-stat-time-lbl">Temps</div></div>
     <div class="stat-card"><div class="stat-val" id="ft-stat-round" style="color:var(--amber);">1/1</div><div class="stat-lbl">Round</div></div>
     <div class="stat-card"><div class="stat-val" id="ft-stat-ex" style="color:var(--text);">1/1</div><div class="stat-lbl">Exercice</div></div>
   </div>
 
+  <!-- Ring -->
+  <div class="ring-wrap" style="flex-shrink:0;align-self:center;">
+    <svg class="ring-svg" viewBox="0 0 280 280">
+      <defs>
+        <linearGradient id="ftRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop id="ft-grad-stop1" offset="0%" stop-color="#4ade80"/>
+          <stop id="ft-grad-stop2" offset="100%" stop-color="#4ade80"/>
+        </linearGradient>
+      </defs>
+      <circle class="ring-track" cx="140" cy="140" r="130"/>
+      <circle class="ring-fill" id="ft-ring-fill" cx="140" cy="140" r="130" style="stroke:url(#ftRingGrad)"/>
+    </svg>
+    <div class="ring-center">
+      <div class="ring-time" id="ft-ring-time">00:00</div>
+      <div class="ring-sub" id="ft-ring-sub"></div>
+    </div>
+  </div>
+
   <!-- Current exercise -->
-  <div style="margin:4px 20px 6px;background:var(--accent-dim);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;position:relative;overflow:hidden;">
+  <div style="margin:0 20px 6px;background:var(--accent-dim);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 16px;position:relative;overflow:hidden;flex-shrink:0;">
     <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);"></div>
-    <div style="font-size:8px;letter-spacing:3px;color:var(--accent);font-family:'Bebas Neue',sans-serif;margin-bottom:4px;">EN COURS</div>
-    <div id="ft-current-name" style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--text);letter-spacing:2px;line-height:1.1;"></div>
-    <div id="ft-current-desc" style="font-size:10px;color:var(--muted);margin-top:4px;"></div>
+    <div style="font-size:8px;letter-spacing:3px;color:var(--accent);font-family:'Bebas Neue',sans-serif;margin-bottom:3px;">EN COURS</div>
+    <div id="ft-current-name" style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);letter-spacing:2px;line-height:1.1;"></div>
+    <div id="ft-current-desc" style="font-size:10px;color:var(--muted);margin-top:3px;font-family:'Bebas Neue',sans-serif;"></div>
   </div>
 
   <!-- Validate button -->
-  <button id="ft-validate-btn" onclick="ftValidate()" style="margin:0 20px 8px;padding:15px;background:var(--accent);color:var(--bg);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:3px;border-radius:14px;border:none;cursor:pointer;box-shadow:0 4px 20px var(--accent-glow);width:calc(100% - 40px);">✓  Validé — Suivant</button>
+  <button id="ft-validate-btn" onclick="ftValidate()" style="margin:0 20px 6px;padding:13px;background:var(--accent);color:var(--bg);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:3px;border-radius:14px;border:none;cursor:pointer;box-shadow:0 4px 20px var(--accent-glow);width:calc(100% - 40px);flex-shrink:0;">✓  Validé — Suivant</button>
 
   <!-- Exercise list -->
-  <div style="font-size:8px;letter-spacing:3px;color:var(--muted);font-family:'Bebas Neue',sans-serif;padding:2px 20px 4px;text-transform:uppercase;">Tous les exercices</div>
+  <div style="font-size:8px;letter-spacing:3px;color:var(--muted);font-family:'Bebas Neue',sans-serif;padding:2px 20px 4px;text-transform:uppercase;flex-shrink:0;">Tous les exercices</div>
   <div id="ft-active-list" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:3px;padding:0 20px;"></div>
 
   <!-- Controls -->
@@ -1545,18 +1575,44 @@ function setupDragDrop(){
 
 // ══ FOR TIME ══
 let ftExercises = [];
-let ftVals = { ft_rounds: 3 };
+let ftVals = { ft_rounds: 3, ft_cap: 1200 };
+let ftTimecapOn = false;
 let ftState = { round: 1, exIdx: 0, startTs: null, elapsed: 0, paused: false, pauseOffset: 0, rafId: null };
 
 function adjFT(key, delta) {
-  ftVals[key] = Math.max(1, Math.min(20, (ftVals[key] || 1) + delta));
-  renderFTVal(key);
-  updateFTHint();
+  if (key === 'ft_cap') {
+    ftVals.ft_cap = Math.max(60, Math.min(7200, (ftVals.ft_cap || 1200) + delta));
+    renderFTVal('ft_cap');
+  } else {
+    ftVals[key] = Math.max(1, Math.min(20, (ftVals[key] || 1) + delta));
+    renderFTVal(key);
+    updateFTHint();
+  }
   saveFTState();
 }
+function toggleFTTimecap() {
+  ftTimecapOn = !ftTimecapOn;
+  document.getElementById('ft-timecap-toggle').classList.toggle('on', ftTimecapOn);
+  const field = document.getElementById('ft-timecap-field');
+  if (field) field.style.display = ftTimecapOn ? 'flex' : 'none';
+}
+function inputFTCap(el) {
+  const parts = el.value.split(':');
+  let secs = 0;
+  if (parts.length === 2) secs = (+parts[0]) * 60 + (+parts[1]);
+  else secs = +el.value;
+  if (!isNaN(secs) && secs > 0) ftVals.ft_cap = Math.max(60, Math.min(7200, secs));
+  renderFTVal('ft_cap'); saveFTState();
+}
 function renderFTVal(key) {
-  const el = document.getElementById('disp-ft_rounds');
-  if (el) el.value = String(ftVals.ft_rounds);
+  if (key === 'ft_rounds' || !key) {
+    const el = document.getElementById('disp-ft_rounds');
+    if (el) el.value = String(ftVals.ft_rounds);
+  }
+  if (key === 'ft_cap' || !key) {
+    const el = document.getElementById('disp-ft_cap');
+    if (el) el.value = fmt(ftVals.ft_cap);
+  }
 }
 function inputFTRounds(el) {
   const n = parseInt(el.value, 10);
@@ -1618,7 +1674,7 @@ function renderFTList() {
 
 // ── SAVE / LOAD FOR TIME ──
 function saveFTState() {
-  try { localStorage.setItem('sporttimer_ft', JSON.stringify({ ftVals, ftExercises })); } catch(e) {}
+  try { localStorage.setItem('sporttimer_ft', JSON.stringify({ ftVals, ftExercises, ftTimecapOn })); } catch(e) {}
 }
 function loadFTState() {
   try {
@@ -1626,9 +1682,17 @@ function loadFTState() {
     if (d) {
       if (d.ftVals) ftVals = { ...ftVals, ...d.ftVals };
       if (d.ftExercises) ftExercises = d.ftExercises;
+      if (d.ftTimecapOn) {
+        ftTimecapOn = d.ftTimecapOn;
+        const tog = document.getElementById('ft-timecap-toggle');
+        if (tog) tog.classList.toggle('on', ftTimecapOn);
+        const field = document.getElementById('ft-timecap-field');
+        if (field) field.style.display = ftTimecapOn ? 'flex' : 'none';
+      }
     }
   } catch(e) {}
   renderFTVal('ft_rounds');
+  renderFTVal('ft_cap');
   renderFTList();
 }
 
@@ -1769,8 +1833,18 @@ function handleFTImport(input) {
 // ── FOR TIME TIMER ──
 function startForTime() {
   if (!ftExercises.length) { alert('Ajoutez au moins un exercice !'); return; }
-  ftState = { round:1, exIdx:0, startTs:null, elapsed:0, paused:false, pauseOffset:0, rafId:null };
+  ftState = { round:1, exIdx:0, startTs:null, elapsed:0, paused:false, pauseOffset:0, rafId:null, validated:0 };
   acquireWakeLock();
+  // Init ring
+  const fill = document.getElementById('ft-ring-fill');
+  if (fill) fill.style.strokeDashoffset = String(CIRC);
+  const timeEl = document.getElementById('ft-ring-time');
+  if (timeEl) { timeEl.textContent = '00:00'; timeEl.className = 'ring-time'; }
+  const subEl = document.getElementById('ft-ring-sub');
+  if (subEl) subEl.textContent = '';
+  // Label stat box
+  const lbl = document.getElementById('ft-stat-time-lbl');
+  if (lbl) lbl.textContent = ftTimecapOn ? 'Restant' : 'Temps';
   if (countdownOn.fortime) {
     showFTTimerScreen();
     runCountdown(() => { renderFTActiveList(); renderFTCurrentEx(); ftState.startTs=performance.now(); ftState.rafId=requestAnimationFrame(ftRaf); });
@@ -1787,11 +1861,40 @@ function ftRaf(ts) {
   if (ftState.paused) return;
   if (ftState.startTs === null) ftState.startTs = ts;
   ftState.elapsed = (ts - ftState.startTs + ftState.pauseOffset) / 1000;
-  document.getElementById('ft-stat-time').textContent = fmt(Math.floor(ftState.elapsed));
+
+  const fill  = document.getElementById('ft-ring-fill');
+  const timeEl = document.getElementById('ft-ring-time');
+  const subEl  = document.getElementById('ft-ring-sub');
+
+  if (ftTimecapOn && ftVals.ft_cap > 0) {
+    const cap = ftVals.ft_cap;
+    const elapsed = ftState.elapsed;
+    const rem = Math.max(0, cap - elapsed);
+    // Ring avance de 0 vers le cap (elapsed / cap)
+    if (fill) fill.style.strokeDashoffset = CIRC * (1 - Math.min(1, elapsed / cap));
+    // Centre : temps écoulé qui monte
+    timeEl.textContent = fmt(Math.floor(elapsed));
+    timeEl.className = 'ring-time' + (rem <= 10 && rem > 0 ? ' urgent' : '');
+    if (subEl) subEl.textContent = '';
+    // Stat box haut gauche : temps restant
+    document.getElementById('ft-stat-time').textContent = fmt(Math.ceil(rem));
+    if (rem <= 0) { ftFinished(); return; }
+  } else {
+    // Sans time cap : anneau avance selon les validations
+    const totalSteps = ftVals.ft_rounds * ftExercises.length;
+    const donePct = totalSteps > 0 ? ftState.validated / totalSteps : 0;
+    if (fill) fill.style.strokeDashoffset = CIRC * (1 - donePct);
+    timeEl.textContent = fmt(Math.floor(ftState.elapsed));
+    timeEl.className = 'ring-time';
+    if (subEl) subEl.textContent = ftState.validated + ' / ' + totalSteps + ' validations';
+    document.getElementById('ft-stat-time').textContent = fmt(Math.floor(ftState.elapsed));
+  }
+
   ftState.rafId = requestAnimationFrame(ftRaf);
 }
 
 function ftValidate() {
+  ftState.validated++;
   ftState.exIdx++;
   if (ftState.exIdx >= ftExercises.length) {
     ftState.exIdx = 0;
