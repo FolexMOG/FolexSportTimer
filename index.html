@@ -706,7 +706,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 <div id="folex-card" style="display:none;position:fixed;top:70px;left:20px;background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:14px 16px;z-index:400;min-width:220px;box-shadow:0 8px 32px rgba(0,0,0,.4);">
   <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--accent);letter-spacing:2px;margin-bottom:6px;">WOD Clock</div>
   <div style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:4px;">© 2026 Folex</div>
-  <a href="/cdn-cgi/l/email-protection#2d4b424148550349485b6d4a404c4441034e4240" style="font-size:11px;color:var(--text);letter-spacing:.5px;text-decoration:none;display:block;margin-bottom:10px;"><span class="__cf_email__" data-cfemail="cdaba2a1a8b5e3a9a8bb8daaa0aca4a1e3aea2a0">[email&#160;protected]</span></a>
+  <a href="mailto:folex.dev@gmail.com" style="font-size:11px;color:var(--text);letter-spacing:.5px;text-decoration:none;display:block;margin-bottom:10px;">folex.dev@gmail.com</a>
   <button onclick="shareApp()" style="width:100%;padding:8px;background:var(--accent-dim);border:1px solid rgba(255,255,255,.1);border-radius:9px;color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;cursor:pointer;">⬆ Partager l'app</button>
 </div>
 
@@ -882,7 +882,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ══ SKIN ══
 const SKINS = {
   default:  { start: '#4ade80', end: '#4ade80' },
@@ -2107,19 +2107,11 @@ function renderFTActiveList() {
       : `<div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;"></div>`;
     const nameColor = isDone ? 'var(--muted2)' : isCurrent ? 'var(--accent)' : 'var(--muted)';
     const decoration = isDone ? 'text-decoration:line-through;' : '';
-    return `<div data-idx="${i}" style="display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;${style}">
+    return `<div style="display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;${style}">
       ${checkEl}
       <span style="flex:1;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:${nameColor};${decoration}">${ex.name}</span>
     </div>`;
   }).join('');
-
-  // Scroll pour que l'élément courant soit en 2ème position
-  const currentEl = list.querySelector(`[data-idx="${ftState.exIdx}"]`);
-  if (currentEl) {
-    const itemH = currentEl.offsetHeight + 3; // hauteur + gap
-    const scrollTo = currentEl.offsetTop - itemH; // une position au-dessus = 2ème visible
-    list.scrollTo({ top: Math.max(0, scrollTo), behavior: 'smooth' });
-  }
 }
 
 function ftTogglePause() {
@@ -2684,4 +2676,9 @@ if('serviceWorker'in navigator){
       e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));
     });
   `;
-  const swBlob
+  const swBlob=new Blob([swCode],{type:'application/javascript'});const swUrl=URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl,{scope:'/'}).catch(()=>{navigator.serviceWorker.register(swUrl).catch(()=>{});});
+}
+</script>
+</body>
+</html>
