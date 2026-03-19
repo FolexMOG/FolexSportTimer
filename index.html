@@ -1429,32 +1429,40 @@ function confirmShareWOD() {
   const rawName = document.getElementById('share-wod-name').value.trim() || '';
   const prefix = mode === 'amrap' ? 'AMRAP - ' : 'For Time - ';
   const name = rawName.startsWith(prefix) ? rawName : prefix + (rawName || 'WOD');
-  const safeName = name.replace(/[^a-zA-Z0-9À-ÿ\s_-]/g,'').trim().replace(/\s+/g,'-') || 'WOD';
 
   let wod;
   if (mode === 'amrap') {
-    wod = { app:'SportTimer', type:'amrap', v:1, name, date:new Date().toISOString().slice(0,10),
+    wod = { app:'SportTimer', type:'amrap', v:1, name,
       steps: degSteps.map(s => ({ exo:s.exo, rest:s.rest, name:s.name||'', desc:s.desc||'' })) };
   } else {
-    wod = { app:'SportTimer', type:'fortime', v:1, name, date:new Date().toISOString().slice(0,10),
+    wod = { app:'SportTimer', type:'fortime', v:1, name,
       rounds:ftVals.ft_rounds, exercises: ftExercises.map(e => ({ name:e.name, desc:e.desc||'' })) };
   }
 
-  const json = JSON.stringify(wod, null, 2);
-  const blob = new Blob([json], { type:'application/json' });
-  const file = new File([blob], `${safeName}.json`, { type:'application/json' });
+  // Encoder le WOD en base64 dans un lien URL
+  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(wod))));
+  const baseUrl = 'https://folexmog.github.io/FolexSportTimer/';
+  const shareUrl = `${baseUrl}?wod=${encoded}`;
 
-  if (navigator.share && navigator.canShare && navigator.canShare({ files:[file] })) {
-    navigator.share({ title:name, text:`WOD Sport Timer — ${name}`, files:[file] })
-      .then(() => closeShareWOD())
-      .catch(e => { if (e.name !== 'AbortError') { closeShareWOD(); downloadWOD(blob, safeName, name); } });
-  } else if (navigator.share) {
-    navigator.share({ title:name, text:`WOD Sport Timer — ${name}\n\n${json}` })
-      .then(() => closeShareWOD())
-      .catch(e => { if (e.name !== 'AbortError') { closeShareWOD(); downloadWOD(blob, safeName, name); } });
+  if (navigator.share) {
+    navigator.share({
+      title: name,
+      text: `💪 ${name} — WOD Sport Timer`,
+      url: shareUrl
+    })
+    .then(() => closeShareWOD())
+    .catch(e => { if (e.name !== 'AbortError') fallbackCopyUrl(shareUrl); });
   } else {
-    closeShareWOD();
-    downloadWOD(blob, safeName, name);
+    fallbackCopyUrl(shareUrl);
+  }
+}
+
+function fallbackCopyUrl(url) {
+  closeShareWOD();
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => showWodToast('Lien copié ✓'));
+  } else {
+    prompt('Copie ce lien pour partager le WOD :', url);
   }
 }
 
@@ -2452,6 +2460,34 @@ renderAll(); renderDegList(); renderAllPresets();
 setupDragDrop();
 cpickBindEvents();
 loadFTState();
+
+// Détection import WOD via URL (?wod=base64)
+(function() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const encoded = params.get('wod');
+    if (!encoded) return;
+    const wod = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+    if (!wod || !wod.type) return;
+    // Nettoyer l'URL sans recharger
+    window.history.replaceState({}, '', window.location.pathname);
+    if (wod.type === 'amrap' && wod.steps && wod.steps.length) {
+      degSteps = wod.steps.map(s => ({ exo:+s.exo, rest:+s.rest, name:s.name||'', desc:s.desc||'' }));
+      renderDegList(); saveState();
+      // Switcher vers l'onglet AMRAP
+      const idx = MODES.indexOf('degressive');
+      if (idx >= 0) switchTab(idx);
+      showWodToast(`"${wod.name}" importé ✓`);
+    } else if (wod.type === 'fortime' && wod.exercises && wod.exercises.length) {
+      ftExercises = wod.exercises.map(e => ({ name:e.name, desc:e.desc||'' }));
+      if (wod.rounds) ftVals.ft_rounds = wod.rounds;
+      renderFTVal('ft_rounds'); renderFTList(); saveFTState();
+      const idx = MODES.indexOf('fortime');
+      if (idx >= 0) switchTab(idx);
+      showWodToast(`"${wod.name}" importé ✓`);
+    }
+  } catch(e) {}
+})();
 setupFTDragDrop();
 
 ['touchstart','click','keydown'].forEach(ev=>document.addEventListener(ev,()=>{try{ctx();}catch(e){}},{once:true}));
