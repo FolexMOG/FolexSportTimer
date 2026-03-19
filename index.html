@@ -1587,6 +1587,7 @@ function adjFT(key, delta) {
     ftVals[key] = Math.max(1, Math.min(20, (ftVals[key] || 1) + delta));
     renderFTVal(key);
     updateFTHint();
+    renderFTList();
   }
   saveFTState();
 }
@@ -1619,6 +1620,7 @@ function inputFTRounds(el) {
   if (!isNaN(n)) ftVals.ft_rounds = Math.max(1, Math.min(20, n));
   renderFTVal('ft_rounds');
   updateFTHint();
+  renderFTList();
   saveFTState();
 }
 function updateFTHint() {
