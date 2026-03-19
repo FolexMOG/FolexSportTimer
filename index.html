@@ -465,8 +465,9 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
       <button class="add-btn" onclick="addDegStep()">+ Ajouter ce palier</button>
       <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">
         <button class="add-btn" onclick="resetDegSteps()" style="flex:1;background:var(--red-dim);border-color:rgba(248,113,113,.2);color:var(--red);">✕ Réinitialiser</button>
-        <button onclick="openExportWOD()" title="Exporter WOD" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬆</button>
-        <button onclick="openImportWOD()" title="Importer WOD" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬇</button>
+        <button onclick="openShareWOD('amrap')" title="Partager WOD" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">↗</button>
+        <button onclick="openExportWOD()" title="Exporter WOD" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬇</button>
+        <button onclick="openImportWOD()" title="Importer WOD" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬆</button>
       </div>
     </div>
     <div class="sec-title" style="margin-top:16px">Paliers programmés</div>
@@ -532,8 +533,9 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
       <button class="add-btn" onclick="addFTExercise()" style="margin-top:8px;">+ Ajouter cet exercice</button>
       <div style="display:flex;gap:6px;align-items:center;margin-top:6px;">
         <button class="add-btn" onclick="resetFTExercises()" style="flex:1;background:var(--red-dim);border-color:rgba(248,113,113,.2);color:var(--red);">✕ Réinitialiser</button>
-        <button onclick="openFTExport()" title="Exporter" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬆</button>
-        <button onclick="openFTImport()" title="Importer" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬇</button>
+        <button onclick="openShareWOD('fortime')" title="Partager WOD" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">↗</button>
+        <button onclick="openFTExport()" title="Exporter" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬇</button>
+        <button onclick="openFTImport()" title="Importer" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬆</button>
       </div>
     </div>
 
@@ -801,6 +803,21 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 <input type="file" id="import-wod-file" accept=".json" style="display:none" onchange="handleImportWOD(this)">
 
 <!-- EXPORT WOD MODAL -->
+<!-- SHARE WOD MODAL -->
+<div class="preset-modal-wrap" id="share-wod-modal">
+  <div class="preset-modal" style="width:300px;gap:14px;">
+    <div class="preset-modal-title">Partager le WOD</div>
+    <div style="font-size:11px;color:var(--muted);letter-spacing:1px;">Donne un nom à ce WOD</div>
+    <input type="text" id="share-wod-name" maxlength="40"
+      style="background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--text);outline:none;caret-color:var(--accent);width:100%;"
+      onkeydown="if(event.key==='Enter')confirmShareWOD();">
+    <div class="preset-modal-btns">
+      <button onclick="closeShareWOD()">Annuler</button>
+      <button class="pm-confirm" onclick="confirmShareWOD()">⬆ Partager</button>
+    </div>
+  </div>
+</div>
+
 <div class="preset-modal-wrap" id="dl-wod-modal">
   <div class="preset-modal" style="width:300px;gap:14px;">
     <div class="preset-modal-title">Exporter le WOD</div>
@@ -1394,6 +1411,53 @@ function removeDeg(i) { degSteps.splice(i,1); renderDegList(); saveState(); }
 function resetDegSteps() { degSteps = []; renderDegList(); saveState(); }
 
 // ── EXPORT / IMPORT WOD ──
+function openShareWOD(mode) {
+  if (mode === 'amrap' && !degSteps.length) { alert('Aucun palier à partager.'); return; }
+  if (mode === 'fortime' && !ftExercises.length) { alert('Aucun exercice à partager.'); return; }
+  const prefix = mode === 'amrap' ? 'AMRAP - ' : 'For Time - ';
+  const el = document.getElementById('share-wod-name');
+  el.value = prefix;
+  document.getElementById('share-wod-modal')._mode = mode;
+  document.getElementById('share-wod-modal').classList.add('active');
+  setTimeout(() => { el.focus(); el.setSelectionRange(el.value.length, el.value.length); }, 100);
+}
+function closeShareWOD() {
+  document.getElementById('share-wod-modal').classList.remove('active');
+}
+function confirmShareWOD() {
+  const mode = document.getElementById('share-wod-modal')._mode;
+  const rawName = document.getElementById('share-wod-name').value.trim() || '';
+  const prefix = mode === 'amrap' ? 'AMRAP - ' : 'For Time - ';
+  const name = rawName.startsWith(prefix) ? rawName : prefix + (rawName || 'WOD');
+  const safeName = name.replace(/[^a-zA-Z0-9À-ÿ\s_-]/g,'').trim().replace(/\s+/g,'-') || 'WOD';
+
+  let wod;
+  if (mode === 'amrap') {
+    wod = { app:'SportTimer', type:'amrap', v:1, name, date:new Date().toISOString().slice(0,10),
+      steps: degSteps.map(s => ({ exo:s.exo, rest:s.rest, name:s.name||'', desc:s.desc||'' })) };
+  } else {
+    wod = { app:'SportTimer', type:'fortime', v:1, name, date:new Date().toISOString().slice(0,10),
+      rounds:ftVals.ft_rounds, exercises: ftExercises.map(e => ({ name:e.name, desc:e.desc||'' })) };
+  }
+
+  const json = JSON.stringify(wod, null, 2);
+  const blob = new Blob([json], { type:'application/json' });
+  const file = new File([blob], `${safeName}.json`, { type:'application/json' });
+
+  if (navigator.share && navigator.canShare && navigator.canShare({ files:[file] })) {
+    navigator.share({ title:name, text:`WOD Sport Timer — ${name}`, files:[file] })
+      .then(() => closeShareWOD())
+      .catch(e => { if (e.name !== 'AbortError') { closeShareWOD(); downloadWOD(blob, safeName, name); } });
+  } else if (navigator.share) {
+    navigator.share({ title:name, text:`WOD Sport Timer — ${name}\n\n${json}` })
+      .then(() => closeShareWOD())
+      .catch(e => { if (e.name !== 'AbortError') { closeShareWOD(); downloadWOD(blob, safeName, name); } });
+  } else {
+    closeShareWOD();
+    downloadWOD(blob, safeName, name);
+  }
+}
+
 function openExportWOD() {
   if (!degSteps.length) { alert('Aucun palier à exporter.'); return; }
   const dlEl = document.getElementById('dl-wod-name');
