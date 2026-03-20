@@ -647,6 +647,10 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
   </div>
 
   <!-- Bloc inférieur collé aux boutons -->
+  <!-- Liste exercices : précédent (coché) + courant (pos.2) + suivants -->
+  <div style="font-size:8px;letter-spacing:3px;color:var(--muted);font-family:'Bebas Neue',sans-serif;padding:2px 20px 3px;text-transform:uppercase;flex-shrink:0;">Exercices</div>
+  <div id="ft-active-list" style="flex-shrink:0;display:flex;flex-direction:column;gap:2px;padding:0 20px 5px;"></div>
+
   <!-- Exercice courant -->
   <div style="margin:0 20px 5px;background:var(--accent-dim);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:9px 16px;position:relative;overflow:hidden;flex-shrink:0;">
     <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);"></div>
@@ -654,10 +658,6 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
     <div id="ft-current-name" style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text);letter-spacing:2px;line-height:1.1;"></div>
     <div id="ft-current-desc" style="font-size:10px;color:var(--muted);margin-top:2px;font-family:'Bebas Neue',sans-serif;"></div>
   </div>
-
-  <!-- Liste exercices : précédent (coché) + courant (pos.2) + suivants -->
-  <div style="font-size:8px;letter-spacing:3px;color:var(--muted);font-family:'Bebas Neue',sans-serif;padding:2px 20px 3px;text-transform:uppercase;flex-shrink:0;">Exercices</div>
-  <div id="ft-active-list" style="flex-shrink:0;display:flex;flex-direction:column;gap:2px;padding:0 20px 5px;"></div>
 
   <!-- Bouton valider -->
   <button id="ft-validate-btn" onclick="ftValidate()" style="margin:0 20px 7px;padding:12px;background:var(--accent);color:var(--bg);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:3px;border-radius:14px;border:none;cursor:pointer;box-shadow:0 4px 20px var(--accent-glow);width:calc(100% - 40px);flex-shrink:0;">✓  Validé — Suivant</button>
