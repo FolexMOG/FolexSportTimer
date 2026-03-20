@@ -287,7 +287,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 .timer-left  { display: none !important; }
 .timer-right { display: none !important; }
 .portrait-ctrl { display: flex; gap: 10px; width: 100%; }
-.t-phase { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; transition: color .3s; min-height: 16px; }
+.t-phase { font-size: 16px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; transition: color .3s; min-height: 18px; }
 .t-phase.rest { color: var(--amber); }
 
 /* ── RING ── */
@@ -688,6 +688,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
   <!-- TIMER SCREEN -->
   <div id="timer-screen">
     <div class="t-phase" id="t-phase">Exercice</div>
+    <div id="t-desc" style="font-size:15px;color:var(--muted2);letter-spacing:.5px;margin-top:-2px;margin-bottom:4px;font-family:'DM Sans',sans-serif;min-height:18px;text-align:center;"></div>
     <div class="ring-wrap">
       <svg class="ring-svg" viewBox="0 0 280 280">
         <defs>
@@ -706,7 +707,6 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
       <div class="ring-center">
         <div class="ring-time" id="ring-time">00:00</div>
         <div class="ring-sub" id="ring-sub">— exercice —</div>
-        <div id="ring-desc" style="font-size:10px;color:var(--muted2);letter-spacing:.5px;margin-top:3px;font-family:'DM Sans',sans-serif;"></div>
       </div>
     </div>
     <div class="stats-row" id="stats-row">
@@ -2532,7 +2532,7 @@ function updatePhaseUI(remaining){
   phaseEl.className='t-phase'+(isRest?' rest':'');
   const timeEl=document.getElementById('ring-time');timeEl.textContent=fmt(Math.ceil(remaining));timeEl.className='ring-time'+(isRest?' rest':'')+(remaining<=5&&!isRest?' urgent':'');
   // Description de l'exercice courant
-  const descEl = document.getElementById('ring-desc');
+  const descEl = document.getElementById('t-desc');
   if (descEl) descEl.textContent = (!isRest && p.desc) ? p.desc : '';
   // Durant une pause en mode dégressif : afficher le nom du prochain exercice
   let subText = '';
