@@ -282,12 +282,12 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 }
 
 /* ── TIMER SCREEN ── */
-#timer-screen { display: none; flex-direction: column; align-items: center; flex: 1; padding: 16px 20px 20px; gap: 0; }
+#timer-screen { display: none; flex-direction: column; align-items: stretch; flex: 1; padding: 16px 20px 0; gap: 0; }
 #timer-screen.active { display: flex; }
 .timer-left  { display: none !important; }
 .timer-right { display: none !important; }
 .portrait-ctrl { display: flex; gap: 10px; width: 100%; }
-.t-phase { font-size: 16px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; transition: color .3s; min-height: 18px; }
+.t-phase { font-size: 16px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; transition: color .3s; min-height: 18px; text-align: center; }
 .t-phase.rest { color: var(--amber); }
 
 /* ── RING ── */
@@ -307,20 +307,25 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 .ring-sub { font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-top: 6px; }
 
 /* ── STATS ── */
-.stats-row { display: flex; gap: 8px; width: 100%; margin-bottom: 14px; }
+.stats-row { display: flex; gap: 20px; width: 100%; margin-bottom: 10px; }
 .stat-card { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 8px; text-align: center; }
 .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); line-height: 1; }
 .stat-lbl { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
-.stat-card.serie-card { flex: 1.4; }
-.stat-card.serie-card .stat-val { font-size: 32px; color: var(--accent); }
+.stat-card.serie-card { flex: 1; }
+.stat-card.serie-card .stat-val { font-size: 20px; color: var(--accent); }
 .chrono-info { display: none; font-family: 'Bebas Neue', sans-serif; font-size: 13px; color: var(--muted); letter-spacing: 2px; margin-bottom: 14px; }
+#exo-name-box { display: none; width: 100%; background: var(--accent-dim); border: 1px solid rgba(255,255,255,.1); border-radius: 14px; padding: 10px 16px; position: relative; overflow: hidden; flex-shrink: 0; margin-bottom: 10px; }
+#exo-name-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); }
+.enb-label { font-size: 8px; letter-spacing: 3px; color: var(--accent); font-family: 'Bebas Neue', sans-serif; margin-bottom: 3px; }
+.enb-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); letter-spacing: 2px; line-height: 1.1; }
+.enb-desc { font-size: 10px; color: var(--muted); margin-top: 3px; font-family: 'Bebas Neue', sans-serif; }
 .lap-item { display: flex; align-items: center; justify-content: space-between; padding: 5px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 1px; }
 .lap-num { color: var(--muted); }
 .lap-split { color: var(--accent); }
 .lap-total { color: var(--muted2); font-size: 10px; }
 
 /* ── CTRL BUTTONS ── */
-.ctrl-row { display: flex; gap: 10px; width: 100%; }
+.ctrl-row { display: flex; gap: 20px; width: 100%; }
 .ctrl-btn { flex: 1; padding: 15px; border-radius: 14px; font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 1px; cursor: pointer; border: 1px solid var(--border2); background: var(--surface); color: var(--muted); transition: all .12s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ctrl-btn:active { transform: scale(.97); }
 .ctrl-btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); box-shadow: 0 4px 18px var(--accent-glow); }
@@ -614,100 +619,104 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 <!-- FOR TIME TIMER SCREEN -->
 <div id="ft-timer-screen" style="display:none;flex-direction:column;height:100%;background:var(--bg);">
 
-  <!-- 3 stats -->
-  <div class="stats-row" id="ft-stats-row">
+  <!-- Cercle centré dans l'espace disponible -->
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;min-height:0;overflow:hidden;">
+    <div class="ring-wrap" style="margin:0;flex-shrink:0;">
+      <svg class="ring-svg" viewBox="0 0 280 280">
+        <defs>
+          <linearGradient id="ftRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop id="ft-grad-stop1" offset="0%" stop-color="#4ade80"/>
+            <stop id="ft-grad-stop2" offset="100%" stop-color="#4ade80"/>
+          </linearGradient>
+          <linearGradient id="ftRingGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop id="ft-grad2-stop1" offset="0%" stop-color="#4ade80"/>
+            <stop id="ft-grad2-stop2" offset="100%" stop-color="#4ade80"/>
+          </linearGradient>
+        </defs>
+        <circle class="ring-track" cx="140" cy="140" r="130"/>
+        <circle class="ring-fill" id="ft-ring-fill" cx="140" cy="140" r="130" style="stroke:url(#ftRingGrad)"/>
+        <circle class="ring-track" cx="140" cy="140" r="115" style="stroke-width:8;"/>
+        <circle class="ring-fill" id="ft-ring-fill-progress" cx="140" cy="140" r="115"
+          style="stroke:url(#ftRingGrad2);stroke-width:8;stroke-dasharray:722.6;stroke-dashoffset:722.6;display:none;"/>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-time" id="ft-ring-time">00:00</div>
+        <div class="ring-sub" id="ft-ring-sub"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bloc inférieur collé aux boutons -->
+  <!-- Exercice courant -->
+  <div style="margin:0 20px 5px;background:var(--accent-dim);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:9px 16px;position:relative;overflow:hidden;flex-shrink:0;">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);"></div>
+    <div style="font-size:8px;letter-spacing:3px;color:var(--accent);font-family:'Bebas Neue',sans-serif;margin-bottom:2px;">EN COURS</div>
+    <div id="ft-current-name" style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text);letter-spacing:2px;line-height:1.1;"></div>
+    <div id="ft-current-desc" style="font-size:10px;color:var(--muted);margin-top:2px;font-family:'Bebas Neue',sans-serif;"></div>
+  </div>
+
+  <!-- Liste exercices : précédent (coché) + courant (pos.2) + suivants -->
+  <div style="font-size:8px;letter-spacing:3px;color:var(--muted);font-family:'Bebas Neue',sans-serif;padding:2px 20px 3px;text-transform:uppercase;flex-shrink:0;">Exercices</div>
+  <div id="ft-active-list" style="flex-shrink:0;display:flex;flex-direction:column;gap:2px;padding:0 20px 5px;"></div>
+
+  <!-- Bouton valider -->
+  <button id="ft-validate-btn" onclick="ftValidate()" style="margin:0 20px 7px;padding:12px;background:var(--accent);color:var(--bg);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:3px;border-radius:14px;border:none;cursor:pointer;box-shadow:0 4px 20px var(--accent-glow);width:calc(100% - 40px);flex-shrink:0;">✓  Validé — Suivant</button>
+
+  <!-- Stats -->
+  <div class="stats-row" id="ft-stats-row" style="padding:0 20px;">
     <div class="stat-card"><div class="stat-val" id="ft-stat-time" style="color:var(--accent);">00:00</div><div class="stat-lbl" id="ft-stat-time-lbl">Temps</div></div>
     <div class="stat-card"><div class="stat-val" id="ft-stat-round" style="color:var(--amber);">1/1</div><div class="stat-lbl">Round</div></div>
     <div class="stat-card"><div class="stat-val" id="ft-stat-ex" style="color:var(--text);">1/1</div><div class="stat-lbl">Exercice</div></div>
   </div>
 
-  <!-- Ring -->
-  <div class="ring-wrap" style="flex-shrink:1;align-self:center;min-height:160px;">
-    <svg class="ring-svg" viewBox="0 0 280 280">
-      <defs>
-        <linearGradient id="ftRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop id="ft-grad-stop1" offset="0%" stop-color="#4ade80"/>
-          <stop id="ft-grad-stop2" offset="100%" stop-color="#4ade80"/>
-        </linearGradient>
-        <linearGradient id="ftRingGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop id="ft-grad2-stop1" offset="0%" stop-color="#4ade80"/>
-          <stop id="ft-grad2-stop2" offset="100%" stop-color="#4ade80"/>
-        </linearGradient>
-      </defs>
-      <circle class="ring-track" cx="140" cy="140" r="130"/>
-      <circle class="ring-fill" id="ft-ring-fill" cx="140" cy="140" r="130" style="stroke:url(#ftRingGrad)"/>
-      <circle class="ring-track" cx="140" cy="140" r="115" style="stroke-width:8;"/>
-      <circle class="ring-fill" id="ft-ring-fill-progress" cx="140" cy="140" r="115"
-        style="stroke:url(#ftRingGrad2);stroke-width:8;stroke-dasharray:722.6;stroke-dashoffset:722.6;display:none;"/>
-    </svg>
-    <div class="ring-center">
-      <div class="ring-time" id="ft-ring-time">00:00</div>
-      <div class="ring-sub" id="ft-ring-sub"></div>
-    </div>
-  </div>
-
-  <!-- Current exercise -->
-  <div style="margin:0 20px 6px;background:var(--accent-dim);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 16px;position:relative;overflow:hidden;flex-shrink:0;">
-    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);"></div>
-    <div style="font-size:8px;letter-spacing:3px;color:var(--accent);font-family:'Bebas Neue',sans-serif;margin-bottom:3px;">EN COURS</div>
-    <div id="ft-current-name" style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);letter-spacing:2px;line-height:1.1;"></div>
-    <div id="ft-current-desc" style="font-size:10px;color:var(--muted);margin-top:3px;font-family:'Bebas Neue',sans-serif;"></div>
-  </div>
-
-  <!-- Validate button -->
-  <button id="ft-validate-btn" onclick="ftValidate()" style="margin:0 20px 6px;padding:13px;background:var(--accent);color:var(--bg);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:3px;border-radius:14px;border:none;cursor:pointer;box-shadow:0 4px 20px var(--accent-glow);width:calc(100% - 40px);flex-shrink:0;">✓  Validé — Suivant</button>
-
-  <!-- Controls -->
-  <div style="padding:0 20px 8px;flex-shrink:0;">
-
-    <!-- État normal -->
+  <!-- Zone de contrôle avec espace réservé pour le message -->
+  <div style="padding:0 20px 16px;flex-shrink:0;">
     <div id="ft-controls-normal" class="ctrl-row portrait-ctrl">
       <button class="ctrl-btn danger" onclick="ftStopRequest()">■ Stop</button>
-      <button class="ctrl-btn primary" id="ft-pause-btn" onclick="ftTogglePause()">⏸ Pause</button>
+      <button class="ctrl-btn primary" id="ft-pause-btn" onclick="ftTogglePause()">❚❚ Pause</button>
     </div>
-
-    <!-- État confirmation stop -->
-    <div id="ft-controls-confirm" style="display:none;flex-direction:column;gap:6px;width:100%;">
-      <div class="ctrl-row portrait-ctrl">
-        <button class="ctrl-btn danger" onclick="ftStopConfirm()">✓ Stop définitif</button>
-        <button class="ctrl-btn primary" onclick="ftStopCancel()">↩ Reprendre (<span id="ft-stop-countdown">5</span>s)</button>
-      </div>
-      <div style="font-size:9px;letter-spacing:2px;color:var(--red);font-family:'Bebas Neue',sans-serif;text-align:center;">
-        ⏸ Timer en pause — Confirmer le stop ?
-      </div>
+    <div id="ft-controls-confirm" class="ctrl-row portrait-ctrl" style="display:none;">
+      <button class="ctrl-btn danger" onclick="ftStopConfirm()">✓ Stop définitif</button>
+      <button class="ctrl-btn primary" onclick="ftStopCancel()">↩ Reprendre (<span id="ft-stop-countdown">5</span>s)</button>
     </div>
-
+    <!-- Message réservé sous les boutons — toujours présent, ne déplace rien -->
+    <div id="ft-stop-msg" style="min-height:20px;text-align:center;margin-top:6px;visibility:hidden;font-size:9px;letter-spacing:2px;color:var(--red);font-family:'Bebas Neue',sans-serif;">❚❚ Timer en pause — Confirmer le stop ?</div>
   </div>
 
-  <!-- Exercise list -->
-  <div style="font-size:8px;letter-spacing:3px;color:var(--muted);font-family:'Bebas Neue',sans-serif;padding:2px 20px 4px;text-transform:uppercase;border-top:1px solid var(--border);flex-shrink:0;">Tous les exercices</div>
-  <div id="ft-active-list" style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:3px;padding:0 20px 10px;"></div>
 </div>
 
 
   <!-- TIMER SCREEN -->
   <div id="timer-screen">
     <div class="t-phase" id="t-phase">Exercice</div>
-    <div id="t-desc" style="font-size:15px;color:var(--muted2);letter-spacing:.5px;margin-top:-2px;margin-bottom:4px;font-family:'DM Sans',sans-serif;min-height:18px;text-align:center;"></div>
-    <div class="ring-wrap">
-      <svg class="ring-svg" viewBox="0 0 280 280">
-        <defs>
-          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop id="grad-stop1" offset="0%" stop-color="#4ade80"/>
-            <stop id="grad-stop2" offset="100%" stop-color="#4ade80"/>
-          </linearGradient>
-          <linearGradient id="ringGradRest" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#fbbf24"/>
-            <stop offset="100%" stop-color="#f59e0b"/>
-          </linearGradient>
-        </defs>
-        <circle class="ring-track" cx="140" cy="140" r="130"/>
-        <circle class="ring-fill" id="ring-fill" cx="140" cy="140" r="130"/>
-      </svg>
-      <div class="ring-center">
-        <div class="ring-time" id="ring-time">00:00</div>
-        <div class="ring-sub" id="ring-sub">— exercice —</div>
+    <!-- Cercle centré dans l'espace disponible -->
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;min-height:0;overflow:hidden;">
+      <div class="ring-wrap" style="margin:0;flex-shrink:0;">
+        <svg class="ring-svg" viewBox="0 0 280 280">
+          <defs>
+            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop id="grad-stop1" offset="0%" stop-color="#4ade80"/>
+              <stop id="grad-stop2" offset="100%" stop-color="#4ade80"/>
+            </linearGradient>
+            <linearGradient id="ringGradRest" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fbbf24"/>
+              <stop offset="100%" stop-color="#f59e0b"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-track" cx="140" cy="140" r="130"/>
+          <circle class="ring-fill" id="ring-fill" cx="140" cy="140" r="130"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-time" id="ring-time">00:00</div>
+          <div class="ring-sub" id="ring-sub">— exercice —</div>
+        </div>
       </div>
+    </div>
+    <!-- Bloc inférieur collé aux boutons -->
+    <div id="exo-name-box">
+      <div class="enb-label">EN COURS</div>
+      <div id="exo-name-text" class="enb-name"></div>
+      <div id="exo-desc-text" class="enb-desc"></div>
     </div>
     <div class="stats-row" id="stats-row">
       <div class="stat-card serie-card"><div class="stat-val" id="stat-serie-p">1/5</div><div class="stat-lbl">Série</div></div>
@@ -715,24 +724,21 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
       <div class="stat-card"><div class="stat-val" id="stat-total-p">--</div><div class="stat-lbl">Restant</div></div>
     </div>
     <div class="chrono-info" id="chrono-info">00:00</div>
-    <!-- Lap row (Chrono uniquement) -->
-    <button class="ctrl-btn" id="btn-lap" onclick="addLap()" style="display:none;width:100%;background:var(--surface);border-color:var(--border2);color:var(--text);flex:none;margin-bottom:10px;">⊕ Lap</button>
-    <!-- État normal -->
-    <div id="timer-controls-normal" class="ctrl-row portrait-ctrl">
-      <button class="ctrl-btn danger" onclick="timerStopRequest()">■ Stop</button>
-      <button class="ctrl-btn primary" id="btn-pause-p" onclick="togglePause()">⏸ Pause</button>
-    </div>
-    <!-- État confirmation stop -->
-    <div id="timer-controls-confirm" style="display:none;flex-direction:column;gap:6px;width:100%;">
-      <div class="ctrl-row portrait-ctrl">
+    <!-- Zone de contrôle : lap list + lap btn + message réservé + boutons -->
+    <div style="width:100%;padding-bottom:16px;flex-shrink:0;">
+      <div id="lap-list" style="display:none;flex-direction:column;gap:4px;width:100%;max-height:110px;overflow-y:auto;margin-bottom:6px;padding:0 2px;"></div>
+      <button class="ctrl-btn" id="btn-lap" onclick="addLap()" style="display:none;width:100%;background:var(--surface);border-color:var(--border2);color:var(--text);margin-bottom:8px;">⊕ Lap</button>
+      <div id="timer-controls-normal" class="ctrl-row portrait-ctrl">
+        <button class="ctrl-btn danger" onclick="timerStopRequest()">■ Stop</button>
+        <button class="ctrl-btn primary" id="btn-pause-p" onclick="togglePause()">❚❚ Pause</button>
+      </div>
+      <div id="timer-controls-confirm" class="ctrl-row portrait-ctrl" style="display:none;">
         <button class="ctrl-btn danger" onclick="timerStopConfirm()">✓ Stop définitif</button>
         <button class="ctrl-btn primary" onclick="timerStopCancel()">↩ Reprendre (<span id="timer-stop-countdown">5</span>s)</button>
       </div>
-      <div style="font-size:9px;letter-spacing:2px;color:var(--red);font-family:'Bebas Neue',sans-serif;text-align:center;">
-        ⏸ Timer en pause — Confirmer le stop ?
-      </div>
+      <!-- Message réservé sous les boutons — toujours présent, ne déplace rien -->
+      <div id="timer-stop-msg" style="min-height:20px;text-align:center;margin-top:6px;visibility:hidden;font-size:9px;letter-spacing:2px;color:var(--red);font-family:'Bebas Neue',sans-serif;">❚❚ Timer en pause — Confirmer le stop ?</div>
     </div>
-    <div id="lap-list" style="display:none;flex-direction:column;gap:4px;width:100%;max-height:160px;overflow-y:auto;margin-top:8px;padding:0 2px;"></div>
   </div>
 
 </div><!-- /app -->
@@ -2147,38 +2153,47 @@ function renderFTCurrentEx() {
 function renderFTActiveList() {
   const list = document.getElementById('ft-active-list');
   if (!list) return;
-  const totalDone = (ftState.round - 1) * ftExercises.length + ftState.exIdx;
-  list.innerHTML = ftExercises.map((ex, i) => {
-    const globalIdx = (ftState.round - 1) * ftExercises.length + i;
-    const isDone = globalIdx < totalDone;
-    const isCurrent = i === ftState.exIdx;
-    const style = isDone
-      ? `opacity:.4;`
-      : isCurrent
-      ? `background:var(--accent-dim);border:1px solid rgba(255,255,255,.1);border-radius:10px;`
-      : '';
-    const checkEl = isDone
-      ? `<div style="width:20px;height:20px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--bg);flex-shrink:0;">✓</div>`
-      : isCurrent
-      ? `<div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--accent);flex-shrink:0;"></div>`
-      : `<div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;"></div>`;
-    const nameColor = isDone ? 'var(--muted2)' : isCurrent ? 'var(--accent)' : 'var(--muted)';
-    const decoration = isDone ? 'text-decoration:line-through;' : '';
-    return `<div data-ex-idx="${i}" style="display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;${style}">
-      ${checkEl}
-      <span style="flex:1;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:${nameColor};${decoration}">${ex.name}</span>
-    </div>`;
+  const total = ftExercises.length;
+  const rounds = ftVals.ft_rounds;
+  const curGlobal = (ftState.round - 1) * total + ftState.exIdx;
+  const totalGlobal = rounds * total;
+  const rLabel = (r) => rounds > 1 ? ` <span style="color:var(--muted2);font-size:10px;">R${r}</span>` : '';
+
+  // Calcul du nombre de suivants et précédents pour toujours afficher 4 lignes.
+  // Règle : courant en position 2 sauf au début (pos 1) et à la fin (descend vers le bas).
+  const nextAvailable = totalGlobal - curGlobal - 1;
+  let nextCount = Math.min(nextAvailable, 2);       // idéalement 2 suivants
+  let prevCount = Math.min(3 - nextCount, curGlobal); // on complète avec des précédents
+  // Si après le clamp il manque encore des lignes, prendre plus de suivants
+  const stillNeeded = 4 - 1 - prevCount - nextCount;
+  if (stillNeeded > 0) nextCount += Math.min(stillNeeded, nextAvailable - nextCount);
+
+  const items = [];
+  for (let g = curGlobal - prevCount; g < curGlobal; g++) {
+    items.push({ ex: ftExercises[g % total], round: Math.floor(g / total) + 1, state: 'done' });
+  }
+  items.push({ ex: ftExercises[ftState.exIdx], round: ftState.round, state: 'current' });
+  for (let g = curGlobal + 1; g <= curGlobal + nextCount; g++) {
+    items.push({ ex: ftExercises[g % total], round: Math.floor(g / total) + 1, state: 'next' });
+  }
+  list.innerHTML = items.map(({ ex, round: r, state }) => {
+    if (state === 'done') {
+      return `<div style="display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;opacity:.5;">
+        <div style="width:14px;height:14px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--bg);flex-shrink:0;">✓</div>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--muted2);text-decoration:line-through;">${ex.name}${rLabel(r)}</span>
+      </div>`;
+    } else if (state === 'current') {
+      return `<div style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:10px;background:var(--accent-dim);border:1px solid rgba(255,255,255,.1);">
+        <div style="width:14px;height:14px;border-radius:50%;border:2px solid var(--accent);flex-shrink:0;"></div>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:var(--accent);">${ex.name}${rLabel(r)}</span>
+      </div>`;
+    } else {
+      return `<div style="display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;">
+        <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;"></div>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--muted);">${ex.name}${rLabel(r)}</span>
+      </div>`;
+    }
   }).join('');
-  // Scroll auto : garder l'exercice courant en 2ème position visible
-  setTimeout(() => {
-    const cur = list.querySelector(`[data-ex-idx="${ftState.exIdx}"]`);
-    if (!cur || ftState.exIdx === 0) { list.scrollTop = 0; return; }
-    const listRect = list.getBoundingClientRect();
-    const curRect  = cur.getBoundingClientRect();
-    const itemH    = cur.offsetHeight + 3; // 3 = gap
-    const relativeTop = list.scrollTop + (curRect.top - listRect.top);
-    list.scrollTo({ top: Math.max(0, relativeTop - itemH), behavior: 'smooth' });
-  }, 50);
 }
 
 function ftTogglePause() {
@@ -2192,7 +2207,7 @@ function ftTogglePause() {
     ftState.paused = false;
     ftState.startTs = performance.now();
     ftState.rafId = requestAnimationFrame(ftRaf);
-    document.getElementById('ft-pause-btn').textContent = '⏸ Pause';
+    document.getElementById('ft-pause-btn').textContent = '❚❚ Pause';
   }
 }
 
@@ -2342,9 +2357,8 @@ function ftStopRequest() {
     if (pauseBtn) pauseBtn.textContent = '▶ Reprendre';
   }
   document.getElementById('ft-controls-normal').style.display = 'none';
-  const conf = document.getElementById('ft-controls-confirm');
-  conf.style.display = 'flex';
-  conf.style.flexDirection = 'column';
+  document.getElementById('ft-controls-confirm').style.display = 'flex';
+  const ftMsg=document.getElementById('ft-stop-msg');if(ftMsg)ftMsg.style.visibility='visible';
   let count = 5;
   const cdEl = document.getElementById('ft-stop-countdown');
   if (cdEl) cdEl.textContent = count;
@@ -2360,6 +2374,7 @@ function ftStopCancel() {
   if (ftStopCountdownTimer) { clearInterval(ftStopCountdownTimer); ftStopCountdownTimer = null; }
   document.getElementById('ft-controls-normal').style.display = 'flex';
   document.getElementById('ft-controls-confirm').style.display = 'none';
+  const ftMsgC=document.getElementById('ft-stop-msg');if(ftMsgC)ftMsgC.style.visibility='hidden';
   if (ftWasPausedBeforeStop) return; // était déjà en pause → rester en pause
   // Rattraper le temps de la fenêtre de confirmation
   const confirmElapsed = performance.now() - ftStopRequestTs;
@@ -2368,7 +2383,7 @@ function ftStopCancel() {
   ftState.startTs = performance.now();
   ftState.rafId = requestAnimationFrame(ftRaf);
   const pauseBtn = document.getElementById('ft-pause-btn');
-  if (pauseBtn) pauseBtn.textContent = '⏸ Pause';
+  if (pauseBtn) pauseBtn.textContent = '❚❚ Pause';
 }
 
 function ftStopConfirm() {
@@ -2376,6 +2391,7 @@ function ftStopConfirm() {
   // Remettre l'état normal (pour la prochaine session)
   document.getElementById('ft-controls-normal').style.display = 'flex';
   document.getElementById('ft-controls-confirm').style.display = 'none';
+  const ftMsgF=document.getElementById('ft-stop-msg');if(ftMsgF)ftMsgF.style.visibility='hidden';
   ftStop();
 }
 
@@ -2411,6 +2427,7 @@ function hideFTTimerScreen() {
   const conf   = document.getElementById('ft-controls-confirm');
   if (normal) normal.style.display = 'flex';
   if (conf)   conf.style.display   = 'none';
+  const hidMsg=document.getElementById('ft-stop-msg');if(hidMsg)hidMsg.style.visibility='hidden';
   document.getElementById('ft-timer-screen').style.display = 'none';
   document.getElementById('swipe-container').style.display = '';
   document.getElementById('tab-bar').style.display = 'flex';
@@ -2483,6 +2500,7 @@ function showConfigScreen(){
   if(timerStopCountdownTimer){clearInterval(timerStopCountdownTimer);timerStopCountdownTimer=null;}
   const tn=document.getElementById('timer-controls-normal'),tc=document.getElementById('timer-controls-confirm');
   if(tn)tn.style.display='flex';if(tc)tc.style.display='none';
+  const scMsg=document.getElementById('timer-stop-msg');if(scMsg)scMsg.style.visibility='hidden';
   document.getElementById('timer-screen').classList.remove('active');
   document.getElementById('swipe-container').style.display='';
   document.getElementById('tab-bar').style.display='flex';
@@ -2496,11 +2514,11 @@ function buildDegressivePhases(){const arr=[];degSteps.forEach((s,i)=>{arr.push(
 
 function startInterval(){phases=buildIntervalPhases();if(!phases.length)return;currentMode='interval';document.getElementById('stats-row').style.display='flex';document.getElementById('chrono-info').style.display='none';acquireWakeLock();if(countdownOn.interval){runCountdown(()=>{showTimerScreen();launchPhases();});}else{showTimerScreen();launchPhases();}}
 function startDegressive(){if(!degSteps.length){alert('Ajoutez au moins un palier !');return;}phases=buildDegressivePhases();currentMode='degressive';document.getElementById('stats-row').style.display='flex';document.getElementById('chrono-info').style.display='none';acquireWakeLock();if(countdownOn.degressive){runCountdown(()=>{showTimerScreen();launchPhases();});}else{showTimerScreen();launchPhases();}}
-function startChrono(){currentMode='chrono';chronoElapsed=0;chronoCap=timecapOn?vals.c_cap:0;document.getElementById('stats-row').style.display='none';document.getElementById('chrono-info').style.display='block';acquireWakeLock();if(countdownOn.chrono){runCountdown(()=>{showTimerScreen();launchChrono();});}else{showTimerScreen();launchChrono();}}
+function startChrono(){currentMode='chrono';chronoElapsed=0;chronoCap=timecapOn?vals.c_cap:0;document.getElementById('stats-row').style.display='none';document.getElementById('chrono-info').style.display='block';const enb=document.getElementById('exo-name-box');if(enb)enb.style.display='none';acquireWakeLock();if(countdownOn.chrono){runCountdown(()=>{showTimerScreen();launchChrono();});}else{showTimerScreen();launchChrono();}}
 
 // ══ PHASES ENGINE ══
 let phaseStartTs=null,rafId=null;
-function launchPhases(){phaseIdx=0;isPaused=false;setPauseBtn('⏸ Pause');setStatus('active','ACTIF');startPhase();}
+function launchPhases(){phaseIdx=0;isPaused=false;setPauseBtn('❚❚ Pause');setStatus('active','ACTIF');startPhase();}
 function startPhase(){
   if(phaseIdx>=phases.length){finishTimer();return;}
   const p=phases[phaseIdx];phaseRemaining=p.dur;phaseDuration=p.dur;phaseStartTs=null;
@@ -2528,13 +2546,21 @@ function updatePhaseUI(remaining){
     const nxtName = nextP && nextP.name ? nextP.name : '';
     phaseEl.textContent = nxtName ? `— Pause — · ${nxtName}` : '— Pause —';
   } else {
-    phaseEl.textContent = p.name ? `${p.name} · ${p.serie}/${p.total}` : `Exercice · Série ${p.serie}/${p.total}`;
+    phaseEl.textContent = `Exercice · Série ${p.serie}/${p.total}`;
   }
   phaseEl.className='t-phase'+(isRest?' rest':'');
   const timeEl=document.getElementById('ring-time');timeEl.textContent=fmt(Math.ceil(remaining));timeEl.className='ring-time'+(isRest?' rest':'')+(remaining<=5&&!isRest?' urgent':'');
-  // Description de l'exercice courant
-  const descEl = document.getElementById('t-desc');
-  if (descEl) descEl.textContent = (!isRest && p.desc) ? p.desc : '';
+  // Boîte nom d'exercice (en-dessous du cercle)
+  const nameBox = document.getElementById('exo-name-box');
+  if (nameBox) {
+    if (!isRest) {
+      nameBox.style.display = 'block';
+      document.getElementById('exo-name-text').textContent = p.name || `Exercice #${p.serie}`;
+      document.getElementById('exo-desc-text').textContent = p.desc || '';
+    } else {
+      nameBox.style.display = 'none';
+    }
+  }
   // Durant une pause en mode dégressif : afficher le nom du prochain exercice
   let subText = '';
   if (nextP) {
@@ -2588,7 +2614,7 @@ function launchChrono(){
   if(lapList){ lapList.style.display='none'; lapList.innerHTML=''; }
   const lapBtn = document.getElementById('btn-lap');
   if(lapBtn) lapBtn.style.display='';
-  isPaused=false;chronoStartTs=null;chronoPauseOffset=0;setPauseBtn('⏸ Pause');setStatus('active','ACTIF');
+  isPaused=false;chronoStartTs=null;chronoPauseOffset=0;setPauseBtn('❚❚ Pause');setStatus('active','ACTIF');
   document.getElementById('t-phase').textContent='Chrono';document.getElementById('t-phase').className='t-phase';
   document.getElementById('ring-fill').className='ring-fill';document.getElementById('ring-fill').style.strokeDashoffset='0';
   document.getElementById('ring-sub').textContent='';document.getElementById('ring-time').className='ring-time';
@@ -2612,7 +2638,7 @@ function setPauseBtn(txt){const b1=document.getElementById('btn-pause'),b2=docum
 function togglePause(){
   isPaused=!isPaused;
   if(isPaused){setPauseBtn('▶ Reprendre');setStatus('paused','PAUSE');if(currentMode==='chrono'){chronoPauseOffset=chronoElapsed;chronoStartTs=null;}else{_pausedRemaining=phaseRemaining;}}
-  else{setPauseBtn('⏸ Pause');setStatus('active','ACTIF');soundTick();if(currentMode==='chrono'){chronoStartTs=null;}else{phaseStartTs=null;_phaseResumeOffset=_pausedRemaining;}}
+  else{setPauseBtn('❚❚ Pause');setStatus('active','ACTIF');soundTick();if(currentMode==='chrono'){chronoStartTs=null;}else{phaseStartTs=null;_phaseResumeOffset=_pausedRemaining;}}
 }
 let _pausedRemaining=0,_phaseResumeOffset=0;
 
@@ -2629,7 +2655,8 @@ function timerStopRequest(){
     setPauseBtn('▶ Reprendre');setStatus('paused','PAUSE');
   }
   document.getElementById('timer-controls-normal').style.display='none';
-  const conf=document.getElementById('timer-controls-confirm');conf.style.display='flex';conf.style.flexDirection='column';
+  document.getElementById('timer-controls-confirm').style.display='flex';
+  const msg=document.getElementById('timer-stop-msg');if(msg)msg.style.visibility='visible';
   let count=5;const cdEl=document.getElementById('timer-stop-countdown');if(cdEl)cdEl.textContent=count;
   timerStopCountdownTimer=setInterval(()=>{count--;const el=document.getElementById('timer-stop-countdown');if(el)el.textContent=count;if(count<=0)timerStopCancel();},1000);
 }
@@ -2637,10 +2664,11 @@ function timerStopCancel(){
   if(timerStopCountdownTimer){clearInterval(timerStopCountdownTimer);timerStopCountdownTimer=null;}
   document.getElementById('timer-controls-normal').style.display='flex';
   document.getElementById('timer-controls-confirm').style.display='none';
+  const msg=document.getElementById('timer-stop-msg');if(msg)msg.style.visibility='hidden';
   if(timerWasPausedAtStop)return; // était déjà en pause → rester en pause
   // Rattraper le temps de la fenêtre de confirmation
   const confirmElapsed=(performance.now()-timerStopRequestTs)/1000;
-  isPaused=false;setPauseBtn('⏸ Pause');setStatus('active','ACTIF');
+  isPaused=false;setPauseBtn('❚❚ Pause');setStatus('active','ACTIF');
   if(currentMode==='chrono'){chronoPauseOffset=chronoElapsed+confirmElapsed;chronoStartTs=null;}
   else{_phaseResumeOffset=Math.max(0,phaseRemaining-confirmElapsed);phaseStartTs=null;}
 }
@@ -2648,6 +2676,7 @@ function timerStopConfirm(){
   if(timerStopCountdownTimer){clearInterval(timerStopCountdownTimer);timerStopCountdownTimer=null;}
   document.getElementById('timer-controls-normal').style.display='flex';
   document.getElementById('timer-controls-confirm').style.display='none';
+  const msg=document.getElementById('timer-stop-msg');if(msg)msg.style.visibility='hidden';
   // Le display est gelé au moment du premier appui → temps correct
   stopTimer();
 }
@@ -2658,7 +2687,8 @@ function stopTimer(){
   if(tn)tn.style.display='flex';if(tc)tc.style.display='none';
   if(rafId){cancelAnimationFrame(rafId);rafId=null;}
   if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
-  isPaused=false;phaseStartTs=null;chronoPauseOffset=0;setPauseBtn('⏸ Pause');releaseWakeLock();
+  isPaused=false;phaseStartTs=null;chronoPauseOffset=0;setPauseBtn('❚❚ Pause');releaseWakeLock();
+  const timerMsg=document.getElementById('timer-stop-msg');if(timerMsg)timerMsg.style.visibility='hidden';
   // Chrono → afficher overlay avec temps écoulé + laps
   if(currentMode==='chrono' && chronoElapsed > 0){
     const laps = _laps.slice();
