@@ -321,7 +321,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 
 /* ── CTRL BUTTONS ── */
 .ctrl-row { display: flex; gap: 10px; width: 100%; }
-.ctrl-btn { flex: 1; padding: 15px; border-radius: 14px; font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 1px; cursor: pointer; border: 1px solid var(--border2); background: var(--surface); color: var(--muted); transition: all .12s; }
+.ctrl-btn { flex: 1; padding: 15px; border-radius: 14px; font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 1px; cursor: pointer; border: 1px solid var(--border2); background: var(--surface); color: var(--muted); transition: all .12s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ctrl-btn:active { transform: scale(.97); }
 .ctrl-btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); box-shadow: 0 4px 18px var(--accent-glow); }
 .ctrl-btn.primary:active { opacity: .85; }
@@ -661,14 +661,14 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
   <div style="padding:0 20px 8px;flex-shrink:0;">
 
     <!-- État normal -->
-    <div id="ft-controls-normal" style="display:flex;gap:8px;">
+    <div id="ft-controls-normal" class="ctrl-row portrait-ctrl">
       <button class="ctrl-btn danger" onclick="ftStopRequest()">■ Stop</button>
       <button class="ctrl-btn primary" id="ft-pause-btn" onclick="ftTogglePause()">⏸ Pause</button>
     </div>
 
     <!-- État confirmation stop -->
     <div id="ft-controls-confirm" style="display:none;flex-direction:column;gap:6px;width:100%;">
-      <div style="display:flex;gap:8px;width:100%;">
+      <div class="ctrl-row portrait-ctrl">
         <button class="ctrl-btn danger" onclick="ftStopConfirm()">✓ Stop définitif</button>
         <button class="ctrl-btn primary" onclick="ftStopCancel()">↩ Reprendre (<span id="ft-stop-countdown">5</span>s)</button>
       </div>
@@ -715,10 +715,11 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
       <div class="stat-card"><div class="stat-val" id="stat-total-p">--</div><div class="stat-lbl">Restant</div></div>
     </div>
     <div class="chrono-info" id="chrono-info">00:00</div>
+    <!-- Lap row (Chrono uniquement) -->
+    <button class="ctrl-btn" id="btn-lap" onclick="addLap()" style="display:none;width:100%;background:var(--surface);border-color:var(--border2);color:var(--text);flex:none;margin-bottom:10px;">⊕ Lap</button>
     <!-- État normal -->
     <div id="timer-controls-normal" class="ctrl-row portrait-ctrl">
       <button class="ctrl-btn danger" onclick="timerStopRequest()">■ Stop</button>
-      <button class="ctrl-btn" id="btn-lap" onclick="addLap()" style="display:none;background:var(--surface);border-color:var(--border2);color:var(--text);">⊕ Lap</button>
       <button class="ctrl-btn primary" id="btn-pause-p" onclick="togglePause()">⏸ Pause</button>
     </div>
     <!-- État confirmation stop -->
