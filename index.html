@@ -323,7 +323,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 .enb-label { font-size: 8px; letter-spacing: 3px; color: var(--accent); font-family: 'Bebas Neue', sans-serif; margin-bottom: 3px; transition: color .2s; }
 #ft-active-list::-webkit-scrollbar { display: none; }
 .enb-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); letter-spacing: 2px; line-height: 1.1; transition: color .2s; }
-.enb-desc { font-size: 10px; color: var(--muted); margin-top: 3px; font-family: 'Bebas Neue', sans-serif; }
+.enb-desc { font-size: 10px; color: var(--muted); margin-top: 3px; font-family: 'Bebas Neue', sans-serif; min-height: 14px; }
 .lap-item { display: flex; align-items: center; justify-content: space-between; padding: 5px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 1px; }
 .lap-num { color: var(--muted); }
 .lap-split { color: var(--accent); }
@@ -456,49 +456,44 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
   <div class="screen" id="screen-degressive">
     <div class="sec-title">Ajouter un palier <span style="color:var(--muted2)">(Exo / Pause)</span></div>
     <div class="deg-add-card">
-      <!-- Rounds + Durées — V2 : une seule bande -->
-      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:6px;margin-bottom:14px;">
-
-        <!-- Rounds -->
-        <div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;">
+      <!-- Rounds — V7 : grand chiffre encadré amber -->
+      <div style="display:flex;align-items:center;justify-content:space-between;background:var(--amber-dim);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:10px 14px;margin-bottom:12px;">
+        <div style="display:flex;flex-direction:column;gap:2px;">
           <span style="font-size:8px;letter-spacing:2px;color:var(--amber);text-transform:uppercase;">Rounds</span>
-          <div style="display:flex;align-items:center;gap:4px;">
-            <button class="spin-btn" onclick="adjDegRounds(-1)" style="width:28px;height:28px;font-size:16px;">−</button>
-            <input class="val-display" id="disp-deg-rounds" type="text" inputmode="numeric" maxlength="2"
-              onblur="inputDegRounds(this)" onkeydown="if(event.key==='Enter')this.blur()"
-              style="color:var(--amber);width:30px;font-size:18px;">
-            <button class="spin-btn" onclick="adjDegRounds(1)" style="width:28px;height:28px;font-size:16px;">+</button>
-          </div>
+          <span style="font-size:9px;color:var(--muted);letter-spacing:1px;font-family:'DM Sans',sans-serif;">Nombre de séries</span>
         </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="spin-btn" onclick="adjDegRounds(-1)" style="background:var(--amber-dim);border-color:rgba(251,191,36,.2);">−</button>
+          <input class="val-display" id="disp-deg-rounds" type="text" inputmode="numeric" maxlength="2"
+            onblur="inputDegRounds(this)" onkeydown="if(event.key==='Enter')this.blur()"
+            style="color:var(--amber);width:32px;font-size:32px;text-align:center;">
+          <button class="spin-btn" onclick="adjDegRounds(1)" style="background:var(--amber-dim);border-color:rgba(251,191,36,.2);">+</button>
+        </div>
+      </div>
 
-        <div style="width:1px;background:var(--border);align-self:stretch;flex-shrink:0;margin-bottom:4px;"></div>
-
-        <!-- Exercice -->
+      <!-- Durées -->
+      <div style="display:flex;justify-content:center;gap:16px;margin-bottom:14px;">
         <div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;">
           <span style="font-size:8px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;">Exercice</span>
-          <div style="display:flex;align-items:center;gap:4px;">
-            <button class="spin-btn" onclick="adj('d_exo',-10)" style="width:28px;height:28px;font-size:16px;">−</button>
+          <div style="display:flex;align-items:center;gap:5px;">
+            <button class="spin-btn" onclick="adj('d_exo',-10)">−</button>
             <input class="val-display" id="disp-d_exo" type="text" inputmode="numeric" maxlength="5"
               onblur="inputTime('d_exo',this)" onkeydown="if(event.key==='Enter')this.blur()"
-              style="font-size:14px;width:44px;">
-            <button class="spin-btn" onclick="adj('d_exo',10)" style="width:28px;height:28px;font-size:16px;">+</button>
+              style="font-size:15px;width:52px;">
+            <button class="spin-btn" onclick="adj('d_exo',10)">+</button>
           </div>
         </div>
-
-        <span style="color:var(--muted2);font-size:15px;flex-shrink:0;padding-bottom:6px;">/</span>
-
-        <!-- Repos -->
+        <div style="width:1px;background:var(--border);align-self:stretch;flex-shrink:0;"></div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;">
           <span style="font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">Repos</span>
-          <div style="display:flex;align-items:center;gap:4px;">
-            <button class="spin-btn" onclick="adj('d_rest',-5)" style="width:28px;height:28px;font-size:16px;">−</button>
+          <div style="display:flex;align-items:center;gap:5px;">
+            <button class="spin-btn" onclick="adj('d_rest',-5)">−</button>
             <input class="val-display" id="disp-d_rest" type="text" inputmode="numeric" maxlength="5"
               onblur="inputTime('d_rest',this)" onkeydown="if(event.key==='Enter')this.blur()"
-              style="font-size:14px;width:44px;">
-            <button class="spin-btn" onclick="adj('d_rest',5)" style="width:28px;height:28px;font-size:16px;">+</button>
+              style="font-size:15px;width:52px;">
+            <button class="spin-btn" onclick="adj('d_rest',5)">+</button>
           </div>
         </div>
-
       </div>
       <div style="margin-bottom:6px;">
         <input type="text" id="disp-d_name" maxlength="40" placeholder="Nom de l'exercice (optionnel)"
@@ -696,7 +691,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
     <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);"></div>
     <div style="font-size:8px;letter-spacing:3px;color:var(--accent);font-family:'Bebas Neue',sans-serif;margin-bottom:2px;">EN COURS</div>
     <div id="ft-current-name" style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text);letter-spacing:2px;line-height:1.1;"></div>
-    <div id="ft-current-desc" style="font-size:10px;color:var(--muted);margin-top:2px;font-family:'Bebas Neue',sans-serif;"></div>
+    <div id="ft-current-desc" style="font-size:10px;color:var(--muted);margin-top:2px;font-family:'Bebas Neue',sans-serif;min-height:14px;"></div>
   </div>
 
   <!-- Bouton valider -->
@@ -2187,7 +2182,7 @@ function ftValidate() {
 function renderFTCurrentEx() {
   const ex = ftExercises[ftState.exIdx];
   document.getElementById('ft-current-name').textContent = ex ? ex.name : '';
-  document.getElementById('ft-current-desc').textContent = ex ? (ex.desc || '') : '';
+  document.getElementById('ft-current-desc').textContent = ex ? (ex.desc || '\u00A0') : '\u00A0';
   const total = ftExercises.length;
   const rounds = ftVals.ft_rounds;
   document.getElementById('ft-stat-round').textContent = `${ftState.round}/${rounds}`;
@@ -2617,12 +2612,12 @@ function updatePhaseUI(remaining){
         nameBox.classList.remove('rest-mode');
         if (lbl) lbl.textContent = 'EN COURS';
         document.getElementById('exo-name-text').textContent = p.name || `Exercice #${p.serie}`;
-        document.getElementById('exo-desc-text').textContent = p.desc || '';
+        document.getElementById('exo-desc-text').textContent = p.desc || '\u00A0';
       } else {
         nameBox.classList.add('rest-mode');
         if (lbl) lbl.textContent = 'EN COURS';
         document.getElementById('exo-name-text').textContent = '— Repos —';
-        document.getElementById('exo-desc-text').textContent = '';
+        document.getElementById('exo-desc-text').textContent = '\u00A0';
       }
     }
   }
@@ -2713,7 +2708,7 @@ function togglePause(){
         nb.style.display='block';nb.classList.add('pause-mode');
         const lbl=document.getElementById('enb-label');if(lbl)lbl.textContent='EN PAUSE';
         document.getElementById('exo-name-text').textContent='❚❚ PAUSE';
-        document.getElementById('exo-desc-text').textContent='';
+        document.getElementById('exo-desc-text').textContent='\u00A0';
       }
     }
   } else {
