@@ -165,7 +165,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
   padding-bottom: 12px;
   height: 100%;
 }
-.sec-title { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); padding: 12px 20px 8px; }
+.sec-title { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); padding: 12px 20px 8px; }
 
 /* ── CONFIG ── */
 .config-card { margin: 0 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
@@ -213,7 +213,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 /* ── SUMMARY ── */
 .summary-card { margin: 10px 20px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 16px; display: flex; align-items: center; gap: 0; }
 .summary-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.summary-lbl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.summary-lbl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
 .summary-val { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--accent); letter-spacing: 1px; line-height: 1; }
 .summary-sep { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
 
@@ -310,7 +310,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 .stats-row { display: flex; gap: 20px; width: 100%; margin-bottom: 10px; }
 .stat-card { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 8px; text-align: center; }
 .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); line-height: 1; }
-.stat-lbl { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+.stat-lbl { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
 .stat-card.serie-card { flex: 1; }
 .stat-card.serie-card .stat-val { font-size: 20px; color: var(--accent); }
 .chrono-info { display: none; font-family: 'Bebas Neue', sans-serif; font-size: 13px; color: var(--muted); letter-spacing: 2px; margin-bottom: 14px; }
@@ -321,6 +321,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 #exo-name-box.pause-mode .enb-label, #exo-name-box.rest-mode .enb-label { color: var(--amber) !important; }
 #exo-name-box.pause-mode .enb-name, #exo-name-box.rest-mode .enb-name { color: var(--amber) !important; letter-spacing: 3px; }
 .enb-label { font-size: 8px; letter-spacing: 3px; color: var(--accent); font-family: 'Bebas Neue', sans-serif; margin-bottom: 3px; transition: color .2s; }
+#ft-active-list::-webkit-scrollbar { display: none; }
 .enb-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); letter-spacing: 2px; line-height: 1.1; transition: color .2s; }
 .enb-desc { font-size: 10px; color: var(--muted); margin-top: 3px; font-family: 'Bebas Neue', sans-serif; }
 .lap-item { display: flex; align-items: center; justify-content: space-between; padding: 5px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 1px; }
@@ -455,14 +456,49 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
   <div class="screen" id="screen-degressive">
     <div class="sec-title">Ajouter un palier <span style="color:var(--muted2)">(Exo / Pause)</span></div>
     <div class="deg-add-card">
-      <div class="deg-add-row">
-        <button class="spin-btn" onclick="adj('d_exo',-10)">−</button>
-        <input class="val-display" id="disp-d_exo" type="text" inputmode="numeric" maxlength="5" style="font-size:15px;width:52px" onblur="inputTime('d_exo',this)" onkeydown="if(event.key==='Enter')this.blur()">
-        <button class="spin-btn" onclick="adj('d_exo',10)">+</button>
-        <span style="color:var(--muted2);font-size:14px;flex-shrink:0;">/</span>
-        <button class="spin-btn" onclick="adj('d_rest',-5)">−</button>
-        <input class="val-display" id="disp-d_rest" type="text" inputmode="numeric" maxlength="5" style="font-size:15px;width:52px" onblur="inputTime('d_rest',this)" onkeydown="if(event.key==='Enter')this.blur()">
-        <button class="spin-btn" onclick="adj('d_rest',5)">+</button>
+      <!-- Rounds + Durées — V2 : une seule bande -->
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:6px;margin-bottom:14px;">
+
+        <!-- Rounds -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;">
+          <span style="font-size:8px;letter-spacing:2px;color:var(--amber);text-transform:uppercase;">Rounds</span>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <button class="spin-btn" onclick="adjDegRounds(-1)" style="width:28px;height:28px;font-size:16px;">−</button>
+            <input class="val-display" id="disp-deg-rounds" type="text" inputmode="numeric" maxlength="2"
+              onblur="inputDegRounds(this)" onkeydown="if(event.key==='Enter')this.blur()"
+              style="color:var(--amber);width:30px;font-size:18px;">
+            <button class="spin-btn" onclick="adjDegRounds(1)" style="width:28px;height:28px;font-size:16px;">+</button>
+          </div>
+        </div>
+
+        <div style="width:1px;background:var(--border);align-self:stretch;flex-shrink:0;margin-bottom:4px;"></div>
+
+        <!-- Exercice -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;">
+          <span style="font-size:8px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;">Exercice</span>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <button class="spin-btn" onclick="adj('d_exo',-10)" style="width:28px;height:28px;font-size:16px;">−</button>
+            <input class="val-display" id="disp-d_exo" type="text" inputmode="numeric" maxlength="5"
+              onblur="inputTime('d_exo',this)" onkeydown="if(event.key==='Enter')this.blur()"
+              style="font-size:14px;width:44px;">
+            <button class="spin-btn" onclick="adj('d_exo',10)" style="width:28px;height:28px;font-size:16px;">+</button>
+          </div>
+        </div>
+
+        <span style="color:var(--muted2);font-size:15px;flex-shrink:0;padding-bottom:6px;">/</span>
+
+        <!-- Repos -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;">
+          <span style="font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">Repos</span>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <button class="spin-btn" onclick="adj('d_rest',-5)" style="width:28px;height:28px;font-size:16px;">−</button>
+            <input class="val-display" id="disp-d_rest" type="text" inputmode="numeric" maxlength="5"
+              onblur="inputTime('d_rest',this)" onkeydown="if(event.key==='Enter')this.blur()"
+              style="font-size:14px;width:44px;">
+            <button class="spin-btn" onclick="adj('d_rest',5)" style="width:28px;height:28px;font-size:16px;">+</button>
+          </div>
+        </div>
+
       </div>
       <div style="margin-bottom:6px;">
         <input type="text" id="disp-d_name" maxlength="40" placeholder="Nom de l'exercice (optionnel)"
@@ -652,8 +688,8 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 
   <!-- Bloc inférieur collé aux boutons -->
   <!-- Liste exercices : précédent (coché) + courant (pos.2) + suivants -->
-  <div style="font-size:8px;letter-spacing:3px;color:var(--muted);font-family:'Bebas Neue',sans-serif;padding:2px 20px 3px;text-transform:uppercase;flex-shrink:0;">Exercices</div>
-  <div id="ft-active-list" style="flex-shrink:0;display:flex;flex-direction:column;gap:2px;padding:0 20px 5px;"></div>
+  <div style="font-size:8px;letter-spacing:3px;color:var(--accent);font-family:'Bebas Neue',sans-serif;padding:2px 20px 3px;text-transform:uppercase;flex-shrink:0;">Exercices</div>
+  <div id="ft-active-list" style="flex-shrink:0;height:132px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;padding:0 20px 5px;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;"></div>
 
   <!-- Exercice courant -->
   <div style="margin:0 20px 8px;background:var(--accent-dim);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:9px 16px;position:relative;overflow:hidden;flex-shrink:0;">
@@ -723,7 +759,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
       <div id="exo-desc-text" class="enb-desc"></div>
     </div>
     <div class="stats-row" id="stats-row">
-      <div class="stat-card serie-card"><div class="stat-val" id="stat-serie-p">1/5</div><div class="stat-lbl">Série</div></div>
+      <div class="stat-card serie-card"><div class="stat-val" id="stat-serie-p">1/5</div><div class="stat-lbl" id="stat-serie-lbl-p">Série</div></div>
       <div class="stat-card"><div class="stat-val" id="stat-next-p">01:00</div><div class="stat-lbl" id="stat-next-lbl-p">Prochain</div></div>
       <div class="stat-card"><div class="stat-val" id="stat-total-p">--</div><div class="stat-lbl">Restant</div></div>
     </div>
@@ -1325,7 +1361,7 @@ function applyCustomSkin() {
 // ══ CONFIG STATE ══
 const vals = { i_exo:180, i_rest:60, i_reps:5, d_exo:120, d_rest:60, c_cap:1200, cd_dur:10 };
 const limits = { i_exo:[10,3600], i_rest:[0,600], i_reps:[1,50], d_exo:[10,3600], d_rest:[0,600], c_cap:[60,7200], cd_dur:[3,60] };
-let degSteps = [], timecapOn = false, timerInterval = null, isPaused = false, currentMode = null;
+let degSteps = [], degRounds = 1, timecapOn = false, timerInterval = null, isPaused = false, currentMode = null;
 const countdownOn = { interval: true, degressive: true, chrono: true, fortime: true };
 let phases = [], phaseIdx = 0, phaseRemaining = 0, phaseDuration = 0;
 let chronoElapsed = 0, chronoCap = 0;
@@ -1414,7 +1450,7 @@ function parseTimeInput(raw) {
 function inputTime(key, el) { const sec=parseTimeInput(el.value); if(sec!==null){const[mn,mx]=limits[key];vals[key]=Math.min(mx,Math.max(mn,sec));} renderVal(key); updateSummaryInterval(); saveState(); }
 function inputReps(key, el) { const n=parseInt(el.value,10); if(!isNaN(n)){const[mn,mx]=limits[key];vals[key]=Math.min(mx,Math.max(mn,n));} renderVal(key); updateSummaryInterval(); saveState(); }
 function updateSummaryInterval() { const e=vals.i_exo*vals.i_reps,r=vals.i_rest*Math.max(0,vals.i_reps-1); document.getElementById('sum-i-exo').textContent=fmt(e); document.getElementById('sum-i-total').textContent=fmt(e+r); }
-function updateSummaryDegressive() { if(!degSteps.length){document.getElementById('sum-d-exo').textContent='—';document.getElementById('sum-d-total').textContent='—';return;} const e=degSteps.reduce((a,s)=>a+s.exo,0),r=degSteps.reduce((a,s)=>a+s.rest,0); document.getElementById('sum-d-exo').textContent=fmt(e); document.getElementById('sum-d-total').textContent=fmt(e+r); }
+function updateSummaryDegressive() { if(!degSteps.length){document.getElementById('sum-d-exo').textContent='—';document.getElementById('sum-d-total').textContent='—';return;} const e=degSteps.reduce((a,s)=>a+s.exo,0),r=degSteps.reduce((a,s)=>a+s.rest,0); document.getElementById('sum-d-exo').textContent=fmt(e*degRounds); document.getElementById('sum-d-total').textContent=fmt((e+r)*degRounds); }
 
 // ══ TABS ══
 const MODES = ['interval','degressive','fortime','chrono'];
@@ -1515,6 +1551,9 @@ function addDegStep() {
 function cloneDeg(i) { degSteps.splice(i+1, 0, {...degSteps[i]}); renderDegList(); saveState(); }
 function removeDeg(i) { degSteps.splice(i,1); renderDegList(); saveState(); }
 function resetDegSteps() { degSteps = []; renderDegList(); saveState(); }
+function adjDegRounds(d){ degRounds=Math.max(1,Math.min(99,degRounds+d)); renderDegRounds(); updateSummaryDegressive(); saveState(); }
+function inputDegRounds(el){ const v=parseInt(el.value); if(!isNaN(v)) degRounds=Math.max(1,Math.min(99,v)); renderDegRounds(); updateSummaryDegressive(); saveState(); }
+function renderDegRounds(){ const el=document.getElementById('disp-deg-rounds'); if(el) el.value=degRounds; }
 
 // ── EXPORT / IMPORT WOD ──
 function openShareWOD(mode) {
@@ -2164,41 +2203,39 @@ function renderFTActiveList() {
   const totalGlobal = rounds * total;
   const rLabel = (r) => rounds > 1 ? ` <span style="color:var(--muted2);font-size:10px;">R${r}</span>` : '';
 
-  // Calcul du nombre de suivants et précédents pour toujours afficher 4 lignes.
-  // Règle : courant en position 2 sauf au début (pos 1) et à la fin (descend vers le bas).
-  const nextAvailable = totalGlobal - curGlobal - 1;
-  let nextCount = Math.min(nextAvailable, 2);       // idéalement 2 suivants
-  let prevCount = Math.min(3 - nextCount, curGlobal); // on complète avec des précédents
-  // Si après le clamp il manque encore des lignes, prendre plus de suivants
-  const stillNeeded = 4 - 1 - prevCount - nextCount;
-  if (stillNeeded > 0) nextCount += Math.min(stillNeeded, nextAvailable - nextCount);
-
-  const items = [];
-  for (let g = curGlobal - prevCount; g < curGlobal; g++) {
-    items.push({ ex: ftExercises[g % total], round: Math.floor(g / total) + 1, state: 'done' });
-  }
-  items.push({ ex: ftExercises[ftState.exIdx], round: ftState.round, state: 'current' });
-  for (let g = curGlobal + 1; g <= curGlobal + nextCount; g++) {
-    items.push({ ex: ftExercises[g % total], round: Math.floor(g / total) + 1, state: 'next' });
-  }
-  list.innerHTML = items.map(({ ex, round: r, state }) => {
-    if (state === 'done') {
-      return `<div style="display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;opacity:.5;">
+  // Rendu de TOUS les exercices (tous rounds confondus) — la liste est scrollable
+  let html = '';
+  for (let g = 0; g < totalGlobal; g++) {
+    const r = Math.floor(g / total) + 1;
+    const eIdx = g % total;
+    const ex = ftExercises[eIdx];
+    if (g < curGlobal) {
+      html += `<div data-g="${g}" style="display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;opacity:.5;flex-shrink:0;">
         <div style="width:14px;height:14px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--bg);flex-shrink:0;">✓</div>
         <span style="font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--muted2);text-decoration:line-through;">${ex.name}${rLabel(r)}</span>
       </div>`;
-    } else if (state === 'current') {
-      return `<div style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:10px;background:var(--accent-dim);border:1px solid rgba(255,255,255,.1);">
+    } else if (g === curGlobal) {
+      html += `<div data-g="${g}" class="ft-list-current" style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:10px;background:var(--accent-dim);border:1px solid rgba(255,255,255,.1);flex-shrink:0;">
         <div style="width:14px;height:14px;border-radius:50%;border:2px solid var(--accent);flex-shrink:0;"></div>
         <span style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:var(--accent);">${ex.name}${rLabel(r)}</span>
       </div>`;
     } else {
-      return `<div style="display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;">
+      html += `<div data-g="${g}" style="display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;flex-shrink:0;">
         <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;"></div>
         <span style="font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--muted);">${ex.name}${rLabel(r)}</span>
       </div>`;
     }
-  }).join('');
+  }
+  list.innerHTML = html;
+
+  // Scroll pour que l'élément courant soit en position 2 (un précédent au-dessus)
+  requestAnimationFrame(() => {
+    const currentEl = list.querySelector('.ft-list-current');
+    if (!currentEl) return;
+    const prevEl = currentEl.previousElementSibling;
+    const offset = prevEl ? currentEl.offsetTop - prevEl.offsetHeight - 2 : currentEl.offsetTop;
+    list.scrollTop = Math.max(0, offset - 4);
+  });
 }
 
 function ftTogglePause() {
@@ -2515,7 +2552,22 @@ function showConfigScreen(){
 
 // ══ BUILD PHASES ══
 function buildIntervalPhases(){const arr=[];for(let r=0;r<vals.i_reps;r++){arr.push({type:'exo',dur:vals.i_exo,serie:r+1,total:vals.i_reps});if(r<vals.i_reps-1&&vals.i_rest>0)arr.push({type:'rest',dur:vals.i_rest,serie:r+1,total:vals.i_reps});}return arr;}
-function buildDegressivePhases(){const arr=[];degSteps.forEach((s,i)=>{arr.push({type:'exo',dur:s.exo,serie:i+1,total:degSteps.length,name:s.name||'',desc:s.desc||''});if(i<degSteps.length-1&&s.rest>0)arr.push({type:'rest',dur:s.rest,serie:i+1,total:degSteps.length,nextName:degSteps[i+1]?degSteps[i+1].name||'':'',nextDesc:degSteps[i+1]?degSteps[i+1].desc||'':'',name:s.name||'',desc:s.desc||''});});return arr;}
+function buildDegressivePhases(){
+  const arr=[];
+  for(let r=0;r<degRounds;r++){
+    const isLastRound=r===degRounds-1;
+    degSteps.forEach((s,i)=>{
+      const isLastStep=i===degSteps.length-1;
+      arr.push({type:'exo',dur:s.exo,serie:i+1,total:degSteps.length,round:r+1,totalRounds:degRounds,name:s.name||'',desc:s.desc||''});
+      if(!isLastStep&&s.rest>0){
+        arr.push({type:'rest',dur:s.rest,serie:i+1,total:degSteps.length,round:r+1,totalRounds:degRounds,nextName:degSteps[i+1]?degSteps[i+1].name||'':'',name:s.name||''});
+      } else if(isLastStep&&!isLastRound&&s.rest>0){
+        arr.push({type:'rest',dur:s.rest,serie:i+1,total:degSteps.length,round:r+1,totalRounds:degRounds,nextName:degSteps[0]?degSteps[0].name||'':'',name:s.name||''});
+      }
+    });
+  }
+  return arr;
+}
 
 function startInterval(){phases=buildIntervalPhases();if(!phases.length)return;currentMode='interval';document.getElementById('stats-row').style.display='flex';document.getElementById('chrono-info').style.display='none';acquireWakeLock();if(countdownOn.interval){runCountdown(()=>{showTimerScreen();launchPhases();});}else{showTimerScreen();launchPhases();}}
 function startDegressive(){if(!degSteps.length){alert('Ajoutez au moins un palier !');return;}phases=buildDegressivePhases();currentMode='degressive';document.getElementById('stats-row').style.display='flex';document.getElementById('chrono-info').style.display='none';acquireWakeLock();if(countdownOn.degressive){runCountdown(()=>{showTimerScreen();launchPhases();});}else{showTimerScreen();launchPhases();}}
@@ -2590,7 +2642,8 @@ function updatePhaseUI(remaining){
   const nextVal=nextP?fmt(nextP.dur):'--',nextIsRest=nextP&&nextP.type==='rest',nextColor=nextIsRest?'var(--amber)':'var(--text)',nextLabel=nextIsRest?'Pause':(nextP?'Exercice':'Prochain');
   const snElP=document.getElementById('stat-next-p');if(snElP){snElP.textContent=nextVal;snElP.style.color=nextColor;}
   const snLblP=document.getElementById('stat-next-lbl-p');if(snLblP){snLblP.textContent=nextLabel;snLblP.style.color=nextIsRest?'var(--amber)':'';}
-  const ssElP=document.getElementById('stat-serie-p');if(ssElP)ssElP.textContent=`${p.serie}/${p.total}`;
+  const ssElP=document.getElementById('stat-serie-p');const ssLblP=document.getElementById('stat-serie-lbl-p');
+  if(ssElP){if(p.totalRounds&&p.totalRounds>1){ssElP.textContent=`${p.round}/${p.totalRounds}`;if(ssLblP)ssLblP.textContent=`Round · ${p.serie}/${p.total}`;}else{ssElP.textContent=`${p.serie}/${p.total}`;if(ssLblP)ssLblP.textContent='Série';}}
   let totalLeft=Math.ceil(remaining);for(let i=phaseIdx+1;i<phases.length;i++)totalLeft+=phases[i].dur;
   const stElP=document.getElementById('stat-total-p');if(stElP)stElP.textContent=fmt(totalLeft);
 }
@@ -2813,7 +2866,7 @@ function confirmSavePreset(){
   const name=document.getElementById('preset-name-input').value.trim();if(!name||!_pendingPresetMode)return;
   const mode=_pendingPresetMode;let config;
   if(mode==='interval')config={exo:vals.i_exo,rest:vals.i_rest,reps:vals.i_reps};
-  else if(mode==='degressive')config={steps:JSON.parse(JSON.stringify(degSteps))};
+  else if(mode==='degressive')config={steps:JSON.parse(JSON.stringify(degSteps)),rounds:degRounds};
   else if(mode==='fortime')config={rounds:ftVals.ft_rounds,exercises:JSON.parse(JSON.stringify(ftExercises))};
   else config={cap:timecapOn?vals.c_cap:0,timecapOn};
   presets[mode].push({name,config});savePresets();renderPresets(mode);closePresetModal();
@@ -2821,7 +2874,7 @@ function confirmSavePreset(){
 function loadPreset(mode,idx){
   const p=presets[mode][idx];if(!p)return;
   if(mode==='interval'){vals.i_exo=p.config.exo;vals.i_rest=p.config.rest;vals.i_reps=p.config.reps;renderAll();updateSummaryInterval();}
-  else if(mode==='degressive'){degSteps=JSON.parse(JSON.stringify(p.config.steps));renderDegList();}
+  else if(mode==='degressive'){degSteps=JSON.parse(JSON.stringify(p.config.steps));if(p.config.rounds)degRounds=p.config.rounds;renderDegList();renderDegRounds();updateSummaryDegressive();}
   else if(mode==='fortime'){ftVals.ft_rounds=p.config.rounds;ftExercises=JSON.parse(JSON.stringify(p.config.exercises));renderFTVal('ft_rounds');renderFTList();saveFTState();}
   else{timecapOn=p.config.timecapOn;if(timecapOn)vals.c_cap=p.config.cap;document.getElementById('timecap-toggle').classList.toggle('on',timecapOn);document.getElementById('timecap-field').style.display=timecapOn?'flex':'none';renderAll();}
   saveState();
@@ -2837,12 +2890,13 @@ document.getElementById('preset-name-input').addEventListener('keydown',e=>{if(e
 
 // ══ PERSISTENCE ══
 const STORAGE_KEY='sporttimer_state';
-function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({vals,degSteps}));}catch(e){}}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({vals,degSteps,degRounds}));}catch(e){}}
 function loadState(){
   try{
     const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const s=JSON.parse(raw);
     if(s.vals)Object.keys(s.vals).forEach(k=>{if(k in vals&&k in limits){const[mn,mx]=limits[k];vals[k]=Math.min(mx,Math.max(mn,Number(s.vals[k])||vals[k]));}});
     if(Array.isArray(s.degSteps)&&s.degSteps.length)degSteps=s.degSteps.filter(s=>s.exo>0);
+    if(typeof s.degRounds==='number')degRounds=Math.max(1,Math.min(99,s.degRounds));
   }catch(e){}
 }
 
@@ -2864,7 +2918,7 @@ try {
     }
   } catch(e) {}
 } catch(e) {}
-renderAll(); renderDegList(); renderAllPresets();
+renderAll(); renderDegList(); renderDegRounds(); renderAllPresets();
 setupDragDrop();
 cpickBindEvents();
 loadFTState();
