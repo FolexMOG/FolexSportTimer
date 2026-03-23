@@ -11,8 +11,8 @@
 <meta name="theme-color" content="#111214" id="meta-theme-color">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>WOD Clock</title>
-<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png">
-<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png">
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/FolexDev/FolexWODClock/ab6d3436f61b082ee71361c0ead186507a4aa711/WODClock.png">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/FolexDev/FolexWODClock/ab6d3436f61b082ee71361c0ead186507a4aa711/WODClock.png">
 <script>
 (function(){
   const manifest = {
@@ -20,7 +20,7 @@
     description: "Fractionné, progressif et chrono",
     start_url: ".", display: "fullscreen", orientation: "portrait",
     background_color: "#111214", theme_color: "#111214",
-    icons: [{ src: "https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }]
+    icons: [{ src: "https://raw.githubusercontent.com/FolexDev/FolexWODClock/ab6d3436f61b082ee71361c0ead186507a4aa711/WODClock.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }]
   };
   const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
   const link = document.createElement('link'); link.rel = 'manifest'; link.href = URL.createObjectURL(blob);
@@ -365,7 +365,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 
   <header>
     <div class="header-left" title="WOD Clock © 2026 Folex">
-      <img src="https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png" alt="Sport Timer" style="height:32px;width:32px;display:block;border-radius:7px;">
+      <img src="https://raw.githubusercontent.com/FolexDev/FolexWODClock/ab6d3436f61b082ee71361c0ead186507a4aa711/WODClock.png" alt="Sport Timer" style="height:32px;width:32px;display:block;border-radius:7px;">
       <span onclick="toggleFolexCard()" style="font-family:'Bebas Neue',sans-serif;font-size:9px;letter-spacing:1.5px;color:var(--muted2);cursor:pointer;">@FOLEX</span>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
