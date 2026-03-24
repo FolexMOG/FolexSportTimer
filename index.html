@@ -18,7 +18,7 @@
   const manifest = {
     name: "WOD Clock", short_name: "WOD Clock",
     description: "Fractionné, progressif et chrono",
-    start_url: ".", display: "fullscreen", orientation: "portrait",
+    start_url: ".", display: "standalone", orientation: "portrait",
     background_color: "#111214", theme_color: "#111214",
     icons: [{ src: "https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }]
   };
@@ -978,18 +978,27 @@ document.addEventListener('click', e => {
 });
 
 function updateThemeColor(color) {
-  // Status bar (tous navigateurs)
+  // Status bar + navigation bar (meta theme-color)
   document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.setAttribute('content', color));
-  // Navigation bar Android — via une balise <meta> dédiée
-  let navMeta = document.getElementById('meta-nav-color');
-  if (!navMeta) {
-    navMeta = document.createElement('meta');
-    navMeta.name = 'theme-color';
-    navMeta.id = 'meta-nav-color';
-    document.head.appendChild(navMeta);
-  }
-  navMeta.setAttribute('content', color);
-  // Forcer la couleur de fond sur html et body pour couvrir les zones système
+
+  // Régénère le manifest avec la nouvelle couleur pour que la nav bar Android suive le skin
+  try {
+    const oldLink = document.querySelector('link[rel="manifest"]');
+    const manifest = {
+      name: "WOD Clock", short_name: "WOD Clock",
+      description: "Fractionné, progressif et chrono",
+      start_url: ".", display: "standalone", orientation: "portrait",
+      background_color: color, theme_color: color,
+      icons: [{ src: "https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }]
+    };
+    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+    const newLink = document.createElement('link');
+    newLink.rel = 'manifest';
+    newLink.href = URL.createObjectURL(blob);
+    if (oldLink) oldLink.replaceWith(newLink); else document.head.appendChild(newLink);
+  } catch(e) {}
+
+  // Fond html/body pour couvrir les zones sûres (notch, etc.)
   document.documentElement.style.setProperty('background', color, 'important');
   document.body.style.setProperty('background', color, 'important');
 }
