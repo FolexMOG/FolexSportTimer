@@ -12,19 +12,19 @@
   "categories": ["sports", "health & fitness"],
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png",
+      "src": "https://raw.githubusercontent.com/FolexDev/FolexWODClock/main/icon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png",
+      "src": "https://raw.githubusercontent.com/FolexDev/FolexWODClock/main/icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png",
+      "src": "https://raw.githubusercontent.com/FolexDev/FolexWODClock/main/icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
