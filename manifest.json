@@ -1,0 +1,63 @@
+{
+  "id": "wod-clock",
+  "name": "WOD Clock",
+  "short_name": "WOD Clock",
+  "description": "Timer sportif : fractionné, AMRAP, For Time et chrono pour vos WODs et entraînements HIIT.",
+  "start_url": "./Index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#111214",
+  "theme_color": "#111214",
+  "categories": ["sports", "health & fitness"],
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/FolexMOG/FolexSportTimer/8313a780ddf8ebe710be54bc7d8e96912c979d3e/SportTimerIcon2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://raw.githubusercontent.com/FolexDev/FolexWODClock/main/screenshots/screenshot-fractionne.png",
+      "sizes": "473x1024",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "WOD Clock – Mode Fractionné"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/FolexDev/FolexWODClock/main/screenshots/screenshot-amrap.png",
+      "sizes": "473x1024",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "WOD Clock – Mode AMRAP"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/FolexDev/FolexWODClock/main/screenshots/screenshot-fortime.png",
+      "sizes": "473x1024",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "WOD Clock – Mode For Time"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/FolexDev/FolexWODClock/main/screenshots/screenshot-chrono.png",
+      "sizes": "473x1024",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "WOD Clock – Mode Chrono"
+    }
+  ]
+}
