@@ -1903,7 +1903,13 @@ function addFTExercise() {
 function cloneFTExercise(i) { ftExercises.splice(i+1, 0, {...ftExercises[i]}); renderFTList(); saveFTState(); }
 function removeFTExercise(i) { ftExercises.splice(i, 1); renderFTList(); saveFTState(); }
 function moveFT(i, dir) { const j=i+dir; if(j<0||j>=ftExercises.length)return; [ftExercises[i],ftExercises[j]]=[ftExercises[j],ftExercises[i]]; renderFTList(); saveFTState(); }
-function resetFTExercises() { ftExercises = []; ftVals.ft_rounds = 1; renderFTList(); renderFTVal('ft_rounds'); updateFTHint(); saveFTState(); }
+function resetFTExercises() {
+  ftExercises = []; ftVals.ft_rounds = 1;
+  ftTimecapOn = false;
+  document.getElementById('ft-timecap-toggle').classList.remove('on');
+  const ftcf = document.getElementById('ft-timecap-field'); if (ftcf) ftcf.style.display = 'none';
+  renderFTList(); renderFTVal('ft_rounds'); updateFTHint(); saveFTState();
+}
 
 function renderFTList() {
   const list = document.getElementById('ft-list');
