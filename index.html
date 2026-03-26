@@ -309,7 +309,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 .stat-card.serie-card { flex: 1; }
 .stat-card.serie-card .stat-val { font-size: 20px; color: var(--accent); }
 .chrono-info { display: none; font-family: 'Bebas Neue', sans-serif; font-size: 13px; color: var(--muted); letter-spacing: 2px; margin-bottom: 14px; }
-#exo-name-box { display: none; width: 100%; background: var(--accent-dim); border: 1px solid rgba(255,255,255,.1); border-radius: 14px; padding: 10px 16px; position: relative; overflow: hidden; flex-shrink: 0; margin-bottom: 10px; transition: background .2s, border-color .2s; }
+#exo-name-box { display: none; width: 100%; background: var(--accent-dim); border: 1px solid rgba(255,255,255,.1); border-radius: 14px; padding: 10px 16px; position: relative; overflow: hidden; flex-shrink: 0; margin-bottom: 10px; transition: background .2s, border-color .2s; height: 140px; }
 #exo-name-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); transition: background .2s; }
 #exo-name-box.pause-mode, #exo-name-box.rest-mode { background: var(--amber-dim) !important; border-color: rgba(251,191,36,.25) !important; }
 #exo-name-box.pause-mode::before, #exo-name-box.rest-mode::before { background: var(--amber) !important; }
@@ -318,7 +318,8 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 .enb-label { font-size: 8px; letter-spacing: 3px; color: var(--accent); font-family: 'Bebas Neue', sans-serif; margin-bottom: 3px; transition: color .2s; }
 #ft-active-list::-webkit-scrollbar { display: none; }
 .enb-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--text); letter-spacing: 2px; line-height: 1.1; transition: color .2s; }
-.enb-desc { font-size: 10px; color: var(--muted); margin-top: 3px; font-family: 'Bebas Neue', sans-serif; min-height: 14px; }
+.enb-desc { font-size: 14px; color: var(--muted); margin-top: 5px; font-family: 'DM Sans', sans-serif; line-height: 1.5; overflow-y: auto; max-height: 88px; scrollbar-width: none; -ms-overflow-style: none; }
+.enb-desc::-webkit-scrollbar { display: none; }
 .lap-item { display: flex; align-items: center; justify-content: space-between; padding: 5px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-family: 'Bebas Neue', sans-serif; font-size: 12px; letter-spacing: 1px; }
 .lap-num { color: var(--muted); }
 .lap-split { color: var(--accent); }
@@ -384,7 +385,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
   </header>
 
   <div class="tabs" id="tab-bar">
-    <button class="tab active" data-tab="interval">Fractionné</button>
+    <button class="tab active" data-tab="interval">Intervalles</button>
     <button class="tab" data-tab="degressive">AMRAP</button>
     <button class="tab" data-tab="fortime">For Time</button>
     <button class="tab" data-tab="chrono">Chrono</button>
@@ -421,6 +422,13 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
           <button class="spin-btn" onclick="adj('i_reps',1)">+</button>
         </div>
       </div>
+      <div class="field-row" style="flex-direction:column;align-items:stretch;gap:6px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div><div class="field-label">Note d'exercice</div><div class="field-sub">Affiché pendant le timer (optionnel)</div></div>
+          <button onclick="vals.i_note='';document.getElementById('disp-i_note').value='';saveState();" style="font-size:9px;letter-spacing:1.5px;color:var(--muted);background:transparent;border:1px solid var(--border2);border-radius:8px;padding:4px 8px;cursor:pointer;font-family:'Bebas Neue',sans-serif;flex-shrink:0;" ontouchstart="this.style.opacity='.6'" ontouchend="this.style.opacity='1'">✕ Effacer</button>
+        </div>
+        <textarea id="disp-i_note" rows="6" placeholder="Exemple:&#10;• 3 Pull ups&#10;• 7 Push ups&#10;• 12 Squats" oninput="noteInput(this)" onkeydown="noteKeydown(this,event)" style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .15s;resize:vertical;line-height:1.5;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'"></textarea>
+      </div>
     </div>
     <div class="summary-card" id="summary-interval">
       <div class="summary-item"><span class="summary-lbl">Exercice total</span><span class="summary-val" id="sum-i-exo">—</span></div>
@@ -449,62 +457,46 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
 
   <!-- AMRAP -->
   <div class="screen" id="screen-degressive">
-    <div class="sec-title">Ajouter un palier <span style="color:var(--muted2)">(Exo / Pause)</span></div>
-    <div class="deg-add-card">
-      <!-- Rounds — V7 : grand chiffre encadré amber -->
-      <div style="display:flex;align-items:center;justify-content:space-between;background:var(--amber-dim);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:10px 14px;margin-bottom:12px;">
-        <div style="display:flex;flex-direction:column;gap:2px;">
-          <span style="font-size:8px;letter-spacing:2px;color:var(--amber);text-transform:uppercase;">Rounds</span>
-          <span style="font-size:9px;color:var(--muted);letter-spacing:1px;font-family:'DM Sans',sans-serif;">Nombre de séries</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <button class="spin-btn" onclick="adjDegRounds(-1)" style="background:var(--amber-dim);border-color:rgba(251,191,36,.2);">−</button>
-          <input class="val-display" id="disp-deg-rounds" type="text" inputmode="numeric" maxlength="2"
-            onblur="inputDegRounds(this)" onkeydown="if(event.key==='Enter')this.blur()"
-            style="color:var(--amber);width:32px;font-size:32px;text-align:center;">
-          <button class="spin-btn" onclick="adjDegRounds(1)" style="background:var(--amber-dim);border-color:rgba(251,191,36,.2);">+</button>
+    <div class="sec-title">Ajouter un palier</div>
+    <div class="config-card">
+      <!-- Durées field-rows -->
+      <div class="field-row">
+        <div><div class="field-label">Exercice</div><div class="field-sub">Durée par palier</div></div>
+        <div class="field-ctrl">
+          <button class="spin-btn" onclick="adj('d_exo',-10)">−</button>
+          <input class="val-display" id="disp-d_exo" type="text" inputmode="numeric" maxlength="5" onblur="inputTime('d_exo',this)" onkeydown="if(event.key==='Enter')this.blur()">
+          <button class="spin-btn" onclick="adj('d_exo',10)">+</button>
         </div>
       </div>
-
-      <!-- Durées -->
-      <div style="display:flex;justify-content:center;gap:16px;margin-bottom:14px;">
-        <div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;">
-          <span style="font-size:8px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;">Exercice</span>
-          <div style="display:flex;align-items:center;gap:5px;">
-            <button class="spin-btn" onclick="adj('d_exo',-10)">−</button>
-            <input class="val-display" id="disp-d_exo" type="text" inputmode="numeric" maxlength="5"
-              onblur="inputTime('d_exo',this)" onkeydown="if(event.key==='Enter')this.blur()"
-              style="font-size:15px;width:52px;">
-            <button class="spin-btn" onclick="adj('d_exo',10)">+</button>
-          </div>
-        </div>
-        <div style="width:1px;background:var(--border);align-self:stretch;flex-shrink:0;"></div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;">
-          <span style="font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">Repos</span>
-          <div style="display:flex;align-items:center;gap:5px;">
-            <button class="spin-btn" onclick="adj('d_rest',-5)">−</button>
-            <input class="val-display" id="disp-d_rest" type="text" inputmode="numeric" maxlength="5"
-              onblur="inputTime('d_rest',this)" onkeydown="if(event.key==='Enter')this.blur()"
-              style="font-size:15px;width:52px;">
-            <button class="spin-btn" onclick="adj('d_rest',5)">+</button>
-          </div>
+      <div class="field-row">
+        <div><div class="field-label">Pause</div><div class="field-sub">Entre les paliers</div></div>
+        <div class="field-ctrl">
+          <button class="spin-btn" onclick="adj('d_rest',-5)">−</button>
+          <input class="val-display" id="disp-d_rest" type="text" inputmode="numeric" maxlength="5" onblur="inputTime('d_rest',this)" onkeydown="if(event.key==='Enter')this.blur()">
+          <button class="spin-btn" onclick="adj('d_rest',5)">+</button>
         </div>
       </div>
-      <div style="margin-bottom:6px;">
+      <div class="field-row">
+        <div><div class="field-label">Séries</div><div class="field-sub">Nombre de rounds</div></div>
+        <div class="field-ctrl">
+          <button class="spin-btn" onclick="adjDegRounds(-1)">−</button>
+          <input class="val-display small" id="disp-deg-rounds" type="text" inputmode="numeric" maxlength="2" onblur="inputDegRounds(this)" onkeydown="if(event.key==='Enter')this.blur()">
+          <button class="spin-btn" onclick="adjDegRounds(1)">+</button>
+        </div>
+      </div>
+      <div class="field-row" style="flex-direction:column;gap:8px;align-items:stretch;">
         <input type="text" id="disp-d_name" maxlength="40" placeholder="Nom de l'exercice (optionnel)"
           style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:var(--text);outline:none;caret-color:var(--accent);"
           onkeydown="if(event.key==='Enter')document.getElementById('disp-d_desc').focus()">
-      </div>
-      <div style="margin-bottom:10px;">
         <input type="text" id="disp-d_desc" maxlength="60" placeholder="Description optionnelle (technique, charge...)"
           style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:7px 12px;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--muted);outline:none;caret-color:var(--accent);"
           onkeydown="if(event.key==='Enter')addDegStep()">
-      </div>
-      <button class="add-btn" onclick="addDegStep()">+ Ajouter ce palier</button>
-      <div style="display:flex;gap:6px;margin-top:8px;align-items:center;">
-        <button class="add-btn" onclick="resetDegSteps()" style="flex:1;background:var(--red-dim);border-color:rgba(248,113,113,.2);color:var(--red);">✕ Réinitialiser</button>
-        <button onclick="openExportWOD()" title="Exporter WOD" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬆</button>
-        <button onclick="openImportWOD()" title="Importer WOD" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬇</button>
+        <button class="add-btn" onclick="addDegStep()">+ Ajouter ce palier</button>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <button class="add-btn" onclick="resetDegSteps()" style="flex:1;background:var(--red-dim);border-color:rgba(248,113,113,.2);color:var(--red);">✕ Réinitialiser</button>
+          <button onclick="openExportWOD()" title="Exporter WOD" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬆</button>
+          <button onclick="openImportWOD()" title="Importer WOD" style="width:36px;height:36px;flex-shrink:0;background:var(--border);border:1px solid var(--border2);border-radius:10px;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">⬇</button>
+        </div>
       </div>
     </div>
     <div class="sec-title" style="margin-top:16px">Paliers programmés</div>
@@ -542,7 +534,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);">
         <!-- Rounds -->
         <div style="display:flex;align-items:center;gap:6px;flex:1;">
-          <span style="font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;white-space:nowrap;">Rounds</span>
+          <span style="font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;white-space:nowrap;">Séries</span>
           <button class="spin-btn" onclick="adjFT('ft_rounds',-1)" style="width:28px;height:28px;">−</button>
           <input class="val-display small" id="disp-ft_rounds" type="text" inputmode="numeric" maxlength="2"
             onblur="inputFTRounds(this)" onkeydown="if(event.key==='Enter')this.blur()" style="color:var(--amber);width:32px;">
@@ -757,7 +749,7 @@ header { padding: 14px 20px 10px; padding-top: calc(14px + env(safe-area-inset-t
     <!-- Zone de contrôle : lap list + lap btn + message réservé + boutons -->
     <div style="width:100%;padding-bottom:16px;flex-shrink:0;">
       <div id="lap-list" style="display:none;flex-direction:column;gap:4px;width:100%;overflow-y:auto;margin-bottom:6px;padding:0 2px;"></div>
-      <button class="ctrl-btn" id="btn-lap" onclick="addLap()" style="display:none;width:100%;background:var(--surface);border-color:var(--border2);color:var(--text);margin-bottom:8px;">⊕ Lap</button>
+      <button class="ctrl-btn" id="btn-lap" onclick="addLap()" style="display:none;width:100%;background:var(--surface);border-color:var(--border2);color:var(--text);margin-bottom:8px;"><span style="font-size:2em;line-height:1;vertical-align:middle;">+</span> Lap</button>
       <div id="timer-controls-normal" class="ctrl-row portrait-ctrl">
         <button class="ctrl-btn danger" onclick="timerStopRequest()">■ Stop</button>
         <button class="ctrl-btn primary" id="btn-pause-p" onclick="togglePause()">❚❚ Pause</button>
@@ -1341,7 +1333,7 @@ function applyCustomSkin() {
 }
 
 // ══ CONFIG STATE ══
-const vals = { i_exo:180, i_rest:60, i_reps:5, d_exo:120, d_rest:60, c_cap:1200, cd_dur:10 };
+const vals = { i_exo:180, i_rest:60, i_reps:5, i_note:'', d_exo:120, d_rest:60, c_cap:1200, cd_dur:10 };
 const limits = { i_exo:[10,3600], i_rest:[0,600], i_reps:[1,50], d_exo:[10,3600], d_rest:[0,600], c_cap:[60,7200], cd_dur:[3,60] };
 let degSteps = [], degRounds = 1, timecapOn = false, timerInterval = null, isPaused = false, currentMode = null;
 const countdownOn = { interval: true, degressive: true, chrono: true, fortime: true };
@@ -1408,10 +1400,39 @@ function soundFinished() {
 function fmt(sec) { sec = Math.max(0, Math.round(sec)); return String(Math.floor(sec/60)).padStart(2,'0') + ':' + String(sec%60).padStart(2,'0'); }
 
 // ══ CONTROLS ══
+function noteKeydown(el, e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const s = el.selectionStart, v = el.value;
+    el.value = v.slice(0, s) + '\n• ' + v.slice(el.selectionEnd);
+    el.selectionStart = el.selectionEnd = s + 3;
+    vals.i_note = el.value; saveState();
+  } else if (e.key === 'Backspace' && el.selectionStart === el.selectionEnd) {
+    const s = el.selectionStart, v = el.value;
+    if (v.slice(s - 3, s) === '\n• ') {
+      e.preventDefault();
+      el.value = v.slice(0, s - 3) + v.slice(s);
+      el.selectionStart = el.selectionEnd = s - 3;
+      vals.i_note = el.value; saveState();
+    }
+  }
+}
+function noteInput(el) {
+  if (el.value && !el.value.startsWith('• ')) {
+    const s = el.selectionStart;
+    el.value = '• ' + el.value;
+    el.selectionStart = el.selectionEnd = Math.min(s + 2, el.value.length);
+  }
+  vals.i_note = el.value; saveState();
+}
 function adj(key, delta) { const [mn,mx]=limits[key]; vals[key]=Math.min(mx,Math.max(mn,vals[key]+delta)); renderVal(key); updateSummaryInterval(); saveState(); }
 function renderVal(key) {
   if (key === 'cd_dur') {
     document.querySelectorAll('.cd-dur-input').forEach(el => el.value = String(vals.cd_dur));
+    return;
+  }
+  if (key === 'i_note') {
+    const el=document.getElementById('disp-i_note'); if(el)el.value=vals.i_note||'';
     return;
   }
   const el=document.getElementById('disp-'+key); if(!el)return;
@@ -2549,7 +2570,7 @@ function showConfigScreen(){
 }
 
 // ══ BUILD PHASES ══
-function buildIntervalPhases(){const arr=[];for(let r=0;r<vals.i_reps;r++){arr.push({type:'exo',dur:vals.i_exo,serie:r+1,total:vals.i_reps});if(r<vals.i_reps-1&&vals.i_rest>0)arr.push({type:'rest',dur:vals.i_rest,serie:r+1,total:vals.i_reps});}return arr;}
+function buildIntervalPhases(){const arr=[];for(let r=0;r<vals.i_reps;r++){arr.push({type:'exo',dur:vals.i_exo,serie:r+1,total:vals.i_reps,note:vals.i_note||''});if(r<vals.i_reps-1&&vals.i_rest>0)arr.push({type:'rest',dur:vals.i_rest,serie:r+1,total:vals.i_reps});}return arr;}
 function buildDegressivePhases(){
   const arr=[];
   for(let r=0;r<degRounds;r++){
@@ -2614,8 +2635,25 @@ function updatePhaseUI(remaining){
       if (!isRest) {
         nameBox.classList.remove('rest-mode');
         if (lbl) lbl.textContent = 'EN COURS';
-        document.getElementById('exo-name-text').textContent = p.name || `Exercice #${p.serie}`;
-        document.getElementById('exo-desc-text').textContent = p.desc || '\u00A0';
+        const hasNote = p.note && p.note.trim();
+        const hasName = p.name && p.name.trim();
+        const nameEl = document.getElementById('exo-name-text');
+        const descEl = document.getElementById('exo-desc-text');
+        if (hasName) {
+          // Mode AMRAP : afficher nom + description du palier
+          nameEl.textContent = p.name;
+          descEl.style.whiteSpace = 'pre-line';
+          descEl.textContent = p.desc && p.desc.trim() ? p.desc : '\u00A0';
+        } else if (hasNote) {
+          // Mode Intervalles : afficher "Exercices" + note
+          nameEl.textContent = 'Exercices';
+          descEl.style.whiteSpace = 'pre-line';
+          descEl.textContent = p.note;
+        } else {
+          nameEl.textContent = 'Exercices';
+          descEl.style.whiteSpace = '';
+          descEl.textContent = '\u00A0';
+        }
       } else {
         nameBox.classList.add('rest-mode');
         if (lbl) lbl.textContent = 'EN COURS';
@@ -2863,7 +2901,7 @@ function closePresetModal(){document.getElementById('preset-modal-wrap').classLi
 function confirmSavePreset(){
   const name=document.getElementById('preset-name-input').value.trim();if(!name||!_pendingPresetMode)return;
   const mode=_pendingPresetMode;let config;
-  if(mode==='interval')config={exo:vals.i_exo,rest:vals.i_rest,reps:vals.i_reps};
+  if(mode==='interval')config={exo:vals.i_exo,rest:vals.i_rest,reps:vals.i_reps,note:vals.i_note||''};
   else if(mode==='degressive')config={steps:JSON.parse(JSON.stringify(degSteps)),rounds:degRounds};
   else if(mode==='fortime')config={rounds:ftVals.ft_rounds,exercises:JSON.parse(JSON.stringify(ftExercises))};
   else config={cap:timecapOn?vals.c_cap:0,timecapOn};
@@ -2871,7 +2909,7 @@ function confirmSavePreset(){
 }
 function loadPreset(mode,idx){
   const p=presets[mode][idx];if(!p)return;
-  if(mode==='interval'){vals.i_exo=p.config.exo;vals.i_rest=p.config.rest;vals.i_reps=p.config.reps;renderAll();updateSummaryInterval();}
+  if(mode==='interval'){vals.i_exo=p.config.exo;vals.i_rest=p.config.rest;vals.i_reps=p.config.reps;vals.i_note=p.config.note||'';renderAll();updateSummaryInterval();const noteEl=document.getElementById('disp-i_note');if(noteEl)noteEl.value=vals.i_note;}
   else if(mode==='degressive'){degSteps=JSON.parse(JSON.stringify(p.config.steps));if(p.config.rounds)degRounds=p.config.rounds;renderDegList();renderDegRounds();updateSummaryDegressive();}
   else if(mode==='fortime'){ftVals.ft_rounds=p.config.rounds;ftExercises=JSON.parse(JSON.stringify(p.config.exercises));renderFTVal('ft_rounds');renderFTList();saveFTState();}
   else{timecapOn=p.config.timecapOn;if(timecapOn)vals.c_cap=p.config.cap;document.getElementById('timecap-toggle').classList.toggle('on',timecapOn);document.getElementById('timecap-field').style.display=timecapOn?'flex':'none';renderAll();}
@@ -2892,7 +2930,7 @@ function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({vals,d
 function loadState(){
   try{
     const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const s=JSON.parse(raw);
-    if(s.vals)Object.keys(s.vals).forEach(k=>{if(k in vals&&k in limits){const[mn,mx]=limits[k];vals[k]=Math.min(mx,Math.max(mn,Number(s.vals[k])||vals[k]));}});
+    if(s.vals)Object.keys(s.vals).forEach(k=>{if(k in vals&&k in limits){const[mn,mx]=limits[k];vals[k]=Math.min(mx,Math.max(mn,Number(s.vals[k])||vals[k]));}else if(k==='i_note'){const v=String(s.vals[k]||'');vals[k]=/^\d{1,2}:\d{2}$/.test(v.trim())?'':v;}});
     if(Array.isArray(s.degSteps)&&s.degSteps.length)degSteps=s.degSteps.filter(s=>s.exo>0);
     if(typeof s.degRounds==='number')degRounds=Math.max(1,Math.min(99,s.degRounds));
   }catch(e){}
@@ -2900,6 +2938,8 @@ function loadState(){
 
 // ══ INIT ══
 loadState(); loadPresets(); loadSkin();
+// Restaurer les champs texte Fractionné
+(()=>{ const n=document.getElementById('disp-i_note'); if(n)n.value=vals.i_note||''; })();
 // Restore countdown preference
 try {
   try {
