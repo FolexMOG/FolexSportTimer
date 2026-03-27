@@ -1,6 +1,6 @@
 /* ── WOD Clock Service Worker ── */
 const CACHE = 'wod-clock-v1';
-const ASSETS = ['/Index.html', '/'];
+const ASSETS = ['/index.html', '/'];
 
 self.addEventListener('install', e => {
   self.skipWaiting();
@@ -32,3 +32,4 @@ self.addEventListener('fetch', e => {
       .catch(() => caches.match(e.request))
   );
 });
+
